@@ -12,10 +12,6 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
-                        CreatedDate = c.DateTime(nullable: false),
-                        CreatedBy = c.String(nullable: false, maxLength: 64),
-                        ModifiedDate = c.DateTime(),
-                        ModifiedBy = c.String(maxLength: 64),
                         Name = c.String(maxLength: 64),
                         StoreId = c.String(nullable: false, maxLength: 64),
                         ChannelId = c.String(maxLength: 64),
@@ -35,6 +31,10 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         HandlingTotal = c.Decimal(nullable: false, storeType: "money"),
                         DiscountTotal = c.Decimal(nullable: false, storeType: "money"),
                         TaxTotal = c.Decimal(nullable: false, storeType: "money"),
+                        CreatedDate = c.DateTime(nullable: false),
+                        ModifiedDate = c.DateTime(),
+                        CreatedBy = c.String(),
+                        ModifiedBy = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -45,12 +45,14 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         Id = c.String(nullable: false, maxLength: 128),
                         AddressType = c.String(maxLength: 32),
                         Organization = c.String(maxLength: 64),
-                        CountryCode = c.String(nullable: false, maxLength: 3),
+                        CountryCode = c.String(maxLength: 3),
                         CountryName = c.String(nullable: false, maxLength: 64),
                         City = c.String(nullable: false, maxLength: 128),
                         PostalCode = c.String(maxLength: 64),
                         Line1 = c.String(maxLength: 2048),
                         Line2 = c.String(maxLength: 2048),
+                        RegionId = c.String(maxLength: 128),
+                        RegionName = c.String(maxLength: 128),
                         FirstName = c.String(nullable: false, maxLength: 64),
                         LastName = c.String(nullable: false, maxLength: 64),
                         Phone = c.String(maxLength: 64),
@@ -88,10 +90,6 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
-                        CreatedDate = c.DateTime(nullable: false),
-                        CreatedBy = c.String(nullable: false, maxLength: 64),
-                        ModifiedDate = c.DateTime(),
-                        ModifiedBy = c.String(maxLength: 64),
                         ShipmentMethodCode = c.String(maxLength: 64),
                         FulfilmentCenterId = c.String(maxLength: 64),
                         Currency = c.String(nullable: false, maxLength: 3),
@@ -107,6 +105,10 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         DiscountTotal = c.Decimal(nullable: false, storeType: "money"),
                         TaxTotal = c.Decimal(nullable: false, storeType: "money"),
                         ShoppingCartId = c.String(nullable: false, maxLength: 128),
+                        CreatedDate = c.DateTime(nullable: false),
+                        ModifiedDate = c.DateTime(),
+                        CreatedBy = c.String(),
+                        ModifiedBy = c.String(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.cart_ShoppingCart", t => t.ShoppingCartId, cascadeDelete: true)
@@ -117,10 +119,6 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
-                        CreatedDate = c.DateTime(nullable: false),
-                        CreatedBy = c.String(nullable: false, maxLength: 64),
-                        ModifiedDate = c.DateTime(),
-                        ModifiedBy = c.String(maxLength: 64),
                         Currency = c.String(nullable: false, maxLength: 3),
                         ProductId = c.String(nullable: false, maxLength: 64),
                         CatalogId = c.String(nullable: false, maxLength: 64),
@@ -151,6 +149,10 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         TaxTotal = c.Decimal(nullable: false, storeType: "money"),
                         ShoppingCartId = c.String(maxLength: 128),
                         ShipmentId = c.String(maxLength: 128),
+                        CreatedDate = c.DateTime(nullable: false),
+                        ModifiedDate = c.DateTime(),
+                        CreatedBy = c.String(),
+                        ModifiedBy = c.String(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.cart_Shipment", t => t.ShipmentId)

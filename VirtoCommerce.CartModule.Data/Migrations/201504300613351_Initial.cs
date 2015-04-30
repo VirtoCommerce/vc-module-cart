@@ -8,7 +8,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
         public override void Up()
         {
             CreateTable(
-                "dbo.cart_ShoppingCart",
+                "dbo.Cart",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
@@ -33,13 +33,13 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         TaxTotal = c.Decimal(nullable: false, storeType: "money"),
                         CreatedDate = c.DateTime(nullable: false),
                         ModifiedDate = c.DateTime(),
-                        CreatedBy = c.String(),
-                        ModifiedBy = c.String(),
+                        CreatedBy = c.String(maxLength: 64),
+                        ModifiedBy = c.String(maxLength: 64),
                     })
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.cart_Address",
+                "dbo.CartAddress",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
@@ -62,15 +62,15 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         PaymentId = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.cart_Payment", t => t.PaymentId)
-                .ForeignKey("dbo.cart_Shipment", t => t.ShipmentId)
-                .ForeignKey("dbo.cart_ShoppingCart", t => t.ShoppingCartId)
+                .ForeignKey("dbo.CartPayment", t => t.PaymentId)
+                .ForeignKey("dbo.CartShipment", t => t.ShipmentId)
+                .ForeignKey("dbo.Cart", t => t.ShoppingCartId)
                 .Index(t => t.ShoppingCartId)
                 .Index(t => t.ShipmentId)
                 .Index(t => t.PaymentId);
             
             CreateTable(
-                "dbo.cart_Payment",
+                "dbo.CartPayment",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
@@ -82,11 +82,11 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         ShoppingCartId = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.cart_ShoppingCart", t => t.ShoppingCartId)
+                .ForeignKey("dbo.Cart", t => t.ShoppingCartId)
                 .Index(t => t.ShoppingCartId);
             
             CreateTable(
-                "dbo.cart_Shipment",
+                "dbo.CartShipment",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
@@ -107,15 +107,15 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         ShoppingCartId = c.String(nullable: false, maxLength: 128),
                         CreatedDate = c.DateTime(nullable: false),
                         ModifiedDate = c.DateTime(),
-                        CreatedBy = c.String(),
-                        ModifiedBy = c.String(),
+                        CreatedBy = c.String(maxLength: 64),
+                        ModifiedBy = c.String(maxLength: 64),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.cart_ShoppingCart", t => t.ShoppingCartId, cascadeDelete: true)
+                .ForeignKey("dbo.Cart", t => t.ShoppingCartId, cascadeDelete: true)
                 .Index(t => t.ShoppingCartId);
             
             CreateTable(
-                "dbo.cart_LineItem",
+                "dbo.CartLineItem",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
@@ -151,12 +151,12 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         ShipmentId = c.String(maxLength: 128),
                         CreatedDate = c.DateTime(nullable: false),
                         ModifiedDate = c.DateTime(),
-                        CreatedBy = c.String(),
-                        ModifiedBy = c.String(),
+                        CreatedBy = c.String(maxLength: 64),
+                        ModifiedBy = c.String(maxLength: 64),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.cart_Shipment", t => t.ShipmentId)
-                .ForeignKey("dbo.cart_ShoppingCart", t => t.ShoppingCartId)
+                .ForeignKey("dbo.CartShipment", t => t.ShipmentId)
+                .ForeignKey("dbo.Cart", t => t.ShoppingCartId)
                 .Index(t => t.ShoppingCartId)
                 .Index(t => t.ShipmentId);
             
@@ -164,25 +164,25 @@ namespace VirtoCommerce.CartModule.Data.Migrations
         
         public override void Down()
         {
-            DropForeignKey("dbo.cart_Address", "ShoppingCartId", "dbo.cart_ShoppingCart");
-            DropForeignKey("dbo.cart_Address", "ShipmentId", "dbo.cart_Shipment");
-            DropForeignKey("dbo.cart_Shipment", "ShoppingCartId", "dbo.cart_ShoppingCart");
-            DropForeignKey("dbo.cart_LineItem", "ShoppingCartId", "dbo.cart_ShoppingCart");
-            DropForeignKey("dbo.cart_LineItem", "ShipmentId", "dbo.cart_Shipment");
-            DropForeignKey("dbo.cart_Address", "PaymentId", "dbo.cart_Payment");
-            DropForeignKey("dbo.cart_Payment", "ShoppingCartId", "dbo.cart_ShoppingCart");
-            DropIndex("dbo.cart_LineItem", new[] { "ShipmentId" });
-            DropIndex("dbo.cart_LineItem", new[] { "ShoppingCartId" });
-            DropIndex("dbo.cart_Shipment", new[] { "ShoppingCartId" });
-            DropIndex("dbo.cart_Payment", new[] { "ShoppingCartId" });
-            DropIndex("dbo.cart_Address", new[] { "PaymentId" });
-            DropIndex("dbo.cart_Address", new[] { "ShipmentId" });
-            DropIndex("dbo.cart_Address", new[] { "ShoppingCartId" });
-            DropTable("dbo.cart_LineItem");
-            DropTable("dbo.cart_Shipment");
-            DropTable("dbo.cart_Payment");
-            DropTable("dbo.cart_Address");
-            DropTable("dbo.cart_ShoppingCart");
+            DropForeignKey("dbo.CartAddress", "ShoppingCartId", "dbo.Cart");
+            DropForeignKey("dbo.CartAddress", "ShipmentId", "dbo.CartShipment");
+            DropForeignKey("dbo.CartShipment", "ShoppingCartId", "dbo.Cart");
+            DropForeignKey("dbo.CartLineItem", "ShoppingCartId", "dbo.Cart");
+            DropForeignKey("dbo.CartLineItem", "ShipmentId", "dbo.CartShipment");
+            DropForeignKey("dbo.CartAddress", "PaymentId", "dbo.CartPayment");
+            DropForeignKey("dbo.CartPayment", "ShoppingCartId", "dbo.Cart");
+            DropIndex("dbo.CartLineItem", new[] { "ShipmentId" });
+            DropIndex("dbo.CartLineItem", new[] { "ShoppingCartId" });
+            DropIndex("dbo.CartShipment", new[] { "ShoppingCartId" });
+            DropIndex("dbo.CartPayment", new[] { "ShoppingCartId" });
+            DropIndex("dbo.CartAddress", new[] { "PaymentId" });
+            DropIndex("dbo.CartAddress", new[] { "ShipmentId" });
+            DropIndex("dbo.CartAddress", new[] { "ShoppingCartId" });
+            DropTable("dbo.CartLineItem");
+            DropTable("dbo.CartShipment");
+            DropTable("dbo.CartPayment");
+            DropTable("dbo.CartAddress");
+            DropTable("dbo.Cart");
         }
     }
 }

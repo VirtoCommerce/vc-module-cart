@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.Domain.Cart.Events;
@@ -27,7 +26,7 @@ namespace VirtoCommerce.CartModule.Web
         {
             using (var context = new CartRepositoryImpl(_connectionStringName, _container.Resolve<AuditableInterceptor>()))
             {
-                var initializer = new SetupDatabaseInitializer<CartRepositoryImpl, VirtoCommerce.CartModule.Data.Migrations.Configuration>();
+                var initializer = new SetupDatabaseInitializer<CartRepositoryImpl, Data.Migrations.Configuration>();
                 initializer.InitializeDatabase(context);
             }
 

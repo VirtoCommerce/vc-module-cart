@@ -18,7 +18,6 @@ using webModel = VirtoCommerce.CartModule.Web.Model;
 
 namespace VirtoCommerce.CartModule.Test
 {
-
     [TestClass]
     public class ShoppingCartControllerTest
     {

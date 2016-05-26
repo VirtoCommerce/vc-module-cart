@@ -1,5 +1,5 @@
 # VirtoCommerce.Cart
-VirtoCommerce.Cart module represents shopping cart management system.
+VirtoCommerce.Cart module represents shopping cart management system. This module doesn't have any UI in VC Manager. 
 
 # Documentation
 User guide:

@@ -80,16 +80,24 @@ namespace VirtoCommerce.CartModule.Data.Converters
 			if (target == null)
 				throw new ArgumentNullException("target");
 
-			var patchInjection = new PatchInjection<ShipmentEntity>(x => x.ShipmentMethodCode, x => x.Total,
-                                                                    x => x.ShippingPrice, x=> x.DiscountTotal, x => x.TaxTotal,
-                                                                    x => x.TaxIncluded, x => x.Currency,
-                                                                    x => x.WeightUnit, x => x.WeightValue,
-                                                                    x => x.DimensionHeight, x => x.DimensionLength, x => x.DimensionUnit,
-                                                                    x => x.DimensionWidth, x => x.TaxType);
-			target.InjectFrom(patchInjection, source);
 
-		
-			if (!source.Addresses.IsNullCollection())
+            target.ShipmentMethodCode = source.ShipmentMethodCode;
+            target.Total = source.Total;
+            target.ShippingPrice = source.ShippingPrice;
+            target.DiscountTotal = source.DiscountTotal;
+            target.TaxTotal = source.TaxTotal;
+            target.TaxIncluded = source.TaxIncluded;
+            target.Currency = source.Currency;
+            target.WeightUnit = source.WeightUnit;
+            target.WeightValue = source.WeightValue;
+            target.DimensionHeight = source.DimensionHeight;
+            target.DimensionLength = source.DimensionLength;
+            target.DimensionUnit = source.DimensionUnit;
+            target.DimensionWidth = source.DimensionWidth;
+            target.TaxType = source.TaxType;
+            target.ShipmentMethodOption = source.ShipmentMethodOption;
+
+            if (!source.Addresses.IsNullCollection())
 			{
 				source.Addresses.Patch(target.Addresses, new AddressComparer(), (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
 			}

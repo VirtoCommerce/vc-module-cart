@@ -194,6 +194,21 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                                      .Where(x => x.ShoppingCartId == id).ToArray();
             return query.FirstOrDefault();
         }
+
+        public void RemoveCart(string id)
+        {
+            var cart = GetShoppingCartById(id);
+            if(cart != null)
+            {
+                //Need manually remove addresses because SQL not allow create cascade delete for address table
+                var addresses = cart.Shipments.SelectMany(x => x.Addresses).Concat(cart.Payments.SelectMany(x => x.Addresses));
+                foreach(var address in addresses)
+                {
+                    Remove(address);
+                }
+                Remove(cart);
+            }
+        }
         #endregion
     }
 }

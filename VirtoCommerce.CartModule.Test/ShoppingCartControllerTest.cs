@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http.Results;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
@@ -14,14 +13,14 @@ using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
+using Xunit;
 using webModel = VirtoCommerce.CartModule.Web.Model;
 
 namespace VirtoCommerce.CartModule.Test
 {
-    [TestClass]
     public class ShoppingCartControllerTest
     {
-        [TestMethod]
+        [Fact]
         public void CreateMultishipmentCart()
         {
             var controller = GetCartController();
@@ -111,15 +110,15 @@ namespace VirtoCommerce.CartModule.Test
             cart = (controller.Update(cart) as OkNegotiatedContentResult<webModel.ShoppingCart>).Content;
         }
 
-        [TestMethod]
+        [Fact]
         public void GetCurrentCartTest()
         {
             var controller = GetCartController();
             var result = controller.GetCurrentCart("testSite", null) as OkNegotiatedContentResult<webModel.ShoppingCart>;
-            Assert.IsNotNull(result.Content);
+            Assert.NotNull(result.Content);
         }
 
-        [TestMethod]
+        [Fact]
         public void AddItemToShoppingCart()
         {
             var controller = GetCartController();
@@ -145,7 +144,7 @@ namespace VirtoCommerce.CartModule.Test
             cart = result.Content;
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCheckout()
         {
             var controller = GetCartController();
@@ -234,7 +233,7 @@ namespace VirtoCommerce.CartModule.Test
             //Next it call customer order method create order form cart
         }
 
-        //[TestMethod]
+        //[Fact]
         //public void SearchCarts()
         //{
         //	var controller = GetCartController();

@@ -144,12 +144,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                     _eventPublisher.Publish(new CartChangeEvent(Platform.Core.Common.EntryState.Deleted, cart, cart));
 
                     _dynamicPropertyService.DeleteDynamicPropertyValues(cart);
-
-                    var entity = repository.GetShoppingCartById(id);
-					if (entity != null)
-					{
-						repository.Remove(entity);
-					}
+                    repository.RemoveCart(id);
 				}
 				repository.UnitOfWork.Commit();
 			}

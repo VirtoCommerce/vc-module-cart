@@ -161,21 +161,22 @@ namespace VirtoCommerce.CartModule.Web.Model
         /// Gets or sets the value of line item original price
         /// </summary>
         public decimal ListPrice { get; set; }
-
+        public decimal ListPriceWithTax { get; set; }
         /// <summary>
         /// Gets or sets the value of line item sale price (include static discount)
         /// </summary>
         public decimal SalePrice { get; set; }
-
+        public decimal SalePriceWithTax { get; set; }
         /// <summary>
         /// Gets or sets the value of line item actual price (include all types of discounts)
         /// </summary>
         public decimal PlacedPrice { get; set; }
-
+        public decimal PlacedPriceWithTax { get; set; }
         /// <summary>
         /// Gets or sets the value of line item subtotal price (actual price * line item quantity)
         /// </summary>
         public decimal ExtendedPrice { get; set; }
+        public decimal ExtendedPriceWithTax { get; set; }
 
         /// <summary>
         /// Gets or sets the value of line item total discount amount

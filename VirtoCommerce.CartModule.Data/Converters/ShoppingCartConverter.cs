@@ -23,13 +23,21 @@ namespace VirtoCommerce.CartModule.Data.Converters
 			var retVal = new ShoppingCart();
 			retVal.InjectFrom(entity);
             retVal.Currency = entity.Currency;
-
+            
             retVal.Items = entity.Items.Select(x => x.ToCoreModel()).ToList();
 			retVal.Addresses = entity.Addresses.Select(x => x.ToCoreModel()).ToList();
 			retVal.Shipments = entity.Shipments.Select(x => x.ToCoreModel()).ToList();
 			retVal.Payments = entity.Payments.Select(x => x.ToCoreModel()).ToList();
 			retVal.TaxDetails = entity.TaxDetails.Select(x => x.ToCoreModel()).ToList();
             retVal.Discounts = entity.Discounts.Select(x => x.ToCoreModel()).ToList();
+
+            if(!string.IsNullOrEmpty(entity.Coupon))
+            {
+                retVal.Coupon = new Coupon
+                {
+                    Code = entity.Coupon
+                };
+            }
 
             return retVal;
 		}
@@ -47,6 +55,10 @@ namespace VirtoCommerce.CartModule.Data.Converters
 
 			retVal.Currency = cart.Currency;
 
+            if(cart.Coupon != null)
+            {
+                retVal.Coupon = cart.Coupon.Code;
+            }
 			if (cart.Addresses != null)
 			{
 				retVal.Addresses = new ObservableCollection<AddressEntity>(cart.Addresses.Select(x => x.ToDataModel()));

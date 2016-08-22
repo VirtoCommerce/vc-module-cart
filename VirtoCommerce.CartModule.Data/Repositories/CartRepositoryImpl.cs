@@ -201,7 +201,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             if(cart != null)
             {
                 //Need manually remove addresses because SQL not allow create cascade delete for address table
-                var addresses = cart.Shipments.SelectMany(x => x.Addresses).Concat(cart.Payments.SelectMany(x => x.Addresses));
+                var addresses = cart.Shipments.SelectMany(x => x.Addresses).Concat(cart.Payments.SelectMany(x => x.Addresses)).ToArray();
                 foreach(var address in addresses)
                 {
                     Remove(address);

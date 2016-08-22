@@ -20,6 +20,7 @@ namespace VirtoCommerce.CartModule.Data.Converters
 
 			var retVal = new coreModel.Discount();
 			retVal.InjectFrom(entity);
+            retVal.Description = entity.PromotionDescription;
 
             retVal.Coupon = entity.CouponCode;
 			if (entity.Currency != null)
@@ -39,8 +40,8 @@ namespace VirtoCommerce.CartModule.Data.Converters
             pkMap.AddPair(discount, retVal);
 
             retVal.InjectFrom(discount);
-
-			retVal.Currency = discount.Currency.ToString();
+            retVal.PromotionDescription = discount.Description;
+            retVal.Currency = discount.Currency.ToString();
 
             retVal.CouponCode = discount.Coupon;
             return retVal;

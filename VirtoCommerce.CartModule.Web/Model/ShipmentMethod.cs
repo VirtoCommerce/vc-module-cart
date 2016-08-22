@@ -17,6 +17,10 @@ namespace VirtoCommerce.CartModule.Web.Model
         /// Gets or sets the value of shipping method name
         /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// Shipping method description
+        /// </summary>
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets the value of shipping method option name
@@ -50,6 +54,7 @@ namespace VirtoCommerce.CartModule.Web.Model
         /// Gets or sets the value of shipping method price
         /// </summary>
         public decimal Price { get; set; }
+        public decimal PriceWithTax { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of shipping method discounts

@@ -19,7 +19,7 @@ namespace VirtoCommerce.CartModule.Web.Converters
             retVal.InjectFrom(shippingRate);
 
             retVal.Currency = shippingRate.Currency;
-            retVal.Name = shippingRate.ShippingMethod.Description;
+            retVal.Name = shippingRate.ShippingMethod.Name;
             retVal.Price = shippingRate.Rate;
             retVal.ShipmentMethodCode = shippingRate.ShippingMethod.Code;
             

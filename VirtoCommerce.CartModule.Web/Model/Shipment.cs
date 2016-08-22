@@ -81,6 +81,7 @@ namespace VirtoCommerce.CartModule.Web.Model
         /// Gets or sets the value of shipping price
         /// </summary>
         public decimal ShippingPrice { get; set; }
+        public decimal ShippingPriceWithTax { get; set; }
 
         /// <summary>
         /// Gets or sets the value of total shipping price

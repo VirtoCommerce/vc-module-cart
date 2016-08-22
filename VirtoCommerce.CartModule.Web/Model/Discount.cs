@@ -12,6 +12,8 @@ namespace VirtoCommerce.CartModule.Web.Model
         /// </summary>
         public string PromotionId { get; set; }
 
+        public string Coupon { get; set; }
+
         /// <summary>
         /// Gets or sets the value of currency
         /// </summary>
@@ -24,6 +26,7 @@ namespace VirtoCommerce.CartModule.Web.Model
         /// Gets or sets the value of discount amount
         /// </summary>
         public decimal DiscountAmount { get; set; }
+        public decimal DiscountAmountWithTax { get; set; }
 
         /// <summary>
         /// Gets or sets the value of discount description

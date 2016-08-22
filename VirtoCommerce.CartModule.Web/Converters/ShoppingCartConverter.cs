@@ -17,6 +17,10 @@ namespace VirtoCommerce.CartModule.Web.Converters
 			retVal.InjectFrom(cart);
 
 			retVal.Currency = cart.Currency;
+            if(cart.Coupon != null)
+            {
+                retVal.Coupon = cart.Coupon.Code;
+            }
 			if(cart.Addresses != null)
 				retVal.Addresses = cart.Addresses.Select(x => x.ToWebModel()).ToList();
 			if(cart.Items != null)
@@ -43,6 +47,13 @@ namespace VirtoCommerce.CartModule.Web.Converters
 
 			retVal.Currency = cart.Currency;
 					
+            if(!string.IsNullOrEmpty(cart.Coupon))
+            {
+                retVal.Coupon = new Domain.Cart.Model.Coupon
+                {
+                    Code = cart.Coupon
+                };
+            }
 			if(cart.Addresses != null)
 				retVal.Addresses = cart.Addresses.Select(x => x.ToCoreModel()).ToList();
 			if(cart.Items != null)

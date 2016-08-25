@@ -89,11 +89,12 @@ namespace VirtoCommerce.CartModule.Data.Builders
 				ListPrice = addItemModel.ListPrice,
 				SalePrice = addItemModel.SalePrice,
 				PlacedPrice = addItemModel.PlacedPrice,
+				PlacedPriceWithTax = addItemModel.PlacedPrice,
 				ExtendedPrice = addItemModel.ExtendedPrice,
 				DiscountTotal = addItemModel.DiscountTotal,
 				TaxTotal = addItemModel.TaxTotal,
 				Quantity = addItemModel.Quantity,
-				CreatedDate = DateTime.UtcNow,
+				CreatedDate = DateTime.UtcNow
 			};
 
 			AddLineItem(lineItem);

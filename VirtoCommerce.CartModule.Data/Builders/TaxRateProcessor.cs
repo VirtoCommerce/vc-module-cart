@@ -10,16 +10,22 @@ namespace VirtoCommerce.CartModule.Data.Builders
 	{
 		public static void ApplyTaxeRates(this ShoppingCart shoppingCart, IEnumerable<TaxRate> taxRates)
 		{
-			foreach (var lineItem in shoppingCart.Items)
+			if (shoppingCart.Items != null)
 			{
-				lineItem.ApplyTaxRates(taxRates);
-				shoppingCart.TaxTotal += lineItem.TaxTotal;
+				foreach (var lineItem in shoppingCart.Items)
+				{
+					lineItem.ApplyTaxRates(taxRates);
+					shoppingCart.TaxTotal += lineItem.TaxTotal;
+				}
 			}
 
-			foreach (var shipment in shoppingCart.Shipments)
+			if (shoppingCart.Shipments != null)
 			{
-				shipment.ApplyTaxRates(taxRates);
-				shoppingCart.TaxTotal += shipment.TaxTotal;
+				foreach (var shipment in shoppingCart.Shipments)
+				{
+					shipment.ApplyTaxRates(taxRates);
+					shoppingCart.TaxTotal += shipment.TaxTotal;
+				}
 			}
 		}
 
@@ -58,6 +64,7 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		{
 			lineItem.ListPriceWithTax = lineItem.ListPrice;
 			lineItem.SalePriceWithTax = lineItem.SalePrice;
+			lineItem.PlacedPrice = lineItem.PlacedPrice;
 
 			//Because TaxLine.Id may contains composite string id & extra info
 			var lineItemTaxRates = taxRates.Where(x => x.Line.Id.SplitIntoTuple('&').Item1 == lineItem.Id).ToList();
@@ -76,6 +83,9 @@ namespace VirtoCommerce.CartModule.Data.Builders
 				lineItem.TaxTotal += extendedPriceRate.Rate;
 				lineItem.ListPriceWithTax = lineItem.ListPrice + listPriceRate.Rate;
 				lineItem.SalePriceWithTax = lineItem.SalePrice + salePriceRate.Rate;
+				
+				// todo: calculate placed plice tax rate
+				lineItem.PlacedPriceWithTax = lineItem.PlacedPrice + listPriceRate.Rate;
 			}
 		}
 	}

@@ -24,16 +24,22 @@ namespace VirtoCommerce.CartModule.Data.Builders
 				shoppingCart.Discounts.Add(discount);
 			}
 
-			var lineItemRewards = rewards.OfType<CatalogItemAmountReward>().Where(x => x.IsValid).ToList();
-			foreach (var lineItem in shoppingCart.Items)
+			if (shoppingCart.Items != null)
 			{
-				lineItem.ApplyRewards(lineItemRewards);
+				var lineItemRewards = rewards.OfType<CatalogItemAmountReward>().Where(x => x.IsValid).ToList();
+				foreach (var lineItem in shoppingCart.Items)
+				{
+					lineItem.ApplyRewards(lineItemRewards);
+				}
 			}
 
-			var shipmentRewards = rewards.OfType<ShipmentReward>().Where(x => x.IsValid).ToList();
-			foreach (var shipment in shoppingCart.Shipments)
+			if (shoppingCart.Shipments != null)
 			{
-				shipment.ApplyRewards(shipmentRewards);
+				var shipmentRewards = rewards.OfType<ShipmentReward>().Where(x => x.IsValid).ToList();
+				foreach (var shipment in shoppingCart.Shipments)
+				{
+					shipment.ApplyRewards(shipmentRewards);
+				}
 			}
 
 			if (shoppingCart.Coupon != null && !string.IsNullOrEmpty(shoppingCart.Coupon.Code))

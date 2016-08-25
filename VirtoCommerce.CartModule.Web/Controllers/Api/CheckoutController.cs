@@ -20,7 +20,7 @@ using VirtoCommerce.Domain.Tax.Model;
 
 namespace VirtoCommerce.CartModule.Web.Controllers.Api
 {
-	[RoutePrefix("api/checkout")]
+	[RoutePrefix("api/checkout2")]
 	public class CheckoutController : ApiController
 	{
 		private readonly ICartBuilder _cartBuilder;
@@ -132,10 +132,10 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 			return Ok();
 		}
 
-		[HttpPost]
+		[HttpGet]
 		[Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/shipments/{shipmentId}/shippingmethods")]
 		[ResponseType(typeof(ICollection<Data.Model.ShippingRate>))]
-		public IHttpActionResult GetCartShipmentAvailShippingRates(string storeId, string customerId, string cartName, string currency, string cultureName, string shipmentId)
+		public IHttpActionResult GetAvailableShippingRates(string storeId, string customerId, string cartName, string currency, string cultureName, string shipmentId)
 		{
 			_cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
 
@@ -144,10 +144,10 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 			return Ok(shippingMethods);
 		}
 
-		[HttpPost]
+		[HttpGet]
 		[Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/paymentmethods")]
 		[ResponseType(typeof(ICollection<Domain.Payment.Model.PaymentMethod>))]
-		public IHttpActionResult GetCartAvailPaymentMethods(string storeId, string customerId, string cartName, string currency, string cultureName)
+		public IHttpActionResult GetAvailablePaymentMethods(string storeId, string customerId, string cartName, string currency, string cultureName)
 		{
 			_cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
 

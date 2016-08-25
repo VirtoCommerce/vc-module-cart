@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using VirtoCommerce.CartModule.Data.Builders;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.Domain.Cart.Events;
@@ -40,7 +41,10 @@ namespace VirtoCommerce.CartModule.Web
 
             _container.RegisterType<IShoppingCartService, ShoppingCartServiceImpl>();
             _container.RegisterType<IShoppingCartSearchService, ShoppingCartSearchServiceImpl>();
-        }
+
+			_container.RegisterType<ICartValidator, CartValidator>();
+			_container.RegisterType<ICartBuilder, CartBuilder>();
+		}
 
         #endregion
     }

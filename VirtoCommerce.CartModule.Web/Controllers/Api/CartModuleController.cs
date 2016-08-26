@@ -36,7 +36,6 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// </remarks>
         /// <param name="storeId">Store id</param>
         /// <param name="customerId">Customer id</param>
-        /// <response code="200"></response>
         [HttpGet]
         [Route("{storeId}/{customerId}/carts/current")]
         [ResponseType(typeof(ShoppingCart))]
@@ -103,7 +102,6 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// Create shopping cart
         /// </summary>
         /// <param name="cart">Shopping cart model</param>
-        /// <response code="204">Operation completed</response>
         [HttpPost]
         [Route("carts")]
         [ResponseType(typeof(ShoppingCart))]

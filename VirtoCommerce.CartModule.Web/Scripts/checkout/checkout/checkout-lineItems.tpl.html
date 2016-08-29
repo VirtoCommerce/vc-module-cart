@@ -27,17 +27,17 @@
 			</td>
 			<td class="product__price">
 				<div ng-if="$ctrl.showPricesWithTaxes">
-					<span class="order-summary__emphasis" ng-bind="'$' + lineItem.placedPriceWithTax"></span>
+					<span class="order-summary__emphasis" ng-bind="lineItem.placedPriceWithTax | currency"></span>
 					<span ng-if="lineItem.listPriceWithTax > lineItem.placedPriceWithTax">
 						<br />
-						<span class="order-summary__small-text strikethrough" ng-bind="'$'+ lineItem.listPriceWithTax"></span>
+						<span class="order-summary__small-text strikethrough" ng-bind="lineItem.listPriceWithTax | currency"></span>
 					</span>
 				</div>
 				<div ng-if="!$ctrl.showPricesWithTaxes">
-					<span class="order-summary__emphasis" ng-bind="'$' + lineItem.placedPrice"></span>
+					<span class="order-summary__emphasis" ng-bind="lineItem.placedPrice | currency"></span>
 					<span ng-if="lineItem.listPrice > lineItem.placedPrice">
 						<br />
-						<span class="order-summary__small-text strikethrough" ng-bind="'$' + lineItem.listPrice"></span>
+						<span class="order-summary__small-text strikethrough" ng-bind="lineItem.listPrice | currency"></span>
 					</span>
 				</div>
 			</td>

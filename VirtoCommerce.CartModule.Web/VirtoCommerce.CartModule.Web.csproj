@@ -158,7 +158,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Domain, Version=2.16.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.16.2-rc1\lib\net451\VirtoCommerce.Domain.dll</HintPath>
+      <HintPath>..\packages\VirtoCommerce.Domain.2.16.2-rc3\lib\net451\VirtoCommerce.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Core, Version=2.11.5.0, Culture=neutral, processorArchitecture=MSIL">
@@ -204,6 +204,7 @@
     <Compile Include="Converters\ShoppingCartConverter.cs" />
     <Compile Include="Model\Address.cs" />
     <Compile Include="Model\CardSummary.cs" />
+    <Compile Include="Model\CurrencyFormat.cs" />
     <Compile Include="Model\LineItem.cs" />
     <Compile Include="Model\Discount.cs" />
     <Compile Include="Model\Payment.cs" />

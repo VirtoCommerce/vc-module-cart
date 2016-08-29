@@ -11,12 +11,15 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VirtoCommerce.CartModule.Data.Builders;
 using VirtoCommerce.CartModule.Data.Model;
-using VirtoCommerce.Domain.Cart.Model;
+using VirtoCommerce.CartModule.Web.Model;
+using VirtoCommerce.Domain.Commerce.Model;
+using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Marketing.Model;
 using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Payment.Model;
 using VirtoCommerce.Domain.Shipping.Model;
 using VirtoCommerce.Domain.Tax.Model;
+using ShoppingCart = VirtoCommerce.Domain.Cart.Model.ShoppingCart;
 
 namespace VirtoCommerce.CartModule.Web.Controllers.Api
 {
@@ -26,12 +29,14 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 		private readonly ICartBuilder _cartBuilder;
 		private readonly ICartValidator _cartValidator;
 		private readonly ICustomerOrderService _customerOrderService;
+		private readonly ICommerceService _commerceService;
 
-		public CheckoutController(ICartBuilder cartBuilder, ICartValidator cartValidator, ICustomerOrderService customerOrderService)
+		public CheckoutController(ICartBuilder cartBuilder, ICartValidator cartValidator, ICustomerOrderService customerOrderService, ICommerceService commerceService)
 		{
 			_cartBuilder = cartBuilder;
 			_cartValidator = cartValidator;
 			_customerOrderService = customerOrderService;
+			_commerceService = commerceService;
 		}
 
 		[HttpGet]
@@ -268,6 +273,15 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 		}
 
 		[HttpGet]
+		[Route("currencies")]
+		[ResponseType(typeof(Currency))]
+		public IHttpActionResult GetCurrencies()
+		{
+			var currencies = _commerceService.GetAllCurrencies();
+			return Ok(currencies);
+		}
+
+		[HttpGet]
 		[Route("countries")]
 		[ResponseType(typeof(Country[]))]
 		public IHttpActionResult GetCountries()
@@ -348,6 +362,14 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 		private static string GetAsyncLockCartKey(string cartId)
 		{
 			return "Cart:" + cartId;
+		}
+
+		private bool StartsWithCurrencySymbol(CultureInfo culture)
+		{
+			bool startsWithCurrencySymbol =
+				culture.NumberFormat.CurrencyPositivePattern == 0 ||
+				culture.NumberFormat.CurrencyPositivePattern == 2;
+			return culture.TextInfo.IsRightToLeft ? !startsWithCurrencySymbol : startsWithCurrencySymbol;
 		}
 	}
 }

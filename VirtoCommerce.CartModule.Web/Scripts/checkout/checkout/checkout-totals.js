@@ -4,6 +4,7 @@ storefrontApp.component('vcCheckoutTotals', {
 	templateUrl: "checkout-totals.tpl.html",
 	bindings: {
 		cart: '=',
+		currency: '<',
 		showPricesWithTaxes: '<',
 		displayOnlyTotal: '<'
 	},

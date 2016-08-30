@@ -13,34 +13,34 @@
 		<tr class="total-line total-line--subtotal">
 			<td class="total-line__name" ng-if="$ctrl.showPricesWithTaxes">Subtotal with taxes</td>
 			<td class="total-line__price" ng-if="$ctrl.showPricesWithTaxes">
-				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.subTotalWithTax | currency"></span>
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.subTotalWithTax | currency : $ctrl.currency.symbol"></span>
 			</td>
 			<td class="total-line__name" ng-if="!$ctrl.showPricesWithTaxes">Subtotal</td>
 			<td class="total-line__price" ng-if="!$ctrl.showPricesWithTaxes">
-				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.subTotal | currency"></span>
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.subTotal | currency : $ctrl.currency.symbol"></span>
 			</td>
 		</tr>
 		<tr class="total-line total-line--shipping">
 			<td class="total-line__name" ng-if="$ctrl.showPricesWithTaxes">Shipping with taxes</td>
 			<td class="total-line__price" ng-if="$ctrl.showPricesWithTaxes">
-				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.shippingPriceWithTax | currency"></span>
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.shippingPriceWithTax | currency : $ctrl.currency.symbol"></span>
 			</td>
 			<td class="total-line__name" ng-if="!$ctrl.showPricesWithTaxes">Shipping</td>
 			<td class="total-line__price" ng-if="!$ctrl.showPricesWithTaxes">
-				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.shippingTotal | currency"></span>
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.shippingTotal | currency : $ctrl.currency.symbol"></span>
 			</td>
 		</tr>
 		<tr class="total-line total-line--subtotal">
 			<td class="total-line__name">Discount</td>
 			<td class="total-line__price">
-				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.discountTotalWithTax | currency" ng-if="$ctrl.showPricesWithTaxes"></span>
-				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.discountTotal | currency" ng-if="!$ctrl.showPricesWithTaxes"></span>
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.discountTotalWithTax | currency : $ctrl.currency.symbol" ng-if="$ctrl.showPricesWithTaxes"></span>
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.discountTotal | currency : $ctrl.currency.symbol" ng-if="!$ctrl.showPricesWithTaxes"></span>
 			</td>
 		</tr>
 		<tr class="total-line total-line--taxes">
 			<td class="total-line__name">Taxes</td>
 			<td class="total-line__price">
-				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.taxTotal | currency"></span>
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.taxTotal | currency : $ctrl.currency.symbol"></span>
 			</td>
 		</tr>
 	</tbody>
@@ -48,8 +48,8 @@
 		<tr class="total-line">
 			<td class="total-line__name payment-due-label">Total</td>
 			<td class="total-line__price payment-due">
-				<span class="payment-due__currency" ng-bind="$ctrl.cart.currencyCode"></span>
-				<span class="payment-due__price" ng-bind="$ctrl.cart.total | currency"></span>
+				<span class="payment-due__currency" ng-bind="$ctrl.currency.code"></span>
+				<span class="payment-due__price" ng-bind="$ctrl.cart.total | currency : $ctrl.currency.symbol"></span>
 			</td>
 		</tr>
 	</tbody>

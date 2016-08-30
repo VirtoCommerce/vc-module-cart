@@ -162,7 +162,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 		}
 
 		[HttpPost]
-		[Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/coupons")]
+		[Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/coupons/{couponCode}")]
 		[ResponseType(typeof(string))]
 		public async Task<IHttpActionResult> AddCartCoupon(string storeId, string customerId, string cartName, string currency, string cultureName, string couponCode)
 		{

@@ -1,7 +1,7 @@
 ﻿angular.module('storefrontApp').service('cartService', ['$http', 'config', function ($http, config) {
 
 	function getUrl(cartContext) {
-		return config.apiUrl + 'api/checkout2/' + cartContext.storeId + '/' + cartContext.customerId + '/carts/' + cartContext.cartName + '/' + cartContext.currency + '/' + cartContext.cultureName;
+		return config.apiUrl + 'api/checkout2/' + cartContext.storeId + '/' + cartContext.customerId + '/carts/' + cartContext.cartName + '/' + cartContext.currency.code + '/' + cartContext.cultureName;
 	}
 
 	return {
@@ -28,6 +28,9 @@
 		},
 		getCountryRegions: function (countryCode) {
 			return $http.get(config.apiUrl + 'api/checkout2/countries/' + countryCode + '/regions?api_key=' + config.apiKey + 't=' + new Date().getTime());
+		},
+		getCurrencies: function () {
+			return $http.get(config.apiUrl + 'api/checkout2/currencies?api_key=' + config.apiKey + '&t=' + new Date().getTime());
 		},
 		addCoupon: function (cartContext, couponCode) {
 			return $http.post(getUrl(cartContext) + '/coupons/' + couponCode + '?api_key=' + config.apiKey);

@@ -45,7 +45,7 @@ angular.module('storefrontApp').controller('javaScriptShoppingCartCtrl', ['$scop
 			cartName: "javaScriptShoppingCart",
 			customerId: $scope.javaScriptShoppingCart.userId,
 			customerName: "Anonymous",
-			currency: itemCurrency,
+			currency: { code: itemCurrency },
 			cultureName: "en-US",
 			showPricesWithTaxes: false
 		};

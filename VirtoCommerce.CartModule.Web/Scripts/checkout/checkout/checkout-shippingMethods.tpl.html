@@ -12,9 +12,9 @@
                     <input class="input-radio" id="{{ method.shippingMethod.id }}" name="ShipmentMethodCode" type="radio" required="required" ng-value="method" ng-model="$ctrl.selectedMethod" ng-change="$ctrl.selectMethod(method)" />
                 </div>
                 <label class="radio__label" for="{{ method.shippingMethod.id }}" ng-bind="method.optionName ? method.optionName : method.shippingMethod.name"></label>
-                <span class="order-summary__emphasis" ng-bind="method.rate | currency"></span>
+                <span class="order-summary__emphasis" ng-bind="method.rate | currency : $ctrl.currency.symbol"></span>
                 <span ng-if="option.discountTotalWithTax.amount > 0">
-                    <span class="order-summary__small-text strikethrough" ng-bind="method.priceWithTax.formatedAmount | currency"></span>
+                    <span class="order-summary__small-text strikethrough" ng-bind="method.priceWithTax.formatedAmount | currency : $ctrl.currency.symbol"></span>
                 </span>
             </div>
         </div>

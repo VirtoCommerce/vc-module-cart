@@ -7,6 +7,7 @@ storefrontApp.component('vcCheckoutShippingMethods', {
 	},
 	bindings: {
 		shipment: '=',
+		currency: '<',
 		getAvailShippingMethods: '&',
 		onSelectShippingMethod: '&'
 	},
@@ -24,12 +25,12 @@ storefrontApp.component('vcCheckoutShippingMethods', {
 				});
 				ctrl.selectedMethod = _.find(ctrl.availShippingMethods, function (x) { return ctrl.shipment.shipmentMethodCode == x.shippingMethod.code && ctrl.shipment.shipmentMethodOption == x.optionName });
 			});
-		};		
-		
+		};
+
 		this.$onDestroy = function () {
 			ctrl.checkoutStep.removeComponent(this);
 		};
-			
+
 		function getMethodId(method) {
 			var retVal = method.shipmentMethodCode;
 			if (method.optionName) {
@@ -42,7 +43,7 @@ storefrontApp.component('vcCheckoutShippingMethods', {
 			ctrl.selectedMethod = method;
 			ctrl.onSelectShippingMethod({ shippingMethod: method });
 		};
-	
+
 		ctrl.validate = function () {
 			ctrl.form.$setSubmitted();
 			return !ctrl.form.$invalid;

@@ -5,8 +5,8 @@
 <div class="modal-body">
 	<div ng-controller="checkoutController" ng-init="checkout.cartContext = javaScriptShoppingCart.cartContext;">
 		<div class="wrap" ng-if="!checkout.isFinished">
-			<div class="sidebar">
-				<div class="sidebar__content">
+			<div class="checkout-sidebar">
+				<div class="checkout-sidebar__content">
 					<div class="order-summary" ng-class="{ 'order-summary--is-expanded': orderSummaryVisible, 'order-summary--is-collapsed': !orderSummaryVisible }">
 						<div class="order-summary__section order-summary__section--product-list">
 							<vc-checkout-line-items items="checkout.cart.items" show-prices-with-taxes="checkout.cartContext.showPricesWithTaxes"  currency="checkout.cartContext.currency"></vc-checkout-line-items>

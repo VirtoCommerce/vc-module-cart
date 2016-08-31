@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Description;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,6 +25,7 @@ using ShoppingCart = VirtoCommerce.Domain.Cart.Model.ShoppingCart;
 namespace VirtoCommerce.CartModule.Web.Controllers.Api
 {
 	[RoutePrefix("api/checkout2")]
+	[EnableCors(origins: "*", headers: "*", methods: "*")]
 	public class CheckoutController : ApiController
 	{
 		private readonly ICartBuilder _cartBuilder;

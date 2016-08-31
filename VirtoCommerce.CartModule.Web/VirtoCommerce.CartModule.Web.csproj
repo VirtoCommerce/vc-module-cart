@@ -247,6 +247,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\checkout\locales\de.json" />
+    <Content Include="Scripts\checkout\locales\en.json" />
+    <Content Include="Scripts\checkout\locales\es.json" />
+    <Content Include="Scripts\checkout\locales\fr.json" />
+    <Content Include="Scripts\checkout\locales\pt-BR.json" />
+    <Content Include="Scripts\checkout\locales\pt-PT.json" />
     <None Include="web.config">
       <SubType>Designer</SubType>
     </None>

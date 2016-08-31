@@ -1,11 +1,20 @@
-﻿var app = angular.module('storefrontApp', ['ngAnimate', 'ui.bootstrap', 'ngCookies', 'storefront.checkout']);
+﻿var app = angular.module('storefrontApp', ['ngAnimate', 'ui.bootstrap', 'ngCookies', 'storefront.checkout', 'pascalprecht.translate']);
 
 app.value('config', {
 	apiUrl: '',
 	apiKey: ''
 });
 
-angular.module('storefrontApp').controller('javaScriptShoppingCartCtrl', ['$scope', '$uibModal', '$log', '$cookies', '$http', 'config', 'cartService', function ($scope, $uibModal, $log, $cookies, $http, config, cartService) {
+app.config(['$translateProvider', function ($translateProvider) {
+
+	$translateProvider.useStaticFilesLoader({
+		prefix: 'http://localhost/admin/Modules/VirtoCommerce.Cart/Scripts/checkout/locales/',
+		suffix: '.json'
+	});
+	$translateProvider.preferredLanguage('en');
+}]);
+
+angular.module('storefrontApp').controller('javaScriptShoppingCartCtrl', ['$scope', '$uibModal', '$log', '$cookies', '$http', '$translate', 'config', 'cartService', function ($scope, $uibModal, $log, $cookies, $http, $translate, config, cartService) {
 
 	$scope.javaScriptShoppingCart = {};
 
@@ -26,6 +35,8 @@ angular.module('storefrontApp').controller('javaScriptShoppingCartCtrl', ['$scop
 
 		config.apiUrl = $scope.javaScriptShoppingCart.baseUrl;
 		config.apiKey = $scope.javaScriptShoppingCart.apiKey;
+
+		$translate.use('de');
 	}
 
 	$scope.open = function () {

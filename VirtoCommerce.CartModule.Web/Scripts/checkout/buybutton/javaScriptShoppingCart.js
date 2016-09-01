@@ -6,12 +6,11 @@ app.value('config', {
 });
 
 app.config(['$translateProvider', function ($translateProvider) {
-
 	$translateProvider.useStaticFilesLoader({
 		prefix: 'http://localhost/admin/Modules/VirtoCommerce.Cart/Scripts/checkout/locales/',
 		suffix: '.json'
 	});
-	$translateProvider.preferredLanguage('en');
+	$translateProvider.fallbackLanguage('en');
 }]);
 
 angular.module('storefrontApp').controller('javaScriptShoppingCartCtrl', ['$scope', '$uibModal', '$log', '$cookies', '$http', '$translate', 'config', 'cartService', function ($scope, $uibModal, $log, $cookies, $http, $translate, config, cartService) {

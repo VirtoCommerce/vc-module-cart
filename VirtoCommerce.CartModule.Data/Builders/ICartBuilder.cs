@@ -8,6 +8,7 @@ using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Marketing.Model;
+using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Shipping.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using ShippingRate = VirtoCommerce.Domain.Shipping.Model.ShippingRate;
@@ -148,6 +149,19 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		/// </summary>
 		/// <returns></returns>
 		ICartBuilder EvaluateTax();
+
+		/// <summary>
+		/// Convert cart to order
+		/// </summary>
+		/// <returns></returns>
+		CustomerOrder ConvertCartToOrder();
+
+		/// <summary>
+		/// Create order
+		/// </summary>
+		/// <param name="createOrderModel"></param>
+		/// <returns></returns>
+		CreateOrderResult CreateOrder(CreateOrderModel createOrderModel);
 
 		//Save cart changes
 		void Save();

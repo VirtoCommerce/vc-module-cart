@@ -96,6 +96,7 @@
     <Compile Include="Converters\AddressConverter.cs" />
     <Compile Include="Converters\CartLineItemConverter.cs" />
     <Compile Include="Converters\CartShipmentConverter.cs" />
+    <Compile Include="Converters\CustomerOrderConverter.cs" />
     <Compile Include="Converters\DiscountConverter.cs" />
     <Compile Include="Converters\LineItemConverter.cs" />
     <Compile Include="Converters\PaymentConverter.cs" />

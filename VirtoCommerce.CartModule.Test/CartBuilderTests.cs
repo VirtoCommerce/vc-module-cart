@@ -227,7 +227,7 @@ namespace VirtoCommerce.CartModule.Test
 			var marketingPromoEvaluator = GetMarketingPromoEvaluator();
 			var cacheManager = GetCacheManager();
 
-			var builder = new CartBuilder(storeService, shoppingCartService, shoppingCartSearchService, marketingPromoEvaluator, cacheManager);
+			var builder = new CartBuilder(storeService, shoppingCartService, shoppingCartSearchService, marketingPromoEvaluator, cacheManager, null, null);
 
 			builder.GetOrCreateNewTransientCart(StoreId, Guid.NewGuid().ToString(), CartName, CurrencyCode, LanguageCultureName).Save();
 

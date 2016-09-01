@@ -8,10 +8,18 @@ using VirtoCommerce.Domain.Cart.Services;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Marketing.Services;
+using VirtoCommerce.Domain.Order.Model;
+using VirtoCommerce.Domain.Order.Services;
+using VirtoCommerce.Domain.Payment.Model;
 using VirtoCommerce.Domain.Shipping.Model;
 using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Data.Common;
+using Coupon = VirtoCommerce.Domain.Cart.Model.Coupon;
+using LineItem = VirtoCommerce.Domain.Cart.Model.LineItem;
+using Shipment = VirtoCommerce.Domain.Cart.Model.Shipment;
+using ShipmentItem = VirtoCommerce.Domain.Cart.Model.ShipmentItem;
 using StringExtensions = VirtoCommerce.Platform.Core.Common.StringExtensions;
 
 namespace VirtoCommerce.CartModule.Data.Builders
@@ -21,6 +29,8 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		private readonly IStoreService _storeService;
 		private readonly IShoppingCartService _shoppingCartService;
 		private readonly IShoppingCartSearchService _shoppingCartSearchService;
+		private readonly ICustomerOrderService _customerOrderService;
+		private readonly IDynamicPropertyService _dynamicPropertyService;
 		private readonly IMarketingPromoEvaluator _marketingPromoEvaluator;
 
 		private readonly ICacheManager<object> _cacheManager;
@@ -31,12 +41,14 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		private Store _store;
 
 		[CLSCompliant(false)]
-		public CartBuilder(IStoreService storeService, IShoppingCartService shoppingShoppingCartService, IShoppingCartSearchService shoppingCartSearchService, IMarketingPromoEvaluator marketingPromoEvaluator, ICacheManager<object> cacheManager)
+		public CartBuilder(IStoreService storeService, IShoppingCartService shoppingShoppingCartService, IShoppingCartSearchService shoppingCartSearchService, IMarketingPromoEvaluator marketingPromoEvaluator, ICacheManager<object> cacheManager, ICustomerOrderService customerOrderService, IDynamicPropertyService dynamicPropertyService)
 		{
 			_storeService = storeService;
 			_shoppingCartService = shoppingShoppingCartService;
 			_shoppingCartSearchService = shoppingCartSearchService;
 			_marketingPromoEvaluator = marketingPromoEvaluator;
+			_customerOrderService = customerOrderService;
+			_dynamicPropertyService = dynamicPropertyService;
 			_cacheManager = cacheManager;
 		}
 
@@ -372,6 +384,59 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			_cacheManager.Remove(CartCaheKey, _cartCacheRegion);
 
 			return this;
+		}
+
+		public virtual CustomerOrder ConvertCartToOrder()
+		{
+			var customerOrder = Cart.ToCustomerOrder();
+
+			// Copy dynamic properties
+			_dynamicPropertyService.LoadDynamicPropertyValues(customerOrder);
+			foreach (var cartItem in Cart.Items)
+			{
+				var orderItem = customerOrder.Items.FirstOrDefault(x => x.ProductId == cartItem.ProductId && x.Quantity == cartItem.Quantity);
+				orderItem?.CopyPropertyValuesFrom(cartItem);
+			}
+
+			return customerOrder;
+		}
+
+		public virtual CreateOrderResult CreateOrder(CreateOrderModel createOrderModel)
+		{
+			var order = _customerOrderService.Create(ConvertCartToOrder());
+
+			RemoveCart();
+
+			var result = new CreateOrderResult()
+			{
+				Order = order
+			};
+
+			var incomingPayment = order.InPayments?.FirstOrDefault();
+			if (incomingPayment != null)
+			{
+				var paymentMethods = GetAvailablePaymentMethods();
+				var paymentMethod = paymentMethods.FirstOrDefault(x => x.Code == incomingPayment.GatewayCode);
+				if (paymentMethod == null)
+				{
+					throw new Exception("An appropriate paymentMethod is not found.");
+				}
+
+				result.PaymentMethodType = paymentMethod.PaymentMethodType;
+
+				var context = new ProcessPaymentEvaluationContext
+				{
+					Order = order,
+					Payment = incomingPayment,
+					Store = Store,
+					BankCardInfo = createOrderModel.BankCardInfo
+				};
+				result.ProcessPaymentResult = paymentMethod.ProcessPayment(context);
+
+				_customerOrderService.Update(new[] {order});
+			}
+
+			return result;
 		}
 
 		//	public virtual async Task<ICartBuilder> FillFromQuoteRequest(QuoteRequest quoteRequest)

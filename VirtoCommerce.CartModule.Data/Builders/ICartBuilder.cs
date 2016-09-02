@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VirtoCommerce.CartModule.Data.Model;
+﻿using System.Collections.Generic;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Store.Model;
-using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Marketing.Model;
 using VirtoCommerce.Domain.Shipping.Model;
-using VirtoCommerce.Domain.Tax.Model;
-using ShippingRate = VirtoCommerce.Domain.Shipping.Model.ShippingRate;
 using VirtoCommerce.Domain.Catalog.Model;
 
 namespace VirtoCommerce.CartModule.Data.Builders
 {
-	/// <summary>
-	/// Represent abstraction for working with customer shopping cart
-	/// </summary>
-	public interface ICartBuilder
+    /// <summary>
+    /// Represent abstraction for working with customer shopping cart
+    /// </summary>
+    public interface ICartBuilder
 	{
 		/// <summary>
 		///  Capture passed cart and all next changes will be implemented on it
@@ -97,7 +88,7 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		/// <param name="updateModel"></param>
 		/// <param name="taxEvaluationContext"></param>
 		/// <returns></returns>
-		ICartBuilder AddOrUpdateShipment(Shipment shipment);
+		ICartBuilder AddOrUpdateShipment(Domain.Cart.Model.Shipment shipment);
 
 		/// <summary>
 		/// Remove exist shipment from cart
@@ -156,6 +147,13 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		/// </summary>
 		/// <returns></returns>
 		ICartBuilder EvaluateTax();
+
+	    /// <summary>
+		/// Create order
+		/// </summary>
+		/// <param name="createOrderModel"></param>
+		/// <returns></returns>
+		//CreateOrderResult CreateOrder(CreateOrderModel createOrderModel);
 
 		//Save cart changes
 		void Save();

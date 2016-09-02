@@ -1,12 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Web.Hosting;
 using System.Web.Optimization;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.CartModule.Data.Builders;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.Bundles;
-using VirtoCommerce.ContentModule.Data.Services;
 using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Cart.Services;
 using VirtoCommerce.Platform.Core.Events;
@@ -19,14 +20,11 @@ namespace VirtoCommerce.CartModule.Web
     public class Module : ModuleBase
     {
         private const string ConnectionStringName = "VirtoCommerce";
-	    private const string CheckoutPath = "~/Modules/VirtoCommerce.Cart/Scripts/checkout/";
 		private readonly IUnityContainer _container;
-		private readonly Func<string, IContentBlobStorageProvider> _contentStorageProviderFactory;
 
-		public Module(IUnityContainer container, Func<string, IContentBlobStorageProvider> contentStorageProviderFactory)
+		public Module(IUnityContainer container)
         {
             _container = container;
-			_contentStorageProviderFactory = contentStorageProviderFactory;
 		}
 
 		#region IModule Members
@@ -56,55 +54,24 @@ namespace VirtoCommerce.CartModule.Web
 
 		public override void PostInitialize()
 		{
-			var cssBundle = new Bundle("~/checkout/checkout.css", new CssMinify())
-				.IncludeDirectory(CheckoutPath, "*.css", true);
-			BundleTable.Bundles.Add(cssBundle);
+            var moduleCatalog = _container.Resolve<IModuleCatalog>();
+            var cartModule = moduleCatalog.Modules.OfType<ManifestModuleInfo>().FirstOrDefault(x => x.ModuleName == "VirtoCommerce.Cart");
+            if(cartModule != null)
+            {
+                var moduleRelativePath = "~/Modules"  + cartModule.FullPhysicalPath.Replace(HostingEnvironment.MapPath("~/Modules"), string.Empty).Replace("\\", "/");
+                var cssBundle = new Bundle("~/styles/vc-shopping-cart", new CssMinify())
+                                    .IncludeDirectory(Path.Combine(moduleRelativePath, "Content"), "*.css", true);
+                BundleTable.Bundles.Add(cssBundle);
 
-			var partialBundle = new JavaScriptShoppingCartBundle("storefrontApp", "~/checkout/javaScriptShoppingCart.js")
-				.IncludeDirectory(CheckoutPath + "buybutton/", "*.js", true)
-				.IncludeDirectory(CheckoutPath + "buybutton/", "*.tpl.html", true)
-				.Include(CheckoutPath + "services/cartService.js")
-				.IncludeDirectory(CheckoutPath + "checkout/", "*.js", true)
-				.IncludeDirectory(CheckoutPath + "checkout/", "*.tpl.html", true);
-			BundleTable.Bundles.Add(partialBundle);
+                var partialBundle = new AngularJavaScriptBundle("virtoCommerce.cartModule", "~/scripts/vc-shopping-cart")
+                    .IncludeDirectory(Path.Combine(moduleRelativePath, "Scripts/cart"), "*.js", true)
+                    .IncludeDirectory(Path.Combine(moduleRelativePath, "Scripts/checkout"), "*.js", true)
+                    .IncludeDirectory(Path.Combine(moduleRelativePath, "Scripts/checkout"), "*.tpl.html", true)
+                    .Include(Path.Combine(moduleRelativePath, "Scripts/services/cartService.js"));
+                BundleTable.Bundles.Add(partialBundle);
 
-			var storageProvider = _contentStorageProviderFactory("Themes/");
-
-			var blobSearchResult = storageProvider.Search("", null);
-			foreach (var folder in blobSearchResult.Folders)
-			{
-				if (folder.Name == "default")
-				{
-					CreateThemeCheckoutBundle(storageProvider, "default");
-				}
-				else
-				{
-					var storeThemes = storageProvider.Search(folder.Name, null);
-					foreach (var storeThemeFolder in storeThemes.Folders)
-					{
-						CreateThemeCheckoutBundle(storageProvider, $"{folder.Name}/{storeThemeFolder.Name}");
-					}
-				}
-			}
-		}
-
-		private void CreateThemeCheckoutBundle(IContentBlobStorageProvider storageProvider, string folderName)
-		{
-			var themeFolders = storageProvider.Search(folderName, null);
-			var checkoutThemeFolder = themeFolders.Folders.FirstOrDefault(f => f.Name == "checkout");
-			if (checkoutThemeFolder != null)
-			{
-				var cssBundle = new Bundle($"~/checkout/{folderName}/checkout.css", new CssMinify())
-					.IncludeDirectory($"~/App_Data/cms-content/Themes/{folderName}/checkout/", "*.css", true);
-				BundleTable.Bundles.Add(cssBundle);
-
-				var bundle = new JavaScriptShoppingCartBundle("storefrontApp", $"~/checkout/{folderName}/javaScriptShoppingCart.js")
-					.IncludeDirectory($"~/App_Data/cms-content/Themes/{folderName}/checkout/", "*.js", true)
-					.IncludeDirectory($"~/App_Data/cms-content/Themes/{folderName}/checkout/", "*.tpl.html", true);
-
-				BundleTable.Bundles.Add(bundle);
-			}
-		}
+            }         
+        }
 
 		#endregion
 	}

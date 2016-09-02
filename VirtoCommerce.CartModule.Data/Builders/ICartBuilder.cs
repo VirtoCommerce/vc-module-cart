@@ -11,6 +11,7 @@ using VirtoCommerce.Domain.Marketing.Model;
 using VirtoCommerce.Domain.Shipping.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using ShippingRate = VirtoCommerce.Domain.Shipping.Model.ShippingRate;
+using VirtoCommerce.Domain.Catalog.Model;
 
 namespace VirtoCommerce.CartModule.Data.Builders
 {
@@ -33,19 +34,26 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		ICartBuilder GetOrCreateNewTransientCart(string storeId, string customerId, string cartName, string currency, string cultureName);
 
 		/// <summary>
+		/// Add new lineitem  to cart
+		/// </summary>
+		/// <param name="addItemModel"></param>
+		/// <returns></returns>
+		ICartBuilder AddItem(LineItem lineItem);
+
+        /// <summary>
 		/// Add new product to cart
 		/// </summary>
 		/// <param name="addItemModel"></param>
 		/// <returns></returns>
-		ICartBuilder AddItem(AddItemModel addItemModel);
+		ICartBuilder AddProduct(CatalogProduct product, int quantity);
 
-		/// <summary>
-		/// Change cart item qty by product index
-		/// </summary>
-		/// <param name="lineItemId"></param>
-		/// <param name="quantity"></param>
-		/// <returns></returns>
-		ICartBuilder ChangeItemQuantity(string lineItemId, int quantity);
+        /// <summary>
+        /// Change cart item qty by product index
+        /// </summary>
+        /// <param name="lineItemId"></param>
+        /// <param name="quantity"></param>
+        /// <returns></returns>
+        ICartBuilder ChangeItemQuantity(string lineItemId, int quantity);
 
 		/// <summary>
 		/// Change cart item qty by item id
@@ -89,7 +97,7 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		/// <param name="updateModel"></param>
 		/// <param name="taxEvaluationContext"></param>
 		/// <returns></returns>
-		ICartBuilder AddOrUpdateShipment(ShipmentUpdateModel updateModel);
+		ICartBuilder AddOrUpdateShipment(Shipment shipment);
 
 		/// <summary>
 		/// Remove exist shipment from cart
@@ -103,7 +111,7 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		/// </summary>
 		/// <param name="updateModel"></param>
 		/// <returns></returns>
-		ICartBuilder AddOrUpdatePayment(PaymentUpdateModel updateModel);
+		ICartBuilder AddOrUpdatePayment(Payment updateModel);
 
 		/// <summary>
 		/// Merge other cart with captured
@@ -129,7 +137,7 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		/// Returns all available shipment methods for current cart
 		/// </summary>
 		/// <returns></returns>
-		ICollection<Model.ShippingRate> GetAvailableShippingRates();
+		ICollection<ShippingRate> GetAvailableShippingRates();
 
 		/// <summary>
 		/// Returns all available payment methods for current cart

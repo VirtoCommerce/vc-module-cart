@@ -1,0 +1,44 @@
+﻿.product {
+	margin-top: 100px;
+	margin-bottom: 150px;
+}
+
+.product-name {
+	font-size: 36px;
+	line-height: 1.23;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 600;
+	color: #000000;
+}
+
+.product-vendor {
+	font-size: 18px;
+	line-height: 1.35;
+	font-family: 'Roboto', sans-serif;
+}
+
+.product-price {
+	font-size: 24px;
+	line-height: 1.35;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 600;
+	color: #000000;
+}
+
+.product-description {
+	margin-top: 14px;
+	margin-bottom: 14px;
+	font-size: 14px;
+	line-height: 1.55;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	color: #000000;
+}
+
+.modal-body {
+	margin-bottom: 25px;
+}
+
+.step-content {
+	min-height: 300px;
+}

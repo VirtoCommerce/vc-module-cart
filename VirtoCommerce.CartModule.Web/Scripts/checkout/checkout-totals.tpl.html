@@ -1,0 +1,57 @@
+﻿<table class="total-line-table">
+	<thead>
+		<tr>
+			<th scope="col">
+				<span class="visually-hidden">{{ 'checkout.description' | translate }}</span>
+			</th>
+			<th scope="col">
+				<span class="visually-hidden">{{ 'checkout.price' | translate }}</span>
+			</th>
+		</tr>
+	</thead>
+	<tbody ng-if="!$ctrl.displayOnlyTotal">
+		<tr class="total-line total-line--subtotal">
+			<td class="total-line__name" ng-if="$ctrl.showPricesWithTaxes">{{ 'checkout.subtotalWithTax' | translate }}</td>
+			<td class="total-line__price" ng-if="$ctrl.showPricesWithTaxes">
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.subTotalWithTax | currency : $ctrl.currency.symbol"></span>
+			</td>
+			<td class="total-line__name" ng-if="!$ctrl.showPricesWithTaxes">{{ 'checkout.subtotal' | translate }}</td>
+			<td class="total-line__price" ng-if="!$ctrl.showPricesWithTaxes">
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.subTotal | currency : $ctrl.currency.symbol"></span>
+			</td>
+		</tr>
+		<tr class="total-line total-line--shipping">
+			<td class="total-line__name" ng-if="$ctrl.showPricesWithTaxes">{{ 'checkout.shippingWithTax' | translate }}</td>
+			<td class="total-line__price" ng-if="$ctrl.showPricesWithTaxes">
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.shippingPriceWithTax | currency : $ctrl.currency.symbol"></span>
+			</td>
+			<td class="total-line__name" ng-if="!$ctrl.showPricesWithTaxes">{{ 'checkout.shipping' | translate }}</td>
+			<td class="total-line__price" ng-if="!$ctrl.showPricesWithTaxes">
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.shippingTotal | currency : $ctrl.currency.symbol"></span>
+			</td>
+		</tr>
+		<tr class="total-line total-line--subtotal">
+			<td class="total-line__name">{{ 'checkout.discount' | translate }}</td>
+			<td class="total-line__price">
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.discountTotalWithTax | currency : $ctrl.currency.symbol" ng-if="$ctrl.showPricesWithTaxes"></span>
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.discountTotal | currency : $ctrl.currency.symbol" ng-if="!$ctrl.showPricesWithTaxes"></span>
+			</td>
+		</tr>
+		<tr class="total-line total-line--taxes">
+			<td class="total-line__name">{{ 'checkout.taxes' | translate }}</td>
+			<td class="total-line__price">
+				<span class="order-summary__emphasis" ng-bind="$ctrl.cart.taxTotal | currency : $ctrl.currency.symbol"></span>
+			</td>
+		</tr>
+	</tbody>
+	<tbody ng-if="$ctrl.displayOnlyTotal">
+		<tr class="total-line">
+			<td class="total-line__name payment-due-label">{{ 'checkout.total' | translate }}</td>
+			<td class="total-line__price payment-due">
+				<span class="payment-due__currency" ng-bind="$ctrl.currency.code"></span>
+				<span class="payment-due__price" ng-bind="$ctrl.cart.total | currency : $ctrl.currency.symbol"></span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+

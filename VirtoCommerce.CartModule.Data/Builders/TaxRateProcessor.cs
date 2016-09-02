@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using VirtoCommerce.CartModule.Data.Common;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Domain.Cart.Model;
+using VirtoCommerce.Domain.Shipping.Model;
 using VirtoCommerce.Domain.Tax.Model;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CartModule.Data.Builders
 {
@@ -31,16 +34,16 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			}
 		}
 
-		public static void ApplyTaxRates(this Model.ShippingRate shippingRate, IEnumerable<TaxRate> taxRates)
+		public static void ApplyTaxRates(this ShippingRate shippingRate, IEnumerable<TaxRate> taxRates)
 		{
 			var shippingMethodTaxRates = taxRates.Where(x => x.Line.Id.SplitIntoTuple('&').Item1 == shippingRate.ShippingMethod.Code && x.Line.Id.SplitIntoTuple('&').Item2 == shippingRate.OptionName);
 
-			shippingRate.TaxTotal = 0;
+			shippingRate.RateWithTax = shippingRate.Rate;
 
 			var shippingMethodTaxRate = shippingMethodTaxRates.FirstOrDefault();
 			if (shippingMethodTaxRate != null)
 			{
-				shippingRate.TaxTotal += shippingMethodTaxRate.Rate;
+                shippingRate.RateWithTax += shippingMethodTaxRate.Rate;
 			}
 		}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Marketing.Model;
+using VirtoCommerce.Domain.Shipping.Model;
 
 namespace VirtoCommerce.CartModule.Data.Builders
 {
@@ -118,25 +119,19 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			}
 		}
 
-		public static void ApplyRewards(this Model.ShippingRate shippingRate, IEnumerable<PromotionReward> rewards)
+		public static void ApplyRewards(this ShippingRate shippingRate, IEnumerable<PromotionReward> rewards)
 		{
 			var shipmentRewards = rewards.OfType<ShipmentReward>().Where(r => string.IsNullOrEmpty(r.ShippingMethod) || string.Equals(r.ShippingMethod, shippingRate.ShippingMethod.Code, StringComparison.InvariantCulture));
-
-			shippingRate.Discounts?.Clear();
-
+            
 			foreach (var reward in shipmentRewards)
 			{
-				var discount = reward.ToDiscountModel(shippingRate.Currency, shippingRate.Rate, shippingRate.Rate + shippingRate.TaxTotal);
+				var discount = reward.ToDiscountModel(shippingRate.Currency, shippingRate.Rate, shippingRate.RateWithTax);
 
 				if (reward.IsValid)
 				{
-					if (shippingRate.Discounts == null)
-					{
-						shippingRate.Discounts = new List<Discount>();
-					}
-
-					shippingRate.Discounts.Add(discount);
-				}
+                    shippingRate.DiscountAmount += discount.DiscountAmount;
+                    shippingRate.DiscountAmountWithTax += discount.DiscountAmountWithTax;
+                }
 			}
 		}
 

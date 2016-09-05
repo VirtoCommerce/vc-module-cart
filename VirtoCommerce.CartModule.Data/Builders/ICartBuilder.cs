@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Shipping.Model;
 using VirtoCommerce.Domain.Catalog.Model;
+using VirtoCommerce.Domain.Payment.Model;
 
 namespace VirtoCommerce.CartModule.Data.Builders
 {
@@ -148,12 +150,12 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		/// <returns></returns>
 		ICartBuilder EvaluateTax();
 
-	    /// <summary>
+		/// <summary>
 		/// Create order
 		/// </summary>
-		/// <param name="createOrderModel"></param>
+		/// <param name="bankCardInfo"></param>
 		/// <returns></returns>
-		//CreateOrderResult CreateOrder(CreateOrderModel createOrderModel);
+		CreateOrderResult CreateOrder(BankCardInfo bankCardInfo);
 
 		//Save cart changes
 		void Save();

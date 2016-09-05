@@ -19,6 +19,13 @@ using VirtoCommerce.Domain.Marketing.Model;
 using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Domain.Order.Model;
+using VirtoCommerce.Domain.Order.Services;
+using VirtoCommerce.Domain.Payment.Model;
+using VirtoCommerce.Platform.Core.DynamicProperties;
+using Discount = VirtoCommerce.Domain.Cart.Model.Discount;
+using LineItem = VirtoCommerce.Domain.Cart.Model.LineItem;
+using Shipment = VirtoCommerce.Domain.Cart.Model.Shipment;
 
 namespace VirtoCommerce.CartModule.Data.Builders
 {
@@ -28,6 +35,8 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		private readonly IShoppingCartService _shoppingCartService;
 		private readonly IShoppingCartSearchService _shoppingCartSearchService;
 		private readonly IMarketingPromoEvaluator _marketingPromoEvaluator;
+		private readonly ICustomerOrderService _customerOrderService;
+		private readonly IDynamicPropertyService _dynamicPropertyService;
 
 		private readonly ICacheManager<object> _cacheManager;
 		private const string _cartCacheRegion = "CartRegion";
@@ -37,13 +46,15 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		private Store _store;
 
 		[CLSCompliant(false)]
-		public CartBuilder(IStoreService storeService, IShoppingCartService shoppingShoppingCartService, IShoppingCartSearchService shoppingCartSearchService, IMarketingPromoEvaluator marketingPromoEvaluator, ICacheManager<object> cacheManager)
+		public CartBuilder(IStoreService storeService, IShoppingCartService shoppingShoppingCartService, IShoppingCartSearchService shoppingCartSearchService, IMarketingPromoEvaluator marketingPromoEvaluator, ICacheManager<object> cacheManager, ICustomerOrderService customerOrderService, IDynamicPropertyService dynamicPropertyService)
 		{
 			_storeService = storeService;
 			_shoppingCartService = shoppingShoppingCartService;
 			_shoppingCartSearchService = shoppingCartSearchService;
 			_marketingPromoEvaluator = marketingPromoEvaluator;
 			_cacheManager = cacheManager;
+			_customerOrderService = customerOrderService;
+			_dynamicPropertyService = dynamicPropertyService;
 		}
 
 		#region ICartBuilder Members
@@ -420,6 +431,46 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			}
 		}
 
+		public virtual CreateOrderResult CreateOrder(BankCardInfo bankCardInfo)
+		{
+			var order = ConvertCartToOrder();
+
+			_customerOrderService.SaveChanges(new CustomerOrder[] {order});
+
+			RemoveCart();
+
+			var result = new CreateOrderResult()
+			{
+				Order = order
+			};
+
+			var incomingPayment = order.InPayments?.FirstOrDefault();
+			if (incomingPayment != null)
+			{
+				var paymentMethods = GetAvailablePaymentMethods();
+				var paymentMethod = paymentMethods.FirstOrDefault(x => x.Code == incomingPayment.GatewayCode);
+				if (paymentMethod == null)
+				{
+					throw new Exception("An appropriate paymentMethod is not found.");
+				}
+
+				result.PaymentMethodType = paymentMethod.PaymentMethodType;
+
+				var context = new ProcessPaymentEvaluationContext
+				{
+					Order = order,
+					Payment = incomingPayment,
+					Store = Store,
+					BankCardInfo = bankCardInfo
+				};
+				result.ProcessPaymentResult = paymentMethod.ProcessPayment(context);
+
+				_customerOrderService.SaveChanges(new[] { order });
+			}
+
+			return result;
+		}
+
 		public ShoppingCart Cart
 		{
 			get
@@ -579,6 +630,21 @@ namespace VirtoCommerce.CartModule.Data.Builders
 				}
 				return GetCartCacheKey(_cart.StoreId, _cart.Name, _cart.CustomerId);
 			}
+		}
+
+		private CustomerOrder ConvertCartToOrder()
+		{
+			var customerOrder = Cart.ToCustomerOrder();
+
+			// Copy dynamic properties
+			_dynamicPropertyService.LoadDynamicPropertyValues(customerOrder);
+			foreach (var cartItem in Cart.Items)
+			{
+				var orderItem = customerOrder.Items.FirstOrDefault(x => x.ProductId == cartItem.ProductId && x.Quantity == cartItem.Quantity);
+				orderItem?.CopyPropertyValuesFrom(cartItem);
+			}
+
+			return customerOrder;
 		}
 
 		private void InnerChangeItemQuantity(LineItem lineItem, int quantity)

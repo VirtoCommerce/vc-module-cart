@@ -12,7 +12,7 @@
                             <vc-checkout-line-items items="$ctrl.cart.items" show-prices-with-taxes="$ctrl.showPricesWithTaxes" currency="$ctrl.cart.currency"></vc-checkout-line-items>
                         </div>
                         <div class="order-summary__section order-summary__section--discount">
-                            <vc-checkout-coupon coupon="$ctrl.checkout.coupon" on-apply-coupon="$ctrl.applyCoupon(coupon)" on-remove-coupon="$ctrl.removeCoupon(coupon)"></vc-checkout-coupon>
+                            <vc-checkout-coupon coupon="$ctrl.cart.coupon" on-apply-coupon="$ctrl.cart.applyCoupon(coupon)" on-remove-coupon="$ctrl.cart.removeCoupon(coupon)"></vc-checkout-coupon>
                         </div>
                         <div class="order-summary__section order-summary__section--total-lines">
                             <vc-checkout-totals cart="$ctrl.cart" show-prices-with-taxes="$ctrl.showPricesWithTaxes" currency="$ctrl.cart.currency"></vc-checkout-totals>

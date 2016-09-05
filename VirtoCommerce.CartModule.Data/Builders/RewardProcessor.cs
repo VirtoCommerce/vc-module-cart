@@ -49,8 +49,7 @@ namespace VirtoCommerce.CartModule.Data.Builders
 
 				if (!couponRewards.Any())
 				{
-					//shoppingCart.Coupon.IsValid = false;
-					shoppingCart.Coupon.InvalidDescription = "InvalidCouponCode";
+					shoppingCart.Coupon.IsValid = false;
 				}
 
 				foreach (var reward in couponRewards)
@@ -58,8 +57,7 @@ namespace VirtoCommerce.CartModule.Data.Builders
 					var couponCode = reward.Promotion.Coupons.FirstOrDefault(c => c == shoppingCart.Coupon.Code);
 					if (!string.IsNullOrEmpty(couponCode))
 					{
-						//shoppingCart.Coupon.IsValid = reward.IsValid;
-						//shoppingCart.Coupon.Description = reward.Promotion.Description;
+						shoppingCart.Coupon.IsValid = reward.IsValid;
 						shoppingCart.Coupon.InvalidDescription = null;
 					}
 				}

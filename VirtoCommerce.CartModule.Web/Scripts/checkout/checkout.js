@@ -163,7 +163,6 @@ cartModule.component('vcCheckout', {
 			if (payment.billingAddress) {
 				payment.billingAddress.email = ctrl.checkout.email;
 				payment.billingAddress.type = 'Billing';
-
 			}
 
 			return cartService.addOrUpdatePayment(ctrl.cart, payment);

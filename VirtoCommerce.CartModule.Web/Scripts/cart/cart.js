@@ -43,21 +43,31 @@ cartModule.component('vcCart', {
 					cartApi.getCurrencies(cart).then(function (response) {
 						ctrl.currency = _.find(response.data, function (x) { return x.code === cart.currencyCode; });
 					});
+					return cart;
 				});
 			});
 		};
 
 		this.addLineItem = function (lineItem) {
 			return wrapLoading(function () {
-				if (!lineItem.currency)
-				{
-					lineItem.currency = ctrl.currency.code;
-				}
 				return cartApi.addLineItem(ctrl, lineItem).then(function () {
-					return this.reload();
+					return ctrl.reload();
 				});
 			});
 		}
+
+		this.applyCoupon = function (coupon) {
+			return cartApi.addCoupon(ctrl, coupon.code).then(function (response) {
+				ctrl.reload();
+				return response.data;
+			});
+		};
+
+		this.removeCoupon = function (coupon) {
+			return cartApi.removeCoupon(ctrl).then(function () {
+				return ctrl.reloadCart();
+			});
+		};
 
 		this.buyOnClick = function (product) {
 			alert(product);

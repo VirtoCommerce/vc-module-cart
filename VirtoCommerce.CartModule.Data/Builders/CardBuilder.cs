@@ -74,8 +74,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
                         Discounts = new List<Discount>(),
                         Items = new List<LineItem>(),
                         TaxDetails = new List<TaxDetail>()
-
-
                     };
                 }
 
@@ -102,9 +100,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			AddLineItem(lineItem);
 
 			EvaluatePromotionsAndTaxes();
-			CalculateLineItemPlacedPrice(lineItem);
-			CalculateTotals();
-
 			return this;
 		}
 
@@ -115,7 +110,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			{
 				InnerChangeItemQuantity(lineItem, quantity);
 				EvaluatePromotionsAndTaxes();
-				CalculateTotals();
 			}
 
 			return this;
@@ -128,7 +122,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			{
 				InnerChangeItemQuantity(lineItem, quantity);
 				EvaluatePromotionsAndTaxes();
-				CalculateTotals();
 			}
 
 			return this;
@@ -146,7 +139,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			}
 
 			EvaluatePromotionsAndTaxes();
-			CalculateTotals();
 
 			return this;
 		}
@@ -158,7 +150,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			{
 				_cart.Items.Remove(lineItem);
 				EvaluatePromotionsAndTaxes();
-				CalculateTotals();
 			}
 
 			return this;
@@ -169,7 +160,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			_cart.Items.Clear();
 
 			EvaluatePromotionsAndTaxes();
-			CalculateTotals();
 
 			return this;
 		}
@@ -182,7 +172,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			};
 
 			EvaluatePromotionsAndTaxes();
-			CalculateTotals();
 
 			return this;
 		}
@@ -192,7 +181,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			_cart.Coupon = null;
 
 			EvaluatePromotionsAndTaxes();
-			CalculateTotals();
 
 			return this;
 		}
@@ -250,7 +238,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 
 
             EvaluatePromotionsAndTaxes();
-			CalculateTotals();
 
 			return this;
 		}
@@ -264,7 +251,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			}
 
 			EvaluatePromotionsAndTaxes();
-			CalculateTotals();
 
 			return this;
 		}
@@ -317,7 +303,6 @@ namespace VirtoCommerce.CartModule.Data.Builders
 			_cart.Payments = cart.Payments;
 
 			EvaluatePromotionsAndTaxes();
-			CalculateTotals();
 
 			_shoppingCartService.Delete(new[] { cart.Id });
 
@@ -663,41 +648,7 @@ namespace VirtoCommerce.CartModule.Data.Builders
 		{
 			return string.Format("Cart-{0}-{1}-{2}", storeId, cartName, customerId);
 		}
-
-		private void CalculateLineItemPlacedPrice(LineItem lineItem)
-		{
-			var itemDiscount = lineItem.ListPrice - lineItem.SalePrice;
-			var itemDiscountWithTax = lineItem.ListPriceWithTax - lineItem.SalePriceWithTax;
-			if (lineItem.Discounts != null)
-			{
-				itemDiscount += lineItem.Discounts.Where(d => d != null).Sum(d => d.DiscountAmount);
-				itemDiscountWithTax += lineItem.Discounts.Where(d => d != null).Sum(d => d.DiscountAmountWithTax);
-			}
-
-			lineItem.PlacedPrice = lineItem.ListPrice - itemDiscount;
-			lineItem.PlacedPriceWithTax = lineItem.ListPriceWithTax - itemDiscountWithTax;
-		}
-
-		private void CalculateTotals()
-		{
-			Cart.SubTotal = Cart.Items?.Sum(i => i.ListPrice * i.Quantity) ?? 0;
-			Cart.SubTotalWithTax = Cart.Items?.Sum(i => i.ListPriceWithTax * i.Quantity) ?? 0;
-
-			Cart.ShippingTotal = Cart.Shipments?.Sum(s => s.ShippingPrice) ?? 0;
-			Cart.ShippingTotalWithTax = Cart.Shipments?.Sum(s => s.ShippingPriceWithTax) ?? 0;
-
-			var discountTotal = Cart.Discounts?.Sum(d => d.DiscountAmount) ?? 0;
-			var itemDiscountTotal = Cart.Items?.Sum(i => GetItemDiscount(i) * i.Quantity) ?? 0;
-			var shipmentDiscountTotal = Cart.Shipments?.Sum(s => GetShipmentDiscount(s)) ?? 0;
-			Cart.DiscountTotal = discountTotal + itemDiscountTotal + shipmentDiscountTotal;
-
-			var discountTotalWithTax = Cart.Discounts?.Sum(d => d.DiscountAmountWithTax) ?? 0;
-			var itemDiscountTotalWithTax = Cart.Items?.Sum(i => GetItemDiscountWithTax(i) * i.Quantity) ?? 0;
-			var shipmentDiscountTotalWithTax = Cart.Shipments?.Sum(s => GetShipmentDiscountWithTax(s)) ?? 0;
-			Cart.DiscountTotalWithTax = discountTotalWithTax + itemDiscountTotalWithTax + shipmentDiscountTotalWithTax;
-
-			Cart.Total = Cart.SubTotal + Cart.TaxTotal + Cart.ShippingTotal - Cart.DiscountTotal;
-		}
+	
 
 		private static decimal GetShipmentDiscount(Shipment shipment)
 		{

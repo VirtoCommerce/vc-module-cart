@@ -1,6 +1,6 @@
 ﻿    <form accept-charset="UTF-8" action="" class="edit_checkout animate-floating-labels" name="$ctrl.form" ng-submit="$ctrl.onApplyCoupon({ coupon: $ctrl.coupon })" novalidate="novalidate">
         <div class="fieldset">
-            <div class="field" ng-class="{ 'field--show-floating-label': $ctrl.coupon.code, 'field--error': $ctrl.coupon.errorCode === 'InvalidCouponCode' }" ng-if="!$ctrl.coupon.appliedSuccessfully">
+            <div class="field" ng-class="{ 'field--show-floating-label': $ctrl.coupon.code, 'field--error': !$ctrl.coupon.isValid }" ng-if="!$ctrl.coupon.isValid">
                 <div class="field__input-btn-wrapper">
                     <div class="field__input-wrapper">
                         <label class="field__label" for="CouponCode">{{ 'checkout.coupon_code' | translate }}</label>
@@ -12,11 +12,11 @@
                         <i class="btn__spinner icon icon--button-spinner"></i>
                     </button>
                 </div>
-                <p class="field__message field__message--error" ng-if="$ctrl.coupon.errorCode === 'InvalidCouponCode'">
+                <p class="field__message field__message--error" ng-if="!$ctrl.coupon.isValid">
                     {{ 'checkout.invalid_coupon_code' | translate }}
                 </p>
             </div>
-            <div class="field" ng-if="$ctrl.coupon.code && $ctrl.coupon.appliedSuccessfully">
+            <div class="field" ng-if="$ctrl.coupon.code && $ctrl.coupon.isValid">
                 <div class="field__input-btn-wrapper">
                     <div class="field__input-wrapper">
                         <span style="font-size: 1.71em; font-weight: 500; line-height: 40px;" ng-bind="$ctrl.coupon.code"></span>

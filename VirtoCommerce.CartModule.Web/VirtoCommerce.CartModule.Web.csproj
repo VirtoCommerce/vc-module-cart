@@ -197,7 +197,6 @@
     <Compile Include="Model\Country.cs" />
     <Compile Include="Model\CountryRegion.cs" />
     <Compile Include="Model\CreateOrderModel.cs" />
-    <Compile Include="Model\CreateOrderResult.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

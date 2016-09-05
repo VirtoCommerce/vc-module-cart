@@ -98,6 +98,7 @@
     <Compile Include="Common\StringExtension.cs" />
     <Compile Include="Converters\AddressConverter.cs" />
     <Compile Include="Converters\CartLineItemConverter.cs" />
+    <Compile Include="Converters\CustomerOrderConverter.cs" />
     <Compile Include="Converters\DiscountConverter.cs" />
     <Compile Include="Converters\LineItemConverter.cs" />
     <Compile Include="Converters\PaymentConverter.cs" />
@@ -163,6 +164,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\AddressEntity.cs" />
+    <Compile Include="Model\CreateOrderResult.cs" />
     <Compile Include="Model\DiscountEntity.cs" />
     <Compile Include="Model\LineItemEntity.cs" />
     <Compile Include="Model\PaymentEntity.cs" />

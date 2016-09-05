@@ -242,53 +242,15 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [HttpPost]
         [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/createorder")]
         [ResponseType(typeof(CreateOrderResult))]
-        public async Task<IHttpActionResult> CreateOrder(string storeId, string customerId, string cartName, string currency, string cultureName, CreateOrderModel createOrderModel)
+        public async Task<IHttpActionResult> CreateOrder(string storeId, string customerId, string cartName, string currency, string cultureName, [FromBody] CreateOrderModel createOrderModel)
         {
             _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
 
-            throw new NotImplementedException();
-
-            //using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
-            //{
-            //    var order = _customerOrderService.CreateByShoppingCart(_cartBuilder.Cart.Id);
-
-            //    //todo: Raise domain event
-            //    //_orderPlacedEventPublisher.Publish(new OrderPlacedEvent(order.ToWebModel(WorkContext.AllCurrencies, WorkContext.CurrentLanguage), _cartBuilder.Cart));
-
-            //    _cartBuilder.RemoveCart();
-
-            //    var result = new CreateOrderResult()
-            //    {
-            //        Order = order
-            //    };
-
-            //    var incomingPayment = order.InPayments?.FirstOrDefault();
-            //    if (incomingPayment != null)
-            //    {
-            //        var paymentMethods = _cartBuilder.GetAvailablePaymentMethods();
-            //        var paymentMethod = paymentMethods.FirstOrDefault(x => x.Code == incomingPayment.GatewayCode);
-            //        if (paymentMethod == null)
-            //        {
-            //            return BadRequest("An appropriate paymentMethod is not found.");
-            //        }
-
-            //        result.PaymentMethodType = paymentMethod.PaymentMethodType;
-
-            //        var context = new ProcessPaymentEvaluationContext
-            //        {
-            //            Order = order,
-            //            Payment = incomingPayment,
-            //            Store = _cartBuilder.Store,
-            //            BankCardInfo = createOrderModel.BankCardInfo
-            //        };
-            //        result.ProcessPaymentResult = paymentMethod.ProcessPayment(context);
-
-            //        _customerOrderService.Update(new[] { order });
-            //    }
-
-                //return Ok(result);
-            //}
-        }
+			using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
+			{
+				return Ok(_cartBuilder.CreateOrder(createOrderModel.BankCardInfo));
+			}
+		}
 
        
         /// <summary>

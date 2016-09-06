@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VirtoCommerce.CartModule.Data.Converters;
+using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Cart.Services;
 using VirtoCommerce.Domain.Catalog.Services;
+using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
@@ -17,139 +18,135 @@ using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
-	public class ShoppingCartServiceImpl : ServiceBase, IShoppingCartService
+	public class ShoppingCartServiceImpl : ServiceBase, IShoppingCartService, IShoppingCartSearchService
 	{
 		private const string _workflowName = "CartRecalculate";
 		private Func<ICartRepository> _repositoryFactory;
 		private readonly IEventPublisher<CartChangeEvent> _eventPublisher;
-		private readonly IItemService _productService;
         private readonly IDynamicPropertyService _dynamicPropertyService;
 
-        public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IEventPublisher<CartChangeEvent> eventPublisher, IItemService productService, IDynamicPropertyService dynamicPropertyService)
+        public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IEventPublisher<CartChangeEvent> eventPublisher, IDynamicPropertyService dynamicPropertyService)
 		{
 			_repositoryFactory = repositoryFactory;
 			_eventPublisher = eventPublisher;
-			_productService = productService;
             _dynamicPropertyService = dynamicPropertyService;
         }
 
-		#region IShoppingCartService Members
-
-		public ShoppingCart GetById(string cartId)
+        #region IShoppingCartService Members
+        public virtual ShoppingCart[] GetByIds(string[] cartIds, string responseGroup = null)
 		{
-			ShoppingCart retVal = null;
+			List<ShoppingCart> retVal = new List<ShoppingCart>();
 			using (var repository = _repositoryFactory())
 			{
-				var entity = repository.GetShoppingCartById(cartId);
-				if (entity != null)
+				var cartEntities = repository.GetShoppingCartsByIds(cartIds);
+				foreach(var cartEntity in cartEntities)
 				{
-					retVal = entity.ToCoreModel();
-
-					var productIds = retVal.Items.Select(x => x.ProductId).ToArray();
-					var products = _productService.GetByIds(productIds, Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
-					foreach (var lineItem in retVal.Items)
-					{
-						var product = products.FirstOrDefault(x => x.Id == lineItem.ProductId);
-						if (product != null)
-						{
-							lineItem.Product = product;
-						}
-					}
-
-					_eventPublisher.Publish(new CartChangeEvent(Platform.Core.Common.EntryState.Unchanged, retVal, retVal));
+					var cart = cartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
+                    retVal.Add(cart);
 				}
 			}
-
-            if (retVal != null)
-            {
-                _dynamicPropertyService.LoadDynamicPropertyValues(retVal);
-            }
-
-            return retVal;
+            _dynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray());
+            return retVal.ToArray();
 		}
 
-		public ShoppingCart Create(ShoppingCart cart)
-		{
-            var pkMap = new PrimaryKeyResolvingMap();
-            //Do business logic on temporary  order object
-            _eventPublisher.Publish(new CartChangeEvent(Platform.Core.Common.EntryState.Added, null, cart));
-
-			var entity = cart.ToDataModel(pkMap);
-			ShoppingCart retVal = null;
-			using (var repository = _repositoryFactory())
-			{
-				repository.Add(entity);
-				CommitChanges(repository);
-                pkMap.ResolvePrimaryKeys();
-            }
-
-            retVal = GetById(entity.Id);
-			return retVal;
-		}
-
-		public void Update(ShoppingCart[] carts)
-		{
-			var changedCarts = new List<ShoppingCart>();
+        public virtual void SaveChanges(ShoppingCart[] carts)
+        {
             var pkMap = new PrimaryKeyResolvingMap();
 
             using (var repository = _repositoryFactory())
-			using (var changeTracker = base.GetChangeTracker(repository))
-			{
-				foreach (var changedCart in carts)
-				{
-					var origCart = GetById(changedCart.Id);
-
-                    var productIds = changedCart.Items.Select(x => x.ProductId).ToArray();
-                    var products = _productService.GetByIds(productIds, Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
-                    foreach (var lineItem in changedCart.Items)
+            using (var changeTracker = GetChangeTracker(repository))
+            {
+                var dataExistCarts = repository.GetShoppingCartsByIds(carts.Where(x => !x.IsTransient()).Select(x => x.Id).ToArray());
+                foreach (var cart in carts)
+                {
+                    var sourceCartEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance();
+                    if (sourceCartEntity != null)
                     {
-                        var product = products.FirstOrDefault(x => x.Id == lineItem.ProductId);
-                        if (product != null)
+                        sourceCartEntity = sourceCartEntity.FromModel(cart, pkMap);
+                        var targetCartEntity = dataExistCarts.FirstOrDefault(x => x.Id == cart.Id);
+                        if (targetCartEntity != null)
                         {
-                            lineItem.Product = product;
+                            var origCart = targetCartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
+                            _eventPublisher.Publish(new CartChangeEvent(EntryState.Modified, origCart, cart));
+
+                            changeTracker.Attach(targetCartEntity);
+                            sourceCartEntity.Patch(targetCartEntity);
+                        }
+                        else
+                        {
+                            repository.Add(sourceCartEntity);
+                            _eventPublisher.Publish(new CartChangeEvent(EntryState.Added, cart, cart));
                         }
                     }
-
-					_eventPublisher.Publish(new CartChangeEvent(Platform.Core.Common.EntryState.Modified, origCart, changedCart));
-
-					var sourceCartEntity = changedCart.ToDataModel(pkMap);
-					var targetCartEntity = repository.GetShoppingCartById(changedCart.Id);
-					if (targetCartEntity == null)
-					{
-						throw new NullReferenceException("targetCartEntity");
-					}
-
-					changeTracker.Attach(targetCartEntity);
-					sourceCartEntity.Patch(targetCartEntity);
                 }
                 CommitChanges(repository);
                 pkMap.ResolvePrimaryKeys();
             }
-
-            //Save dynamic properties for carts and all nested objects
-            foreach(var cart in carts)
+            //Save dynamic properties
+            foreach (var cart in carts)
             {
                 _dynamicPropertyService.SaveDynamicPropertyValues(cart);
             }
+
         }
 
-        public void Delete(string[] cartIds)
-		{
-			using (var repository = _repositoryFactory())
-			{
-				foreach (var id in cartIds)
-				{
-					var cart = GetById(id);
-                   
+        public virtual void Delete(string[] ids)
+        {
+            var carts = GetByIds(ids);
+            using (var repository = _repositoryFactory())
+            {
+                var cartEntities = repository.GetShoppingCartsByIds(ids);
+                foreach (var cart in carts)
+                {
                     _eventPublisher.Publish(new CartChangeEvent(Platform.Core.Common.EntryState.Deleted, cart, cart));
-
+                }
+                repository.RemoveCarts(ids);
+                foreach (var cart in carts)
+                {
                     _dynamicPropertyService.DeleteDynamicPropertyValues(cart);
-                    repository.RemoveCart(id);
-				}
-				repository.UnitOfWork.Commit();
-			}
-		}
+                }
+                repository.UnitOfWork.Commit();
+            }
+        }
+        #endregion
 
+        #region IShoppingCartSearchService Members
+
+        public GenericSearchResult<ShoppingCart> Search(ShoppingCartSearchCriteria criteria)
+        {
+            var retVal = new GenericSearchResult<ShoppingCart>();
+            using (var repository = _repositoryFactory())
+            {
+                var query = repository.ShoppingCarts;
+
+                if (!string.IsNullOrEmpty(criteria.Name))
+                {
+                    query = query.Where(x => x.Name == criteria.Name);
+                }
+                if (criteria.CustomerId != null)
+                {
+                    query = query.Where(x => x.CustomerId == criteria.CustomerId);
+                }
+                if (criteria.StoreId != null)
+                {
+                    query = query.Where(x => criteria.StoreId == x.StoreId);
+                }            
+
+                var sortInfos = criteria.SortInfos;
+                if (sortInfos.IsNullOrEmpty())
+                {
+                    sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<ShoppingCartEntity>(x => x.CreatedDate), SortDirection = SortDirection.Descending } };
+                }
+                query = query.OrderBySortInfos(sortInfos);
+
+                retVal.TotalCount = query.Count();
+
+                var cartIds = query.Select(x => x.Id).Skip(criteria.Skip).Take(criteria.Take).ToArray();
+                var carts = GetByIds(cartIds);
+                retVal.Results = carts.AsQueryable<ShoppingCart>().OrderBySortInfos(sortInfos).ToList();
+                return retVal;
+            }
+        } 
         #endregion
 
     }

@@ -11,7 +11,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 	public interface ICartRepository : IRepository
 	{
 		IQueryable<ShoppingCartEntity> ShoppingCarts { get; }
-		ShoppingCartEntity GetShoppingCartById(string id);
-        void RemoveCart(string id);
+		ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null);
+        void RemoveCarts(string[] ids);
 	}
 }

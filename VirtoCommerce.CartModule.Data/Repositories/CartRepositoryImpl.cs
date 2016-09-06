@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VirtoCommerce.CartModule.Data.Model;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 
@@ -177,36 +178,39 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             get { return GetAsQueryable<ShipmentEntity>(); }
         }
 
-        public ShoppingCartEntity GetShoppingCartById(string id)
+        public ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null)
         {
             var query = ShoppingCarts.Include(x => x.TaxDetails)
                                      .Include(x => x.Discounts)
-                                     .Where(x => x.Id == id);
-            var addresses = Addresses.Where(x => x.ShoppingCartId == id).ToArray();
-            var payments = Payments.Include(x => x.Addresses).Where(x => x.ShoppingCartId == id).ToArray();
+                                     .Where(x => ids.Contains(x.Id));
+            var addresses = Addresses.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+            var payments = Payments.Include(x => x.Addresses).Where(x =>ids.Contains(x.ShoppingCartId)).ToArray();
             var lineItems = LineItems.Include(x => x.Discounts)
                                      .Include(x => x.TaxDetails)
-                                     .Where(x => x.ShoppingCartId == id).ToArray();
+                                     .Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
             var shipments = Shipments.Include(x => x.TaxDetails)
                                      .Include(x => x.Discounts)
                                      .Include(x => x.Addresses)
                                      .Include(x => x.Items)
-                                     .Where(x => x.ShoppingCartId == id).ToArray();
-            return query.FirstOrDefault();
+                                     .Where(x =>ids.Contains(x.ShoppingCartId)).ToArray();
+            return query.ToArray();
         }
 
-        public void RemoveCart(string id)
+        public void RemoveCarts(string[] ids)
         {
-            var cart = GetShoppingCartById(id);
-            if(cart != null)
+            var carts = GetShoppingCartsByIds(ids);
+            if(!carts.IsNullOrEmpty())
             {
-                //Need manually remove addresses because SQL not allow create cascade delete for address table
-                var addresses = cart.Shipments.SelectMany(x => x.Addresses).Concat(cart.Payments.SelectMany(x => x.Addresses)).ToArray();
-                foreach(var address in addresses)
+                foreach (var cart in carts)
                 {
-                    Remove(address);
+                    //Need manually remove addresses because SQL not allow create cascade delete for address table
+                    var addresses = cart.Shipments.SelectMany(x => x.Addresses).Concat(cart.Payments.SelectMany(x => x.Addresses)).ToArray();
+                    foreach (var address in addresses)
+                    {
+                        Remove(address);
+                    }
+                    Remove(cart);
                 }
-                Remove(cart);
             }
         }
         #endregion

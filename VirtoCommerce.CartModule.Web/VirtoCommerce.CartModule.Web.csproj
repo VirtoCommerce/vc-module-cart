@@ -162,11 +162,11 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="VirtoCommerce.Domain, Version=2.16.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.17.0-rc16\lib\net451\VirtoCommerce.Domain.dll</HintPath>
+      <HintPath>..\packages\VirtoCommerce.Domain.2.17.0-rc18\lib\net451\VirtoCommerce.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Core, Version=2.11.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.12.0-rc3\lib\net451\VirtoCommerce.Platform.Core.dll</HintPath>
+      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.12.0-rc4\lib\net451\VirtoCommerce.Platform.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Core.Web, Version=2.11.5.0, Culture=neutral, processorArchitecture=MSIL">
@@ -190,19 +190,14 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Bundles\AngularJavaScriptBundle.cs" />
-    <Compile Include="Bundles\AngularJavaScriptTemplateCacheBundleTransform.cs" />
     <Compile Include="Controllers\Api\CartModuleController.cs" />
     <Compile Include="Controllers\PredefinedPermissions.cs" />
-    <Compile Include="Model\Country.cs" />
-    <Compile Include="Model\CountryRegion.cs" />
-    <Compile Include="Model\CreateOrderModel.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Binders\" />
     <Folder Include="Converters\" />
+    <Folder Include="Scripts\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CartModule.Data\VirtoCommerce.CartModule.Data.csproj">
@@ -216,20 +211,11 @@
     </None>
     <Content Include="Content\logo.png" />
     <Content Include="Localizations\en.VirtoCommerce.Cart.json" />
-    <Content Include="countries.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\cart\cart.js" />
-    <Content Include="Scripts\checkout\checkout.tpl.html" />
-    <Content Include="Scripts\locales\de.json" />
-    <Content Include="Scripts\locales\en.json" />
-    <Content Include="Scripts\locales\es.json" />
-    <Content Include="Scripts\locales\fr.json" />
-    <Content Include="Scripts\locales\pt-BR.json" />
-    <Content Include="Scripts\locales\pt-PT.json" />
     <None Include="web.config">
       <SubType>Designer</SubType>
     </None>
@@ -239,43 +225,6 @@
     <None Include="web.Release.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Content\checkout.css" />
-    <Content Include="Scripts\checkout\checkout-address.js" />
-    <Content Include="Scripts\checkout\checkout-address.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-coupon.js" />
-    <Content Include="Scripts\checkout\checkout-coupon.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-creditCard.js" />
-    <Content Include="Scripts\checkout\checkout-creditCard.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-email.js" />
-    <Content Include="Scripts\checkout\checkout-email.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-lineItems.js" />
-    <Content Include="Scripts\checkout\checkout-lineItems.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-paymentMethods.js" />
-    <Content Include="Scripts\checkout\checkout-paymentMethods.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-shippingMethods.js" />
-    <Content Include="Scripts\checkout\checkout-shippingMethods.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-totals.js" />
-    <Content Include="Scripts\checkout\checkout-totals.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-wizard-step.js" />
-    <Content Include="Scripts\checkout\checkout-wizard-step.tpl.html" />
-    <Content Include="Scripts\checkout\checkout-wizard.js" />
-    <Content Include="Scripts\checkout\checkout-wizard.tpl.html" />
-    <Content Include="Scripts\checkout\checkout.js" />
-    <Content Include="Scripts\example\index.html" />
-    <Content Include="Scripts\example\product-image.jpg" />
-    <Content Include="Scripts\example\style.css" />
-    <Content Include="Scripts\libraries\angular-animate-1.5.7.min.js" />
-    <Content Include="Scripts\libraries\angular-cookies-1.5.7.min.js" />
-    <Content Include="Scripts\libraries\angular-credit-cards-3.0.1.js" />
-    <Content Include="Scripts\libraries\angular-filter-0.5.8.js" />
-    <Content Include="Scripts\libraries\angularjs-1.5.7.min.js" />
-    <Content Include="Scripts\libraries\bootstrap-3.3.6.min.css" />
-    <Content Include="Scripts\libraries\ui-bootstrap-tpls-1.3.3.js" />
-    <Content Include="Scripts\libraries\underscore-min-1.8.3.js" />
-    <Content Include="Scripts\services\cartService.js" />
-    <Content Include="Scripts\services\mockCartService.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="module.manifest" />

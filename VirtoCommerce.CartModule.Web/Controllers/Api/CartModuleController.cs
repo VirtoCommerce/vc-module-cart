@@ -14,7 +14,7 @@ using VirtoCommerce.Platform.Core.Web.Security;
 
 namespace VirtoCommerce.CartModule.Web.Controllers.Api
 {
-    [RoutePrefix("api/cart")]
+    [RoutePrefix("api/carts")]
     [CheckPermission(Permission = PredefinedPermissions.Query)]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CartModuleController : ApiController
@@ -33,33 +33,33 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         }
 
         [HttpGet]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/current")]
+        [Route("{storeId}/{customerId}/{cartName}/{currency}/{cultureName}/current")]
         [ResponseType(typeof(ShoppingCart))]
         public IHttpActionResult GetCart(string storeId, string customerId, string cartName, string currency, string cultureName)
         {
             _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName)
-                        .EvaluateTaxes()
-                        .EvaluatePromotions();
+                                .EvaluatePromotions()
+                                .EvaluateTaxes();
 
             return Ok(_cartBuilder.Cart);
         }
 
         [HttpGet]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/itemscount")]
+        [Route("{cartId}/itemscount")]
         [ResponseType(typeof(int))]
-        public IHttpActionResult GetCartItemsCount(string storeId, string customerId, string cartName, string currency, string cultureName)
+        public IHttpActionResult GetCartItemsCount(string cartId)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             return Ok(_cartBuilder.Cart.Items.Count);
         }
      
 
         [HttpPost]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/items")]
+        [Route("{cartId}/items")]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> AddItemToCart(string storeId, string customerId, string cartName, string currency, string cultureName, [FromBody] LineItem lineItem)
+        public async Task<IHttpActionResult> AddItemToCart(string cartId, [FromBody] LineItem lineItem)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
 
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
@@ -69,12 +69,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         }
 
         [HttpPut]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/items")]
+        [Route("{cartId}/items")]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> ChangeCartItem(string storeId, string customerId, string cartName, string currency, string cultureName, string lineItemId, int quantity)
+        public async Task<IHttpActionResult> ChangeCartItem(string cartId, string lineItemId, int quantity)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
-
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
                 var lineItem = _cartBuilder.Cart.Items.FirstOrDefault(i => i.Id == lineItemId);
@@ -88,126 +87,109 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         }
 
         [HttpDelete]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/items")]
+        [Route("{cartId}/items/{lineItemId}")]
         [ResponseType(typeof(int))]
-        public async Task<IHttpActionResult> RemoveCartItem(string storeId, string customerId, string cartName, string currency, string cultureName, string lineItemId)
+        public async Task<IHttpActionResult> RemoveCartItem(string cartId, string lineItemId)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
-
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
                 _cartBuilder.RemoveItem(lineItemId).Save();
             }
-
             return Ok(_cartBuilder.Cart.Items.Count);
         }
 
-        [HttpPost]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/clear")]
+        [HttpDelete]
+        [Route("{cartId}/items")]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> ClearCart(string storeId, string customerId, string cartName, string currency, string cultureName)
+        public async Task<IHttpActionResult> ClearCart(string cartId)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
-
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
                 _cartBuilder.Clear().Save();
             }
-
             return Ok();
         }
 
-        [HttpPost]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/mergewith/{cartId}")]
+        [HttpPatch]
+        [Route("{cartId}")]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> MergeWithCart(string storeId, string customerId, string cartName, string currency, string cultureName, string cartId)
+        public async Task<IHttpActionResult> MergeWithCart(string cartId, [FromBody]ShoppingCart otherCart)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
-                var cart = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();                
-                _cartBuilder.MergeWithCart(cart);
-                _cartBuilder.Save();
+                _cartBuilder.MergeWithCart(otherCart).Save();
             }
             return Ok();
         }
 
         [HttpGet]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/shipments/{shipmentId}/shippingmethods")]
+        [Route("{cartId}/availshippingrates")]
         [ResponseType(typeof(ICollection<ShippingRate>))]
-        public IHttpActionResult GetAvailableShippingRates(string storeId, string customerId, string cartName, string currency, string cultureName, string shipmentId)
+        public IHttpActionResult GetAvailableShippingRates(string cartId)
         {
-            var shippingRates = _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName)
-                .GetAvailableShippingRates();
-
+            var shippingRates = _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault())
+                                            .GetAvailableShippingRates();
             return Ok(shippingRates);
         }
 
         [HttpGet]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/paymentmethods")]
+        [Route("{cartId}/availpaymentmethods")]
         [ResponseType(typeof(ICollection<Domain.Payment.Model.PaymentMethod>))]
-        public IHttpActionResult GetAvailablePaymentMethods(string storeId, string customerId, string cartName, string currency, string cultureName)
+        public IHttpActionResult GetAvailablePaymentMethods(string cartId)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
-
-            var paymentMethods = _cartBuilder.GetAvailablePaymentMethods();
-
+            var paymentMethods = _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault())
+                                             .GetAvailablePaymentMethods();
             return Ok(paymentMethods);
         }
 
         [HttpPost]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/coupons/{couponCode}")]
+        [Route("{cartId}/coupons/{couponCode}")]
         [ResponseType(typeof(Coupon))]
-        public async Task<IHttpActionResult> AddCartCoupon(string storeId, string customerId, string cartName, string currency, string cultureName, string couponCode)
+        public async Task<IHttpActionResult> AddCartCoupon(string cartId, string couponCode)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
-
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
-                _cartBuilder.AddCoupon(couponCode);
-                _cartBuilder.Save();
+                _cartBuilder.AddCoupon(couponCode).Save();
             }
-
             return Ok(_cartBuilder.Cart.Coupon);
         }
 
         [HttpDelete]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/coupons")]
+        [Route("{cartId}/coupons/{couponCode}")]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> RemoveCartCoupon(string storeId, string customerId, string cartName, string currency, string cultureName)
+        public async Task<IHttpActionResult> RemoveCartCoupon(string cartId, string couponCode)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
-
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
-                _cartBuilder.RemoveCoupon();
-                _cartBuilder.Save();
+                _cartBuilder.RemoveCoupon().Save();
             }
-
             return Ok();
         }
 
         [HttpPost]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/shipments")]
+        [Route("{cartId}/shipments")]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> AddOrUpdateCartShipment(string storeId, string customerId, string cartName, string currency, string cultureName, [FromBody] Shipment shipment)
+        public async Task<IHttpActionResult> AddOrUpdateCartShipment(string cartId, [FromBody] Shipment shipment)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
-
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
                 _cartBuilder.AddOrUpdateShipment(shipment).Save();
             }
-
             return Ok();
         }
 
         [HttpPost]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/payments")]
+        [Route("{cartId}/payments")]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> AddOrUpdateCartPayment(string storeId, string customerId, string cartName, string currency, string cultureName, [FromBody] Payment payment)
+        public async Task<IHttpActionResult> AddOrUpdateCartPayment(string cartId, [FromBody] Payment payment)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
+            _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
 
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
@@ -218,12 +200,12 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         }
 
         [HttpPost]
-        [Route("{storeId}/{customerId}/carts/{cartName}/{currency}/{cultureName}/createorder")]
+        [Route("placeorder")]
         [ResponseType(typeof(string))]
-        public async Task<IHttpActionResult> PlaceOrder(string storeId, string customerId, string cartName, string currency, string cultureName)
+        public async Task<IHttpActionResult> PlaceOrder([FromBody] ShoppingCart cart)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName);
-
+            //TODO: Check carefully
+            _cartBuilder.TakeCart(cart);
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
                 var customerOrder = _customerOrderBuilder.PlaceCustomerOrder(_cartBuilder);
@@ -234,19 +216,14 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// <summary>
         /// Get shopping cart by id
         /// </summary>
-        /// <param name="id">Shopping cart id</param>
+        /// <param name="cartId">Shopping cart id</param>
         /// <response code="200"></response>
-        /// <response code="404">Shopping cart not found</response>
         [HttpGet]
-        [Route("carts/{id}")]
+        [Route("{cartId}")]
         [ResponseType(typeof(ShoppingCart))]
-        public IHttpActionResult GetCartById(string id)
+        public IHttpActionResult GetCartById(string cartId)
         {
-            var retVal = _shoppingCartService.GetByIds(new[] { id });
-            if (retVal == null)
-            {
-                return NotFound();
-            }
+            var retVal = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();
             return Ok(retVal);
         }
 
@@ -257,7 +234,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// <param name="cart">Shopping cart model</param>
         /// <response code="204">Operation completed</response>
         [HttpPost]
-        [Route("carts")]
+        [Route("")]
         [ResponseType(typeof(ShoppingCart))]
         [CheckPermission(Permission = PredefinedPermissions.Create)]
         public IHttpActionResult Create(ShoppingCart cart)
@@ -271,7 +248,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// </summary>
         /// <param name="cart">Shopping cart model</param>
         [HttpPut]
-        [Route("carts")]
+        [Route("")]
         [ResponseType(typeof(ShoppingCart))]
         [CheckPermission(Permission = PredefinedPermissions.Update)]
         public IHttpActionResult Update(ShoppingCart cart)
@@ -288,7 +265,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// <param name="ids">Array of shopping cart ids</param>
         /// <response code="204">Operation completed</response>
         [HttpDelete]
-        [Route("carts")]
+        [Route("")]
         [ResponseType(typeof(void))]
         [CheckPermission(Permission = PredefinedPermissions.Delete)]
         public IHttpActionResult DeleteCarts([FromUri] string[] ids)

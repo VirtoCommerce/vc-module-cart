@@ -2,25 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using CacheManager.Core;
-using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Domain.Cart.Services;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Shipping.Model;
 using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Platform.Data.Common;
-using StringExtensions = VirtoCommerce.Platform.Core.Common.StringExtensions;
-using VirtoCommerce.Domain.Commerce.Model;
-using VirtoCommerce.Domain.Catalog.Model;
-using VirtoCommerce.Domain.Order.Model;
-using VirtoCommerce.Domain.Order.Services;
-using VirtoCommerce.Domain.Payment.Model;
-using VirtoCommerce.Platform.Core.DynamicProperties;
-using Discount = VirtoCommerce.Domain.Cart.Model.Discount;
-using LineItem = VirtoCommerce.Domain.Cart.Model.LineItem;
-using Shipment = VirtoCommerce.Domain.Cart.Model.Shipment;
 using VirtoCommerce.Platform.Core.Common;
-using Omu.ValueInjecter;
+using System.Collections.Concurrent;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
@@ -38,6 +27,8 @@ namespace VirtoCommerce.CartModule.Data.Services
         private ShoppingCart _cart;
 
         private Store _store;
+
+        private static readonly ConcurrentDictionary<string, object> _locks = new ConcurrentDictionary<string, object>();
 
         [CLSCompliant(false)]
         public ShoppingCartBuilderImpl(IStoreService storeService, IShoppingCartTaxEvaluator taxEvaluator, IShoppingCartService shoppingShoppingCartService, IShoppingCartSearchService shoppingCartSearchService, IShoppingCartPromotionEvaluator marketingPromoEvaluator, ICacheManager<object> cacheManager)
@@ -60,34 +51,39 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual IShoppingCartBuilder GetOrCreateNewTransientCart(string storeId, string customerId, string cartName, string currency, string cultureName)
         {
-            _cart = _cacheManager.Get(GetCartCacheKey(storeId, cartName, customerId), _cartCacheRegion, () =>
+            var lockKey = String.Join(":", storeId, customerId, cartName, currency);
+            lock (_locks.GetOrAdd(lockKey, x => new object()))
             {
-                var cart = GetCurrentCart(customerId, storeId, cartName);
-                if (cart == null)
+                _cart = _cacheManager.Get(GetCartCacheKey(storeId, cartName, customerId), _cartCacheRegion, () =>
                 {
-                    cart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
-                    cart.Name = cartName;
-                    cart.Currency = currency;
-                    cart.CustomerId = customerId;
-                    cart.StoreId = storeId;
-                    cart.Shipments = new List<Shipment>();
-                    cart.Payments = new List<Payment>();
-                    cart.Addresses = new List<Address>();
-                    cart.Discounts = new List<Discount>();
-                    cart.Items = new List<LineItem>();
-                    cart.TaxDetails = new List<TaxDetail>();                
-                }
-                return cart;
-            });
+                    var criteria = new ShoppingCartSearchCriteria
+                    {
+                        CustomerId = string.IsNullOrEmpty(customerId) ? "anonymous" : customerId,
+                        StoreId = storeId,
+                        Name = cartName
+                    };
+                    var searchResult = _shoppingCartSearchService.Search(criteria);
+                    var cart = searchResult.Results.FirstOrDefault();
+                    if (cart == null)
+                    {
+                        cart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
+                        cart.Name = cartName;
+                        cart.Currency = currency;
+                        cart.CustomerId = customerId;
+                        cart.StoreId = storeId;
+                        _shoppingCartService.SaveChanges(new[] { cart });
+                        cart = _shoppingCartService.GetByIds(new[] { cart.Id }).FirstOrDefault();
+                    }
+                    return cart;
+                });
+            }
 
             return this;
-        }   
+        }
 
         public virtual IShoppingCartBuilder AddItem(LineItem lineItem)
         {
             AddLineItem(lineItem);
-
-            EvaluatePromotionsAndTaxes();
             return this;
         }
 
@@ -97,7 +93,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             if (lineItem != null)
             {
                 InnerChangeItemQuantity(lineItem, quantity);
-                EvaluatePromotionsAndTaxes();
             }
 
             return this;
@@ -109,7 +104,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             if (lineItem != null)
             {
                 _cart.Items.Remove(lineItem);
-                EvaluatePromotionsAndTaxes();
             }
 
             return this;
@@ -118,9 +112,6 @@ namespace VirtoCommerce.CartModule.Data.Services
         public virtual IShoppingCartBuilder Clear()
         {
             _cart.Items.Clear();
-
-            EvaluatePromotionsAndTaxes();
-
             return this;
         }
 
@@ -131,16 +122,12 @@ namespace VirtoCommerce.CartModule.Data.Services
                 Code = couponCode
             };
 
-            EvaluatePromotionsAndTaxes();
-
             return this;
         }
 
         public virtual IShoppingCartBuilder RemoveCoupon()
         {
             _cart.Coupon = null;
-
-            EvaluatePromotionsAndTaxes();
 
             return this;
         }
@@ -174,7 +161,6 @@ namespace VirtoCommerce.CartModule.Data.Services
                 shipment.DiscountTotalWithTax = shippingRate.DiscountAmountWithTax;
                 shipment.TaxType = shippingRate.ShippingMethod.TaxType;
             }
-            EvaluatePromotionsAndTaxes();
             return this;
         }
 
@@ -185,8 +171,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 _cart.Shipments.Remove(shipment);
             }
-
-            EvaluatePromotionsAndTaxes();
 
             return this;
         }
@@ -232,11 +216,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             _cart.Payments.Clear();
             _cart.Payments = cart.Payments;
 
-            EvaluatePromotionsAndTaxes();
-
             _shoppingCartService.Delete(new[] { cart.Id });
 
-            _cacheManager.Remove(CartCaheKey, _cartCacheRegion);
+            InvalidateCache();
 
             return this;
         }
@@ -245,7 +227,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             _shoppingCartService.Delete(new string[] { _cart.Id });
 
-            _cacheManager.Remove(CartCaheKey, _cartCacheRegion);
+            InvalidateCache();
 
             return this;
         }
@@ -288,8 +270,9 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual void Save()
         {
+            EvaluatePromotionsAndTaxes();
             //Invalidate cart in cache
-            _cacheManager.Remove(CartCaheKey, _cartCacheRegion);
+            InvalidateCache();
             _shoppingCartService.SaveChanges(new[] { _cart });
         }
 
@@ -313,6 +296,11 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
+        private void InvalidateCache()
+        {
+            _cacheManager.Remove(CartCaheKey, _cartCacheRegion);
+        }
+
         private string CartCaheKey
         {
             get
@@ -330,12 +318,6 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             if (lineItem != null)
             {
-                //todo: tier price
-                //var product = (await _catalogSearchService.GetProductsAsync(new[] { lineItem.ProductId }, ItemResponseGroup.ItemWithPrices)).FirstOrDefault();
-                //if (product != null)
-                //{
-                //	lineItem.SalePrice = product.Price.GetTierPrice(quantity).Price;
-                //}
                 if (quantity > 0)
                 {
                     lineItem.Quantity = quantity;
@@ -364,20 +346,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         private void EvaluatePromotionsAndTaxes()
         {
             EvaluatePromotions();
-            EvaluateTaxes();            
-        }
-
-        private ShoppingCart GetCurrentCart(string customerId, string storeId, string cartName)
-        {
-            var criteria = new ShoppingCartSearchCriteria
-            {
-                CustomerId = string.IsNullOrEmpty(customerId) ? "anonymous" : customerId,
-                StoreId = storeId,
-                Name = cartName
-            };
-            var searchResult = _shoppingCartSearchService.Search(criteria);
-            var retVal = searchResult.Results.FirstOrDefault();
-            return retVal;
+            EvaluateTaxes();
         }
 
         private string GetCartCacheKey(string storeId, string cartName, string customerId)

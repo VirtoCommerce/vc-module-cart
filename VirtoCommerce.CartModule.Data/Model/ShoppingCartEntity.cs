@@ -92,7 +92,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (cart == null)
                 throw new NullReferenceException("cart");
 
-            this.InjectFrom(cart);
+            cart.InjectFrom(this);
 
             cart.Discounts = this.Discounts.Select(x=> x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
             cart.Items = this.Items.Select(x => x.ToModel(AbstractTypeFactory<LineItem>.TryCreateInstance())).ToList();
@@ -118,6 +118,8 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new NullReferenceException("cart");
 
             pkMap.AddPair(cart, this);
+
+            this.InjectFrom(cart);
 
             if (cart.Addresses != null)
             {

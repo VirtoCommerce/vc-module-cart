@@ -27,10 +27,9 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             var customerOrder = ConvertCartToOrder(cartBuilder.Cart);
             _customerOrderService.SaveChanges(new[] { customerOrder });
+
             customerOrder = _customerOrderService.GetByIds(new[] { customerOrder.Id }).FirstOrDefault();
             var store = _storeService.GetById(cartBuilder.Cart.StoreId);
-
-            cartBuilder.RemoveCart();
 
             if (!customerOrder.InPayments.IsNullOrEmpty())
             {

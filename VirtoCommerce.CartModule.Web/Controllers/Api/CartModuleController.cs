@@ -70,8 +70,6 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// Get shopping cart by id
         /// </summary>
         /// <param name="id">Shopping cart id</param>
-        /// <response code="200"></response>
-        /// <response code="404">Shopping cart not found</response>
         [HttpGet]
         [Route("carts/{id}")]
         [ResponseType(typeof(ShoppingCart))]
@@ -188,7 +186,6 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// Delete shopping carts by ids
         /// </summary>
         /// <param name="ids">Array of shopping cart ids</param>
-        /// <response code="204">Operation completed</response>
         [HttpDelete]
         [Route("carts")]
         [ResponseType(typeof(void))]

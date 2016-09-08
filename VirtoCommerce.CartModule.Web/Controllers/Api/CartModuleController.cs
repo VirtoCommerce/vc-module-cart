@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -35,12 +36,15 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [HttpGet]
         [Route("{storeId}/{customerId}/{cartName}/{currency}/{cultureName}/current")]
         [ResponseType(typeof(ShoppingCart))]
-        public IHttpActionResult GetCart(string storeId, string customerId, string cartName, string currency, string cultureName)
+        public async Task<IHttpActionResult> GetCart(string storeId, string customerId, string cartName, string currency, string cultureName)
         {
-            _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName)
-                                .EvaluatePromotions()
-                                .EvaluateTaxes();
+            using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(string.Join(":", storeId, customerId, cartName, currency))).LockAsync())
+            {
+                _cartBuilder.GetOrCreateNewTransientCart(storeId, customerId, cartName, currency, cultureName)
+                               .EvaluatePromotions()
+                               .EvaluateTaxes();
 
+            }
             return Ok(_cartBuilder.Cart);
         }
 
@@ -65,7 +69,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             {
                 _cartBuilder.AddItem(lineItem).Save();
             }
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpPut]
@@ -83,7 +87,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
                 }
             }
 
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpDelete]
@@ -109,7 +113,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             {
                 _cartBuilder.Clear().Save();
             }
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpPatch]
@@ -122,7 +126,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             {
                 _cartBuilder.MergeWithCart(otherCart).Save();
             }
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpGet]
@@ -168,7 +172,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             {
                 _cartBuilder.RemoveCoupon().Save();
             }
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpPost]
@@ -181,7 +185,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             {
                 _cartBuilder.AddOrUpdateShipment(shipment).Save();
             }
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpPost]
@@ -196,7 +200,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
                 _cartBuilder.AddOrUpdatePayment(payment).Save();
             }
 
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpPost]
@@ -217,7 +221,6 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// Get shopping cart by id
         /// </summary>
         /// <param name="cartId">Shopping cart id</param>
-        /// <response code="200"></response>
         [HttpGet]
         [Route("{cartId}")]
         [ResponseType(typeof(ShoppingCart))]
@@ -227,12 +230,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return Ok(retVal);
         }
 
-      
+
         /// <summary>
         /// Create shopping cart
         /// </summary>
         /// <param name="cart">Shopping cart model</param>
-        /// <response code="204">Operation completed</response>
         [HttpPost]
         [Route("")]
         [ResponseType(typeof(ShoppingCart))]
@@ -254,7 +256,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         public IHttpActionResult Update(ShoppingCart cart)
         {
             _shoppingCartService.SaveChanges(new[] { cart });
-            var retVal = _shoppingCartService.GetByIds(new[] { cart.Id });
+            var retVal = _shoppingCartService.GetByIds(new[] { cart.Id }).FirstOrDefault();
             return Ok(retVal);
         }
                   
@@ -263,7 +265,6 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         /// Delete shopping carts by ids
         /// </summary>
         /// <param name="ids">Array of shopping cart ids</param>
-        /// <response code="204">Operation completed</response>
         [HttpDelete]
         [Route("")]
         [ResponseType(typeof(void))]
@@ -271,7 +272,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         public IHttpActionResult DeleteCarts([FromUri] string[] ids)
         {
             _shoppingCartService.Delete(ids);
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
               
         private static string GetAsyncLockCartKey(string cartId)

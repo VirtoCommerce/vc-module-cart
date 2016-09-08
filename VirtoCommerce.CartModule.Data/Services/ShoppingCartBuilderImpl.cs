@@ -28,8 +28,6 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         private Store _store;
 
-        private static readonly ConcurrentDictionary<string, object> _locks = new ConcurrentDictionary<string, object>();
-
         [CLSCompliant(false)]
         public ShoppingCartBuilderImpl(IStoreService storeService, IShoppingCartTaxEvaluator taxEvaluator, IShoppingCartService shoppingShoppingCartService, IShoppingCartSearchService shoppingCartSearchService, IShoppingCartPromotionEvaluator marketingPromoEvaluator, ICacheManager<object> cacheManager)
         {
@@ -51,33 +49,28 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual IShoppingCartBuilder GetOrCreateNewTransientCart(string storeId, string customerId, string cartName, string currency, string cultureName)
         {
-            var lockKey = String.Join(":", storeId, customerId, cartName, currency);
-            lock (_locks.GetOrAdd(lockKey, x => new object()))
+            _cart = _cacheManager.Get(GetCartCacheKey(storeId, cartName, customerId, currency), _cartCacheRegion, () =>
             {
-                _cart = _cacheManager.Get(GetCartCacheKey(storeId, cartName, customerId), _cartCacheRegion, () =>
+                var criteria = new ShoppingCartSearchCriteria
                 {
-                    var criteria = new ShoppingCartSearchCriteria
-                    {
-                        CustomerId = string.IsNullOrEmpty(customerId) ? "anonymous" : customerId,
-                        StoreId = storeId,
-                        Name = cartName
-                    };
-                    var searchResult = _shoppingCartSearchService.Search(criteria);
-                    var cart = searchResult.Results.FirstOrDefault();
-                    if (cart == null)
-                    {
-                        cart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
-                        cart.Name = cartName;
-                        cart.Currency = currency;
-                        cart.CustomerId = customerId;
-                        cart.StoreId = storeId;
-                        _shoppingCartService.SaveChanges(new[] { cart });
-                        cart = _shoppingCartService.GetByIds(new[] { cart.Id }).FirstOrDefault();
-                    }
-                    return cart;
-                });
-            }
-
+                    CustomerId = string.IsNullOrEmpty(customerId) ? "anonymous" : customerId,
+                    StoreId = storeId,
+                    Name = cartName
+                };
+                var searchResult = _shoppingCartSearchService.Search(criteria);
+                var cart = searchResult.Results.FirstOrDefault();
+                if (cart == null)
+                {
+                    cart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
+                    cart.Name = cartName;
+                    cart.Currency = currency;
+                    cart.CustomerId = customerId;
+                    cart.StoreId = storeId;
+                    _shoppingCartService.SaveChanges(new[] { cart });
+                    cart = _shoppingCartService.GetByIds(new[] { cart.Id }).FirstOrDefault();
+                }
+                return cart;
+            });
             return this;
         }
 
@@ -143,6 +136,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 _cart.Shipments.Remove(existShipment);
             }
+            shipment.Currency = _cart.Currency;
             _cart.Shipments.Add(shipment);
 
             if (!string.IsNullOrEmpty(shipment.ShipmentMethodCode))
@@ -309,7 +303,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 {
                     throw new Exception("Cart is not set");
                 }
-                return GetCartCacheKey(_cart.StoreId, _cart.Name, _cart.CustomerId);
+                return GetCartCacheKey(_cart.StoreId, _cart.Name, _cart.CustomerId, _cart.Currency);
             }
         }
 
@@ -349,9 +343,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             EvaluateTaxes();
         }
 
-        private string GetCartCacheKey(string storeId, string cartName, string customerId)
+        private string GetCartCacheKey(string storeId, string cartName, string customerId, string currency)
         {
-            return string.Format("Cart-{0}-{1}-{2}", storeId, cartName, customerId);
+            return "CartBuilder:" + string.Join(storeId, cartName, customerId, currency);
         }
     }
 }

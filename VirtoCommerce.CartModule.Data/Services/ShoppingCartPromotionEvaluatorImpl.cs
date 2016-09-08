@@ -190,9 +190,9 @@ namespace VirtoCommerce.CartModule.Data.Services
                     //TODO: need allocate more rightly between each quantities
                     discount.DiscountAmount = discountAmount / lineItem.Quantity;
                     discount.DiscountAmountWithTax = discountAmountWithTax / lineItem.Quantity;
-                    lineItem.DiscountAmount += discountAmount;
-                    lineItem.DiscountAmountWithTax += discountAmountWithTax;
+             
                 }
+              
 
                 if (reward.IsValid)
                 {
@@ -201,6 +201,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                         lineItem.Discounts = new List<Discount>();
                     }
                     lineItem.Discounts.Add(discount);
+                    lineItem.DiscountAmount += discount.DiscountAmount;
+                    lineItem.DiscountAmountWithTax += discount.DiscountAmountWithTax;
                 }
             }
         }

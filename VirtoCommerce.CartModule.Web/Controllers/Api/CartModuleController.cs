@@ -46,23 +46,23 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
             }
             return Ok(_cartBuilder.Cart);
-        }
+            }
 
         [HttpGet]
         [Route("{cartId}/itemscount")]
         [ResponseType(typeof(int))]
         public IHttpActionResult GetCartItemsCount(string cartId)
-        {
+            {
             _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             return Ok(_cartBuilder.Cart.Items.Count);
         }
-     
+
 
         [HttpPost]
         [Route("{cartId}/items")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> AddItemToCart(string cartId, [FromBody] LineItem lineItem)
-        {
+            {
             _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
 
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
@@ -76,7 +76,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{cartId}/items")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ChangeCartItem(string cartId, string lineItemId, int quantity)
-        {
+            {
             _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
@@ -84,8 +84,8 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
                 if (lineItem != null)
                 {
                     _cartBuilder.ChangeItemQuantity(lineItemId, quantity).Save();
-                }
             }
+        }
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -198,7 +198,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
                 _cartBuilder.AddOrUpdatePayment(payment).Save();
-            }
+        }
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -259,7 +259,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             var retVal = _shoppingCartService.GetByIds(new[] { cart.Id }).FirstOrDefault();
             return Ok(retVal);
         }
-                  
+
 
         /// <summary>
         /// Delete shopping carts by ids

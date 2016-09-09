@@ -69,7 +69,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 CartPromoEntries = promotionItems,
                 CartTotal = cart.Total,
-                Coupon = cart.Coupon?.Code,
+                Coupon = cart.Coupon != null ? cart.Coupon.Code : null,
                 Currency = cart.Currency,
                 CustomerId = cart.CustomerId,
                 //todo: IsRegisteredUser = cart.Customer.IsRegisteredUser,

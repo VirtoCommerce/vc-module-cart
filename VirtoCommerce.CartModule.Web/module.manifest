@@ -23,4 +23,13 @@
 
     <assemblyFile>VirtoCommerce.CartModule.Web.dll</assemblyFile>
     <moduleType>VirtoCommerce.CartModule.Web.Module, VirtoCommerce.CartModule.Web</moduleType>
+
+	<permissions>
+		<group name="Cart">
+			<permission id="cart:read" name="Read cart" description=""/>
+			<permission id="cart:create" name="Create cart" description=""/>
+			<permission id="cart:update" name="Update cart" description=""/>
+			<permission id="cart:delete" name="Delete cart" description=""/>
+		</group>
+	</permissions>
 </module>

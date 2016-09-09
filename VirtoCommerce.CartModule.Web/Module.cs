@@ -1,6 +1,8 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System.Web.Http;
+using Microsoft.Practices.Unity;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
+using VirtoCommerce.CartModule.Web.JsonConverters;
 using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Cart.Services;
 using VirtoCommerce.Platform.Core.Events;
@@ -13,16 +15,16 @@ namespace VirtoCommerce.CartModule.Web
     public class Module : ModuleBase
     {
         private const string ConnectionStringName = "VirtoCommerce";
-		private readonly IUnityContainer _container;
+        private readonly IUnityContainer _container;
 
-		public Module(IUnityContainer container)
+        public Module(IUnityContainer container)
         {
             _container = container;
-		}
+        }
 
-		#region IModule Members
+        #region IModule Members
 
-		public override void SetupDatabase()
+        public override void SetupDatabase()
         {
             using (var context = new CartRepositoryImpl(ConnectionStringName, _container.Resolve<AuditableInterceptor>()))
             {
@@ -34,6 +36,8 @@ namespace VirtoCommerce.CartModule.Web
 
         public override void Initialize()
         {
+            base.Initialize();
+
             _container.RegisterType<IEventPublisher<CartChangeEvent>, EventPublisher<CartChangeEvent>>();
 
             _container.RegisterType<ICartRepository>(new InjectionFactory(c => new CartRepositoryImpl(ConnectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
@@ -46,7 +50,15 @@ namespace VirtoCommerce.CartModule.Web
             _container.RegisterType<IShoppingCartPromotionEvaluator, ShoppingCartPromotionEvaluatorImpl>();
             _container.RegisterType<IShoppingCartBuilder, ShoppingCartBuilderImpl>();
         }
-		
-		#endregion
-	}
+
+        public override void PostInitialize()
+        {
+            base.PostInitialize();
+
+            //Next lines allow to use polymorph types in API controller methods
+            var httpConfiguration = _container.Resolve<HttpConfiguration>();
+            httpConfiguration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new PolymorphicCartJsonConverter());
+        }
+        #endregion
+    }
 }

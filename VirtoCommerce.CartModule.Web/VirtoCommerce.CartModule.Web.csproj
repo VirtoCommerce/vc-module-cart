@@ -192,6 +192,7 @@
     </Compile>
     <Compile Include="Controllers\Api\CartModuleController.cs" />
     <Compile Include="Controllers\PredefinedPermissions.cs" />
+    <Compile Include="JsonConverters\PolymorphicCartJsonConverter.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -45,7 +45,6 @@ namespace VirtoCommerce.CartModule.Web
             _container.RegisterType<IShoppingCartService, ShoppingCartServiceImpl>();
             _container.RegisterType<IShoppingCartSearchService, ShoppingCartServiceImpl>();
 
-            _container.RegisterType<ICustomerOrderBuilder, CustomerOrderBuilderImpl>();
             _container.RegisterType<IShoppingCartTaxEvaluator, ShoppingCartTaxEvaluatorImpl>();
             _container.RegisterType<IShoppingCartPromotionEvaluator, ShoppingCartPromotionEvaluatorImpl>();
             _container.RegisterType<IShoppingCartBuilder, ShoppingCartBuilderImpl>();

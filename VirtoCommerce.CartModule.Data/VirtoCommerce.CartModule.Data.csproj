@@ -93,8 +93,6 @@
     <Compile Include="Migrations\201609061251293_CartNewTotalsAndTax.Designer.cs">
       <DependentUpon>201609061251293_CartNewTotalsAndTax.cs</DependentUpon>
     </Compile>
-    <Compile Include="Services\CustomerOrderBuilderImpl.cs" />
-    <Compile Include="Services\ICustomerOrderBuilder.cs" />
     <Compile Include="Services\ShoppingCartBuilderImpl.cs" />
     <Compile Include="Services\IShoppingCartBuilder.cs" />
     <Compile Include="Common\StringExtension.cs" />

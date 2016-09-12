@@ -20,17 +20,15 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CartModuleController : ApiController
     {
-        private readonly ICustomerOrderBuilder _customerOrderBuilder;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IShoppingCartSearchService _searchService;
         private readonly IShoppingCartBuilder _cartBuilder;
 
-        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService, IShoppingCartBuilder cartBuilder, ICustomerOrderBuilder customerOrderBuilder)
+        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService, IShoppingCartBuilder cartBuilder)
         {
             _shoppingCartService = shoppingCartService;
             _searchService = searchService;
             _cartBuilder = cartBuilder;
-            _customerOrderBuilder = customerOrderBuilder;
         }
 
         [HttpGet]
@@ -202,21 +200,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-
-        [HttpPost]
-        [Route("placeorder")]
-        [ResponseType(typeof(string))]
-        public async Task<IHttpActionResult> PlaceOrder([FromBody] ShoppingCart cart)
-        {
-            //TODO: Check carefully
-            _cartBuilder.TakeCart(cart);
-            using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
-            {
-                var customerOrder = _customerOrderBuilder.PlaceCustomerOrder(_cartBuilder);
-                return Ok(customerOrder.Id);
-            }
-        }
-
+ 
         /// <summary>
         /// Get shopping cart by id
         /// </summary>

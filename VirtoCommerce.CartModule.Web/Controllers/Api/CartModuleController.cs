@@ -48,7 +48,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
             }
             return Ok(_cartBuilder.Cart);
-            }
+        }
 
         [HttpGet]
         [Route("{cartId}/itemscount")]
@@ -215,6 +215,13 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         public IHttpActionResult GetCartById(string cartId)
         {
             var retVal = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();
+            if (retVal != null)
+            {
+                _cartBuilder.TakeCart(retVal)
+                            .EvaluatePromotions()
+                            .EvaluateTaxes();
+            }
+
             return Ok(retVal);
         }
 

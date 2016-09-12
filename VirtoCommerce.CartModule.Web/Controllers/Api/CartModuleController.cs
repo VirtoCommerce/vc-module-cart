@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
+using CacheManager.Core;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Cart.Services;
@@ -23,12 +24,15 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IShoppingCartSearchService _searchService;
         private readonly IShoppingCartBuilder _cartBuilder;
+        private readonly ICacheManager<object> _cacheManager;
 
-        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService, IShoppingCartBuilder cartBuilder)
+        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService, 
+                                    IShoppingCartBuilder cartBuilder, ICacheManager<object> cacheManager)
         {
             _shoppingCartService = shoppingCartService;
             _searchService = searchService;
             _cartBuilder = cartBuilder;
+            _cacheManager = cacheManager;
         }
 
         [HttpGet]
@@ -44,23 +48,23 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
             }
             return Ok(_cartBuilder.Cart);
-        }
+            }
 
         [HttpGet]
         [Route("{cartId}/itemscount")]
         [ResponseType(typeof(int))]
         public IHttpActionResult GetCartItemsCount(string cartId)
-        {
+            {
             _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             return Ok(_cartBuilder.Cart.Items.Count);
         }
-     
+
 
         [HttpPost]
         [Route("{cartId}/items")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> AddItemToCart(string cartId, [FromBody] LineItem lineItem)
-        {
+            {
             _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
 
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
@@ -74,7 +78,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{cartId}/items")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ChangeCartItem(string cartId, string lineItemId, int quantity)
-        {
+            {
             _cartBuilder.TakeCart(_shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault());
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
@@ -82,8 +86,8 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
                 if (lineItem != null)
                 {
                     _cartBuilder.ChangeItemQuantity(lineItemId, quantity).Save();
-                }
             }
+        }
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -196,11 +200,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(_cartBuilder.Cart.Id)).LockAsync())
             {
                 _cartBuilder.AddOrUpdatePayment(payment).Save();
-            }
+        }
 
             return StatusCode(HttpStatusCode.NoContent);
         }
- 
+
         /// <summary>
         /// Get shopping cart by id
         /// </summary>
@@ -243,7 +247,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             var retVal = _shoppingCartService.GetByIds(new[] { cart.Id }).FirstOrDefault();
             return Ok(retVal);
         }
-                  
+
 
         /// <summary>
         /// Delete shopping carts by ids
@@ -254,8 +258,9 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ResponseType(typeof(void))]
         [CheckPermission(Permission = PredefinedPermissions.Delete)]
         public IHttpActionResult DeleteCarts([FromUri] string[] ids)
-        {
+        {        
             _shoppingCartService.Delete(ids);
+            _cacheManager.ClearRegion(ShoppingCartBuilderImpl.CartCacheRegion);
             return StatusCode(HttpStatusCode.NoContent);
         }
               

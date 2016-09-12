@@ -121,22 +121,8 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             if (shoppingCart.Coupon != null && !string.IsNullOrEmpty(shoppingCart.Coupon.Code))
             {
-                var couponRewards = rewards.Where(r => r.Promotion.Coupons != null && r.Promotion.Coupons.Any()).ToList();
-
-                if (!couponRewards.Any())
-                {
-                    shoppingCart.Coupon.IsValid = false;
-                }
-
-                foreach (var reward in couponRewards)
-                {
-                    var couponCode = reward.Promotion.Coupons.FirstOrDefault(c => c == shoppingCart.Coupon.Code);
-                    if (!string.IsNullOrEmpty(couponCode))
-                    {
-                        shoppingCart.Coupon.IsValid = reward.IsValid;
-                        shoppingCart.Coupon.InvalidDescription = null;
-                    }
-                }
+                shoppingCart.Coupon.IsValid = rewards.Any(x => x.IsValid && x.Promotion.Coupons != null
+                                                            && x.Promotion.Coupons.Contains(shoppingCart.Coupon.Code, StringComparer.OrdinalIgnoreCase));
             }
         }
 

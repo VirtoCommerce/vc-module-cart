@@ -22,7 +22,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         private readonly IShoppingCartPromotionEvaluator _marketingPromoEvaluator;
 
         private readonly ICacheManager<object> _cacheManager;
-        private const string _cartCacheRegion = "CartRegion";
+        public const string CartCacheRegion = "CartRegion";
 
         private ShoppingCart _cart;
 
@@ -49,7 +49,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual IShoppingCartBuilder GetOrCreateNewTransientCart(string storeId, string customerId, string cartName, string currency, string cultureName)
         {
-            _cart = _cacheManager.Get(GetCartCacheKey(storeId, cartName, customerId, currency), _cartCacheRegion, () =>
+            _cart = _cacheManager.Get(GetCartCacheKey(storeId, cartName, customerId, currency), CartCacheRegion, () =>
             {
                 var criteria = new ShoppingCartSearchCriteria
                 {
@@ -191,7 +191,6 @@ namespace VirtoCommerce.CartModule.Data.Services
                 {
                     throw new Exception("Unknown payment method " + payment.PaymentGatewayCode);
                 }
-                payment.PaymentGatewayCode = paymentMethod.Code;
             }
             return this;
         }
@@ -292,7 +291,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         private void InvalidateCache()
         {
-            _cacheManager.Remove(CartCaheKey, _cartCacheRegion);
+            _cacheManager.Remove(CartCaheKey, CartCacheRegion);
         }
 
         private string CartCaheKey

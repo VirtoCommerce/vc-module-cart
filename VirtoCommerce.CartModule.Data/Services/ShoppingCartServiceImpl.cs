@@ -123,15 +123,18 @@ namespace VirtoCommerce.CartModule.Data.Services
                 {
                     query = query.Where(x => x.Name == criteria.Name);
                 }
-                if (criteria.CustomerId != null)
+                if (!string.IsNullOrEmpty(criteria.CustomerId))
                 {
                     query = query.Where(x => x.CustomerId == criteria.CustomerId);
                 }
-                if (criteria.StoreId != null)
+                if (!string.IsNullOrEmpty(criteria.StoreId))
                 {
                     query = query.Where(x => criteria.StoreId == x.StoreId);
                 }            
-
+                if(!string.IsNullOrEmpty(criteria.Currency))
+                {
+                    query = query.Where(x => x.Currency == criteria.Currency);
+                }
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {

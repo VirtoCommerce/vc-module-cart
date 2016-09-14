@@ -10,67 +10,70 @@ using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.Platform.Core.Common;
 using System.Collections.Concurrent;
+using VirtoCommerce.Domain.Customer.Services;
+using VirtoCommerce.Domain.Customer.Model;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
     public class ShoppingCartBuilderImpl : IShoppingCartBuilder
     {
         private readonly IStoreService _storeService;
-        private readonly IShoppingCartTaxEvaluator _taxEvaluator;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IShoppingCartSearchService _shoppingCartSearchService;
-        private readonly IShoppingCartPromotionEvaluator _marketingPromoEvaluator;
-
-        private readonly ICacheManager<object> _cacheManager;
-        public const string CartCacheRegion = "CartRegion";
+        private readonly IMemberService _memberService;
 
         private ShoppingCart _cart;
 
         private Store _store;
 
         [CLSCompliant(false)]
-        public ShoppingCartBuilderImpl(IStoreService storeService, IShoppingCartTaxEvaluator taxEvaluator, IShoppingCartService shoppingShoppingCartService, IShoppingCartSearchService shoppingCartSearchService, IShoppingCartPromotionEvaluator marketingPromoEvaluator, ICacheManager<object> cacheManager)
+        public ShoppingCartBuilderImpl(IStoreService storeService, IShoppingCartService shoppingShoppingCartService, IShoppingCartSearchService shoppingCartSearchService, IMemberService memberService)
         {
             _storeService = storeService;
-            _taxEvaluator = taxEvaluator;
             _shoppingCartService = shoppingShoppingCartService;
             _shoppingCartSearchService = shoppingCartSearchService;
-            _marketingPromoEvaluator = marketingPromoEvaluator;
-            _cacheManager = cacheManager;
+            _memberService = memberService;
         }
 
         #region ICartBuilder Members
 
         public IShoppingCartBuilder TakeCart(ShoppingCart cart)
         {
+            if(cart == null)
+            {
+                throw new ArgumentNullException("cart");
+            }
             _cart = cart;
             return this;
         }
 
-        public virtual IShoppingCartBuilder GetOrCreateNewTransientCart(string storeId, string customerId, string cartName, string currency, string cultureName)
+        public virtual IShoppingCartBuilder GetOrCreateCart(string storeId, string customerId, string cartName, string currency, string cultureName)
         {
-            _cart = _cacheManager.Get(GetCartCacheKey(storeId, cartName, customerId, currency), CartCacheRegion, () =>
+            var criteria = new ShoppingCartSearchCriteria
             {
-                var criteria = new ShoppingCartSearchCriteria
-                {
-                    CustomerId = string.IsNullOrEmpty(customerId) ? "anonymous" : customerId,
-                    StoreId = storeId,
-                    Name = cartName
-                };
-                var searchResult = _shoppingCartSearchService.Search(criteria);
-                var cart = searchResult.Results.FirstOrDefault();
-                if (cart == null)
-                {
-                    cart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
-                    cart.Name = cartName;
-                    cart.Currency = currency;
-                    cart.CustomerId = customerId;
-                    cart.StoreId = storeId;
-                    _shoppingCartService.SaveChanges(new[] { cart });
-                    cart = _shoppingCartService.GetByIds(new[] { cart.Id }).FirstOrDefault();
-                }
-                return cart;
-            });
+                CustomerId = customerId,
+                StoreId = storeId,
+                Name = cartName,
+                Currency = currency
+            };
+            var searchResult = _shoppingCartSearchService.Search(criteria);
+            _cart = searchResult.Results.FirstOrDefault();
+            if (_cart == null)
+            {
+                var customerContact = _memberService.GetByIds(new[] { customerId }).OfType<Contact>().FirstOrDefault();
+                _cart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
+                _cart.Name = cartName;
+                _cart.LanguageCode = cultureName;
+                _cart.Currency = currency;
+                _cart.CustomerId = customerId;
+                _cart.CustomerName = customerContact != null ? customerContact.FullName : "Anonymous";
+                _cart.IsAnonymous = customerContact == null;
+                _cart.StoreId = storeId;
+
+                _shoppingCartService.SaveChanges(new[] { _cart });
+
+                _cart = _shoppingCartService.GetByIds(new[] { _cart.Id }).FirstOrDefault();
+            }
             return this;
         }
 
@@ -211,17 +214,12 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             _shoppingCartService.Delete(new[] { cart.Id });
 
-            InvalidateCache();
-
             return this;
         }
 
         public virtual IShoppingCartBuilder RemoveCart()
         {
             _shoppingCartService.Delete(new string[] { _cart.Id });
-
-            InvalidateCache();
-
             return this;
         }
 
@@ -236,11 +234,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 .SelectMany(x => x.CalculateRates(shippingEvaluationContext))
                 .Where(x => x.ShippingMethod == null || x.ShippingMethod.IsActive)
                 .ToArray();
-
-            //Evaluate tax for shipping methods
-            _taxEvaluator.EvaluateTaxes(this.Cart, availableShippingRates);
-            //Evaluate promotions for shipping methods
-            _marketingPromoEvaluator.EvaluatePromotions(this.Cart, availableShippingRates);
+                      
             return availableShippingRates;
         }
 
@@ -249,23 +243,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             return Store.PaymentMethods.Where(x => x.IsActive).ToList();
         }
 
-        public virtual IShoppingCartBuilder EvaluateTaxes()
-        {
-            _taxEvaluator.EvaluateTaxes(this.Cart);
-            return this;
-        }
-
-        public virtual IShoppingCartBuilder EvaluatePromotions()
-        {
-            _marketingPromoEvaluator.EvaluatePromotions(this.Cart);
-            return this;
-        }
-
+    
         public virtual void Save()
         {
-            EvaluatePromotionsAndTaxes();
-            //Invalidate cart in cache
-            InvalidateCache();
             _shoppingCartService.SaveChanges(new[] { _cart });
         }
 
@@ -289,24 +269,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-        private void InvalidateCache()
-        {
-            _cacheManager.Remove(CartCaheKey, CartCacheRegion);
-        }
-
-        private string CartCaheKey
-        {
-            get
-            {
-                if (_cart == null)
-                {
-                    throw new Exception("Cart is not set");
-                }
-                return GetCartCacheKey(_cart.StoreId, _cart.Name, _cart.CustomerId, _cart.Currency);
-            }
-        }
-
-
+    
         private void InnerChangeItemQuantity(LineItem lineItem, int quantity)
         {
             if (lineItem != null)
@@ -334,18 +297,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 lineItem.Id = null;
                 _cart.Items.Add(lineItem);
             }
-        }
-
-        private void EvaluatePromotionsAndTaxes()
-        {
-            EvaluatePromotions();
-            EvaluateTaxes();
-        }
-
-        private string GetCartCacheKey(string storeId, string cartName, string customerId, string currency)
-        {
-            return "CartBuilder:" + string.Join(storeId, cartName, customerId, currency);
-        }
+        }     
     }
 }
 

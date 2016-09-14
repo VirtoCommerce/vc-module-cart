@@ -17,10 +17,10 @@ namespace VirtoCommerce.CartModule.Data.Services
         IShoppingCartBuilder TakeCart(ShoppingCart cart);
 
         /// <summary>
-        /// Load or created new cart for current user and capture it
+        /// Load or created new cart with specified parameters
         /// </summary>
         /// <returns></returns>
-        IShoppingCartBuilder GetOrCreateNewTransientCart(string storeId, string customerId, string cartName, string currency, string cultureName);
+        IShoppingCartBuilder GetOrCreateCart(string storeId, string customerId, string cartName, string currency, string cultureName);
 
         /// <summary>
         /// Add new lineitem  to cart
@@ -110,18 +110,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 		/// <returns></returns>
 		ICollection<Domain.Payment.Model.PaymentMethod> GetAvailablePaymentMethods();
 
-        /// <summary>
-		/// Evaluate marketing discounts for captured cart
-		/// </summary>
-		/// <returns></returns>
-		IShoppingCartBuilder EvaluatePromotions();
-
-        /// <summary>
-        /// Evaluate taxes  for captured cart
-        /// </summary>
-        /// <returns></returns>
-        IShoppingCartBuilder EvaluateTaxes();
-
+       
         //Save cart changes
         void Save();
 

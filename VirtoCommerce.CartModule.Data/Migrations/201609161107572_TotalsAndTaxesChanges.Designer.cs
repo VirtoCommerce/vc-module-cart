@@ -7,13 +7,13 @@ namespace VirtoCommerce.CartModule.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.1-30610")]
-    public sealed partial class CartNewTotalsAndTax : IMigrationMetadata
+    public sealed partial class TotalsAndTaxesChanges : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CartNewTotalsAndTax));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(TotalsAndTaxesChanges));
         
         string IMigrationMetadata.Id
         {
-            get { return "201609061251293_CartNewTotalsAndTax"; }
+            get { return "201609161107572_TotalsAndTaxesChanges"; }
         }
         
         string IMigrationMetadata.Source

@@ -152,10 +152,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                 }
                 shipment.ShipmentMethodCode = shippingRate.ShippingMethod.Code;
                 shipment.ShipmentMethodOption = shippingRate.OptionName;
-                shipment.ShippingPrice = shippingRate.Rate;
-                shipment.ShippingPriceWithTax = shippingRate.RateWithTax;
-                shipment.DiscountTotal = shippingRate.DiscountAmount;
-                shipment.DiscountTotalWithTax = shippingRate.DiscountAmountWithTax;
+                shipment.Price = shippingRate.Rate;
+                shipment.DiscountAmount = shippingRate.DiscountAmount;
                 shipment.TaxType = shippingRate.ShippingMethod.TaxType;
             }
             return this;

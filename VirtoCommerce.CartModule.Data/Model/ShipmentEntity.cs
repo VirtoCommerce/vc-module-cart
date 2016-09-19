@@ -48,14 +48,16 @@ namespace VirtoCommerce.CartModule.Data.Model
 
 		public bool TaxIncluded { get; set; }
 		[Column(TypeName = "Money")]
-		public decimal ShippingPrice { get; set; }
+		public decimal Price { get; set; }
         [Column(TypeName = "Money")]
-        public decimal ShippingPriceWithTax { get; set; }
+        public decimal PriceWithTax { get; set; }
 
         [Column(TypeName = "Money")]
-		public decimal DiscountTotal { get; set; }
+		public decimal DiscountAmount { get; set; }
         [Column(TypeName = "Money")]
-        public decimal DiscountTotalWithTax { get; set; }
+        public decimal DiscountAmountWithTax { get; set; }
+
+        public decimal TaxPercentRate { get; set; }
 
         [Column(TypeName = "Money")]
 		public decimal TaxTotal { get; set; }
@@ -142,10 +144,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Total = this.Total;
             target.TotalWithTax = this.TotalWithTax;
             target.TaxTotal = this.TaxTotal;
-            target.ShippingPrice = this.ShippingPrice;
-            target.ShippingPriceWithTax = this.ShippingPriceWithTax;
-            target.DiscountTotal = this.DiscountTotal;
-            target.DiscountTotal = this.DiscountTotalWithTax;
+            target.Price = this.Price;
+            target.PriceWithTax = this.PriceWithTax;
+            target.DiscountAmount = this.DiscountAmount;
+            target.DiscountAmountWithTax = this.DiscountAmountWithTax;
+            target.TaxPercentRate = this.TaxPercentRate;
             target.TaxIncluded = this.TaxIncluded;
             target.Currency = this.Currency;
             target.WeightUnit = this.WeightUnit;

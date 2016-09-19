@@ -97,7 +97,8 @@ namespace VirtoCommerce.CartModule.Data.Model
         public decimal DiscountAmountWithTax { get; set; }
         [Column(TypeName = "Money")]
 		public decimal TaxTotal { get; set; }
-		[StringLength(64)]
+        public decimal TaxPercentRate { get; set; }
+        [StringLength(64)]
 		public string TaxType { get; set; }
 
 		public virtual ShoppingCartEntity ShoppingCart { get; set; }
@@ -155,6 +156,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.DiscountAmountWithTax = this.DiscountAmountWithTax;
             target.Quantity = this.Quantity;
             target.TaxTotal = this.TaxTotal;
+            target.TaxPercentRate = this.TaxPercentRate;
             target.Weight = this.Weight;
             target.Height = this.Height;
             target.Width = this.Width;

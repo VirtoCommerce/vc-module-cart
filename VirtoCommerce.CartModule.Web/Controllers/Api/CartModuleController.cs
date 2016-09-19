@@ -212,8 +212,8 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ResponseType(typeof(ShoppingCart))]
         public IHttpActionResult GetCartById(string cartId)
         {
-            var retVal = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();       
-            return Ok(retVal);
+            var retval = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();
+            return Ok(retval);
         }
 
         /// <summary>

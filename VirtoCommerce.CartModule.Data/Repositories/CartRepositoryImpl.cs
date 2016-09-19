@@ -71,7 +71,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<ShipmentItemEntity>().HasRequired(x => x.Shipment)
                                        .WithMany(x => x.Items)
-                                       .HasForeignKey(x => x.ShipmentId).WillCascadeOnDelete(false);
+                                       .HasForeignKey(x => x.ShipmentId).WillCascadeOnDelete(true);
 
 
             modelBuilder.Entity<ShipmentItemEntity>().ToTable("CartShipmentItem");
@@ -87,11 +87,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<AddressEntity>().HasOptional(x => x.Shipment)
                                        .WithMany(x => x.Addresses)
-                                       .HasForeignKey(x => x.ShipmentId);
+                                       .HasForeignKey(x => x.ShipmentId).WillCascadeOnDelete(true);
 
             modelBuilder.Entity<AddressEntity>().HasOptional(x => x.Payment)
                                        .WithMany(x => x.Addresses)
-                                       .HasForeignKey(x => x.PaymentId);
+                                       .HasForeignKey(x => x.PaymentId).WillCascadeOnDelete(true); 
 
             modelBuilder.Entity<AddressEntity>().ToTable("CartAddress");
             #endregion
@@ -114,15 +114,15 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<TaxDetailEntity>().HasOptional(x => x.ShoppingCart)
                                        .WithMany(x => x.TaxDetails)
-                                       .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(false);
+                                       .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(true);
 
             modelBuilder.Entity<TaxDetailEntity>().HasOptional(x => x.Shipment)
                                        .WithMany(x => x.TaxDetails)
-                                       .HasForeignKey(x => x.ShipmentId).WillCascadeOnDelete(false);
+                                       .HasForeignKey(x => x.ShipmentId).WillCascadeOnDelete(true);
 
             modelBuilder.Entity<TaxDetailEntity>().HasOptional(x => x.LineItem)
                                        .WithMany(x => x.TaxDetails)
-                                       .HasForeignKey(x => x.LineItemId).WillCascadeOnDelete(false);
+                                       .HasForeignKey(x => x.LineItemId).WillCascadeOnDelete(true);
 
 
             modelBuilder.Entity<TaxDetailEntity>().ToTable("CartTaxDetail");
@@ -135,15 +135,15 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<DiscountEntity>().HasOptional(x => x.ShoppingCart)
                                        .WithMany(x => x.Discounts)
-                                       .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(false);
+                                       .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(true);
 
             modelBuilder.Entity<DiscountEntity>().HasOptional(x => x.Shipment)
                                        .WithMany(x => x.Discounts)
-                                       .HasForeignKey(x => x.ShipmentId).WillCascadeOnDelete(false);
+                                       .HasForeignKey(x => x.ShipmentId).WillCascadeOnDelete(true);
 
             modelBuilder.Entity<DiscountEntity>().HasOptional(x => x.LineItem)
                                        .WithMany(x => x.Discounts)
-                                       .HasForeignKey(x => x.LineItemId).WillCascadeOnDelete(false);
+                                       .HasForeignKey(x => x.LineItemId).WillCascadeOnDelete(true);
 
 
             modelBuilder.Entity<DiscountEntity>().ToTable("CartDiscount");
@@ -198,17 +198,13 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public void RemoveCarts(string[] ids)
         {
+
             var carts = GetShoppingCartsByIds(ids);
             if(!carts.IsNullOrEmpty())
             {
                 foreach (var cart in carts)
                 {
-                    //Need manually remove addresses because SQL not allow create cascade delete for address table
-                    var addresses = cart.Shipments.SelectMany(x => x.Addresses).Concat(cart.Payments.SelectMany(x => x.Addresses)).ToArray();
-                    foreach (var address in addresses)
-                    {
-                        Remove(address);
-                    }
+                 
                     Remove(cart);
                 }
             }

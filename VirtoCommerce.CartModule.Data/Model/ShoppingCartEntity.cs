@@ -73,8 +73,6 @@ namespace VirtoCommerce.CartModule.Data.Model
         [Column(TypeName = "Money")]
         public decimal DiscountAmount { get; set; }
         [Column(TypeName = "Money")]
-        public decimal DiscountAmountWithTax { get; set; }
-        [Column(TypeName = "Money")]
 		public decimal TaxTotal { get; set; }
         [StringLength(64)]
         public string ValidationType { get; set; }
@@ -176,7 +174,6 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.DiscountTotal = this.DiscountTotal;
             target.DiscountTotalWithTax = this.DiscountTotalWithTax;
             target.DiscountAmount = this.DiscountAmount;
-            target.DiscountAmountWithTax = this.DiscountAmountWithTax;
             target.TaxTotal = this.TaxTotal;
             target.Coupon = this.Coupon;         
 

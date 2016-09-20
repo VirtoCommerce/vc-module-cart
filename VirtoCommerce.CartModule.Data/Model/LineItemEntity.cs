@@ -164,6 +164,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.WeightUnit = this.WeightUnit;
             target.Length = this.Length;
             target.TaxType = this.TaxType;
+            target.Comment = this.Comment;
       
             if (!this.Discounts.IsNullCollection())
             {

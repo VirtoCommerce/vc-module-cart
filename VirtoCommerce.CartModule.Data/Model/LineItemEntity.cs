@@ -80,6 +80,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 		public decimal? Length { get; set; }
 		public decimal? Width { get; set; }
 
+        public bool IsReadOnly { get; set; }
         [StringLength(128)]
         public string PriceId { get; set; }
 
@@ -165,7 +166,20 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Length = this.Length;
             target.TaxType = this.TaxType;
             target.Comment = this.Comment;
-      
+            target.IsReadOnly = this.IsReadOnly;
+            target.ValidationType = this.ValidationType;
+            target.PriceId = this.PriceId;
+            target.LanguageCode = this.LanguageCode;
+            target.IsReccuring = this.IsReccuring;
+            target.IsGift = this.IsGift;
+            target.ImageUrl = this.ImageUrl;
+            target.ProductId = this.ProductId;
+            target.ProductType = this.ProductType;
+            target.ShipmentMethodCode = this.ShipmentMethodCode;
+            target.RequiredShipping = this.RequiredShipping;
+            target.ProductType = this.ProductType;
+            target.FulfilmentLocationCode = this.FulfilmentLocationCode;
+
             if (!this.Discounts.IsNullCollection())
             {
                 var discountComparer = AnonymousComparer.Create((DiscountEntity x) => x.PromotionId);

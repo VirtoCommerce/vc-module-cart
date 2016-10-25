@@ -12,6 +12,7 @@ namespace VirtoCommerce.CartModule.Web.JsonConverters
 {
     public class PolymorphicCartJsonConverter : JsonConverter
     {
+        private static Type[] _knowTypes = new[] { typeof(ShoppingCart), typeof(ShoppingCartSearchCriteria), typeof(LineItem), typeof(Shipment), typeof(Payment) };
         public PolymorphicCartJsonConverter()
         {
         }
@@ -21,7 +22,7 @@ namespace VirtoCommerce.CartModule.Web.JsonConverters
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(ShoppingCart).IsAssignableFrom(objectType) || objectType == typeof(ShoppingCartSearchCriteria);
+            return _knowTypes.Any(x=> x.IsAssignableFrom(objectType));
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -35,7 +36,19 @@ namespace VirtoCommerce.CartModule.Web.JsonConverters
             else if (objectType == typeof(ShoppingCartSearchCriteria))
             {
                 retVal = AbstractTypeFactory<ShoppingCartSearchCriteria>.TryCreateInstance();
-            }          
+            }
+            else if(objectType == typeof(LineItem))
+            {
+                retVal = AbstractTypeFactory<LineItem>.TryCreateInstance();
+            }
+            else if (objectType == typeof(Shipment))
+            {
+                retVal = AbstractTypeFactory<Shipment>.TryCreateInstance();
+            }
+            else if (objectType == typeof(Payment))
+            {
+                retVal = AbstractTypeFactory<Payment>.TryCreateInstance();
+            }
             serializer.Populate(obj.CreateReader(), retVal);
             return retVal;
         }

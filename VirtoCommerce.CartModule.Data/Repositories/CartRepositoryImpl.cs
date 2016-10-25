@@ -178,7 +178,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             get { return GetAsQueryable<ShipmentEntity>(); }
         }
 
-        public ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null)
+        public virtual ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null)
         {
             var query = ShoppingCarts.Include(x => x.TaxDetails)
                                      .Include(x => x.Discounts)
@@ -196,7 +196,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             return query.ToArray();
         }
 
-        public void RemoveCarts(string[] ids)
+        public virtual void RemoveCarts(string[] ids)
         {
 
             var carts = GetShoppingCartsByIds(ids);

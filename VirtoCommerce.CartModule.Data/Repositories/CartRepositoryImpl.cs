@@ -91,7 +91,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<AddressEntity>().HasOptional(x => x.Payment)
                                        .WithMany(x => x.Addresses)
-                                       .HasForeignKey(x => x.PaymentId).WillCascadeOnDelete(true); 
+                                       .HasForeignKey(x => x.PaymentId).WillCascadeOnDelete(true);
 
             modelBuilder.Entity<AddressEntity>().ToTable("CartAddress");
             #endregion
@@ -178,33 +178,48 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             get { return GetAsQueryable<ShipmentEntity>(); }
         }
 
+        protected IQueryable<DiscountEntity> Discounts
+        {
+            get { return GetAsQueryable<DiscountEntity>(); }
+        }
+
+        protected IQueryable<TaxDetailEntity> TaxDetails
+        {
+            get { return GetAsQueryable<TaxDetailEntity>(); }
+        }
+
         public virtual ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null)
         {
-            var query = ShoppingCarts.Include(x => x.TaxDetails)
-                                     .Include(x => x.Discounts)
-                                     .Where(x => ids.Contains(x.Id));
-            var addresses = Addresses.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
-            var payments = Payments.Include(x => x.Addresses).Where(x =>ids.Contains(x.ShoppingCartId)).ToArray();
-            var lineItems = LineItems.Include(x => x.Discounts)
-                                     .Include(x => x.TaxDetails)
-                                     .Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
-            var shipments = Shipments.Include(x => x.TaxDetails)
-                                     .Include(x => x.Discounts)
-                                     .Include(x => x.Addresses)
-                                     .Include(x => x.Items)
-                                     .Where(x =>ids.Contains(x.ShoppingCartId)).ToArray();
-            return query.ToArray();
+            var carts = ShoppingCarts.Where(x => ids.Contains(x.Id)).ToArray();
+
+            var cartTaxDetails = TaxDetails.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+            var cartDiscounts = Discounts.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+            var cartAddresses = Addresses.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+
+            var payments = Payments.Include(x => x.Addresses)
+                                    .Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+
+            var lineItemIds = LineItems.Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
+            var lineItemsTaxDetails = TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();
+            var lineItemsDiscounts = Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();
+
+            var shipmentIds = Shipments.Include(x => x.Items).Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
+            var shipmentTaxDetails = TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
+            var shipmentDiscounts = Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
+            var shipmentAddresses = Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
+
+            return carts;
         }
 
         public virtual void RemoveCarts(string[] ids)
         {
 
             var carts = GetShoppingCartsByIds(ids);
-            if(!carts.IsNullOrEmpty())
+            if (!carts.IsNullOrEmpty())
             {
                 foreach (var cart in carts)
                 {
-                 
+
                     Remove(cart);
                 }
             }

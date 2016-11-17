@@ -119,6 +119,10 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 var query = repository.ShoppingCarts;
 
+                if (!string.IsNullOrEmpty(criteria.Status))
+                {
+                    query = query.Where(x => x.Status == criteria.Status);
+                }
                 if (!string.IsNullOrEmpty(criteria.Name))
                 {
                     query = query.Where(x => x.Name == criteria.Name);

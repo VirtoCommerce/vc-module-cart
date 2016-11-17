@@ -72,8 +72,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="VirtoCommerce.Domain, Version=2.17.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.17.0\lib\net451\VirtoCommerce.Domain.dll</HintPath>
+    <Reference Include="VirtoCommerce.Domain, Version=2.17.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Domain.2.18.0-rc2\lib\net451\VirtoCommerce.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Core, Version=2.12.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -92,6 +92,10 @@
     <Compile Include="Migrations\201609210920207_TotalsAndTaxesChanges.cs" />
     <Compile Include="Migrations\201609210920207_TotalsAndTaxesChanges.Designer.cs">
       <DependentUpon>201609210920207_TotalsAndTaxesChanges.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611161546084_PaymentSelfPricesFields.cs" />
+    <Compile Include="Migrations\201611161546084_PaymentSelfPricesFields.Designer.cs">
+      <DependentUpon>201611161546084_PaymentSelfPricesFields.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\ShoppingCartBuilderImpl.cs" />
     <Compile Include="Services\IShoppingCartBuilder.cs" />
@@ -218,6 +222,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609210920207_TotalsAndTaxesChanges.resx">
       <DependentUpon>201609210920207_TotalsAndTaxesChanges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611161546084_PaymentSelfPricesFields.resx">
+      <DependentUpon>201611161546084_PaymentSelfPricesFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -63,6 +63,10 @@ namespace VirtoCommerce.CartModule.Data.Model
         [Column(TypeName = "Money")]
         public decimal ShippingTotalWithTax { get; set; }
         [Column(TypeName = "Money")]
+        public decimal PaymentTotal { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal PaymentTotalWithTax { get; set; }
+        [Column(TypeName = "Money")]
 		public decimal HandlingTotal { get; set; }
         [Column(TypeName = "Money")]
         public decimal HandlingTotalWithTax { get; set; }
@@ -76,6 +80,8 @@ namespace VirtoCommerce.CartModule.Data.Model
 		public decimal TaxTotal { get; set; }
         [StringLength(64)]
         public string ValidationType { get; set; }
+        [StringLength(64)]
+        public string Status { get; set; }
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; }
         public virtual ObservableCollection<AddressEntity> Addresses { get; set; }
@@ -155,6 +161,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (target == null)
                 throw new ArgumentNullException("target");
 
+            target.Status = this.Status;
             target.Currency = this.Currency;
             target.ValidationType = this.ValidationType;
             target.CustomerId = this.CustomerId;
@@ -169,6 +176,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.SubTotalWithTax = this.SubTotalWithTax;
             target.ShippingTotal = this.ShippingTotal;
             target.ShippingTotalWithTax = this.ShippingTotalWithTax;
+            target.PaymentTotal = this.PaymentTotal;
+            target.PaymentTotalWithTax = this.PaymentTotalWithTax;
             target.HandlingTotal = this.HandlingTotal;
             target.HandlingTotalWithTax = this.HandlingTotalWithTax;
             target.DiscountTotal = this.DiscountTotal;

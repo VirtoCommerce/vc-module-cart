@@ -28,6 +28,9 @@ namespace VirtoCommerce.CartModule.Data.Model
 		public virtual LineItemEntity LineItem { get; set; }
 		public string LineItemId { get; set; }
 
+        public virtual PaymentEntity Payment { get; set; }
+        public string PaymentId { get; set; }
+
         public virtual TaxDetail ToModel(TaxDetail taxDetail)
         {
             if (taxDetail == null)

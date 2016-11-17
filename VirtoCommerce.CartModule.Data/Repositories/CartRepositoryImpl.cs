@@ -124,6 +124,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                                        .WithMany(x => x.TaxDetails)
                                        .HasForeignKey(x => x.LineItemId).WillCascadeOnDelete(true);
 
+            modelBuilder.Entity<TaxDetailEntity>().HasOptional(x => x.Payment)
+                                      .WithMany(x => x.TaxDetails)
+                                      .HasForeignKey(x => x.PaymentId).WillCascadeOnDelete(true);
+
 
             modelBuilder.Entity<TaxDetailEntity>().ToTable("CartTaxDetail");
             #endregion
@@ -144,6 +148,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<DiscountEntity>().HasOptional(x => x.LineItem)
                                        .WithMany(x => x.Discounts)
                                        .HasForeignKey(x => x.LineItemId).WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<DiscountEntity>().HasOptional(x => x.Payment)
+                                     .WithMany(x => x.Discounts)
+                                     .HasForeignKey(x => x.PaymentId).WillCascadeOnDelete(true);
 
 
             modelBuilder.Entity<DiscountEntity>().ToTable("CartDiscount");
@@ -196,8 +204,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             var cartDiscounts = Discounts.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
             var cartAddresses = Addresses.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
 
-            var payments = Payments.Include(x => x.Addresses)
-                                    .Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+            var paymentIds = Payments.Include(x => x.Addresses)
+                                    .Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
+            var paymentTaxDetails = TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).ToArray();
+            var paymentDiscounts = Discounts.Where(x => paymentIds.Contains(x.PaymentId)).ToArray();
 
             var lineItemIds = LineItems.Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
             var lineItemsTaxDetails = TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();

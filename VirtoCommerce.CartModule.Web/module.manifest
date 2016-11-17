@@ -6,7 +6,7 @@
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="2.18.0" />
     </dependencies>
-
+    
     <title>Shopping cart module</title>
     <description>Shopping cart / checkout functionality</description>
     <authors>

@@ -37,7 +37,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         #region ICartBuilder Members
 
-        public IShoppingCartBuilder TakeCart(ShoppingCart cart)
+        public virtual IShoppingCartBuilder TakeCart(ShoppingCart cart)
         {
             if(cart == null)
             {
@@ -267,8 +267,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-    
-        private void InnerChangeItemQuantity(LineItem lineItem, int quantity)
+
+        protected virtual void InnerChangeItemQuantity(LineItem lineItem, int quantity)
         {
             if (lineItem != null)
             {
@@ -283,7 +283,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-        private void AddLineItem(LineItem lineItem)
+        protected virtual void AddLineItem(LineItem lineItem)
         {
             var existingLineItem = _cart.Items.FirstOrDefault(li => li.ProductId == lineItem.ProductId);
             if (existingLineItem != null)

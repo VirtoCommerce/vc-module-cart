@@ -41,7 +41,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<LineItemEntity>().HasKey(x => x.Id)
                     .Property(x => x.Id);
 
-            modelBuilder.Entity<LineItemEntity>().HasOptional(x => x.ShoppingCart)
+            modelBuilder.Entity<LineItemEntity>().HasRequired(x => x.ShoppingCart)
                                        .WithMany(x => x.Items)
                                        .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(true);
 
@@ -100,7 +100,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<PaymentEntity>().HasKey(x => x.Id)
                 .Property(x => x.Id);
 
-            modelBuilder.Entity<PaymentEntity>().HasOptional(x => x.ShoppingCart)
+            modelBuilder.Entity<PaymentEntity>().HasRequired(x => x.ShoppingCart)
                                        .WithMany(x => x.Payments)
                                        .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(true);
 

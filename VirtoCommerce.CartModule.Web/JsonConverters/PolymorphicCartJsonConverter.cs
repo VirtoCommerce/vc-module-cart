@@ -33,19 +33,19 @@ namespace VirtoCommerce.CartModule.Web.JsonConverters
             {
                 retVal = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
             }
-            else if (objectType == typeof(ShoppingCartSearchCriteria))
+            else if (typeof(ShoppingCartSearchCriteria).IsAssignableFrom(objectType))
             {
                 retVal = AbstractTypeFactory<ShoppingCartSearchCriteria>.TryCreateInstance();
             }
-            else if(objectType == typeof(LineItem))
+            else if(typeof(LineItem).IsAssignableFrom(objectType))
             {
                 retVal = AbstractTypeFactory<LineItem>.TryCreateInstance();
             }
-            else if (objectType == typeof(Shipment))
+            else if (typeof(Shipment).IsAssignableFrom(objectType))
             {
                 retVal = AbstractTypeFactory<Shipment>.TryCreateInstance();
             }
-            else if (objectType == typeof(Payment))
+            else if (typeof(Payment).IsAssignableFrom(objectType))
             {
                 retVal = AbstractTypeFactory<Payment>.TryCreateInstance();
             }

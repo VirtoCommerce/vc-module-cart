@@ -82,6 +82,10 @@ namespace VirtoCommerce.CartModule.Data.Model
         public string ValidationType { get; set; }
         [StringLength(64)]
         public string Status { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal Fee { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal FeeWithTax { get; set; }
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; }
         public virtual ObservableCollection<AddressEntity> Addresses { get; set; }
@@ -160,7 +164,8 @@ namespace VirtoCommerce.CartModule.Data.Model
         {
             if (target == null)
                 throw new ArgumentNullException("target");
-
+            target.Fee = this.Fee;
+            target.FeeWithTax = this.FeeWithTax;
             target.Status = this.Status;
             target.Currency = this.Currency;
             target.ValidationType = this.ValidationType;

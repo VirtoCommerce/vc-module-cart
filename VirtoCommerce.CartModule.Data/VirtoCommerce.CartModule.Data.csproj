@@ -101,6 +101,10 @@
     <Compile Include="Migrations\201612291048554_UpdateKeys.Designer.cs">
       <DependentUpon>201612291048554_UpdateKeys.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612291314050_FeeFields.cs" />
+    <Compile Include="Migrations\201612291314050_FeeFields.Designer.cs">
+      <DependentUpon>201612291314050_FeeFields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\ShoppingCartBuilderImpl.cs" />
     <Compile Include="Services\IShoppingCartBuilder.cs" />
     <Compile Include="Common\StringExtension.cs" />
@@ -232,6 +236,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612291048554_UpdateKeys.resx">
       <DependentUpon>201612291048554_UpdateKeys.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612291314050_FeeFields.resx">
+      <DependentUpon>201612291314050_FeeFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

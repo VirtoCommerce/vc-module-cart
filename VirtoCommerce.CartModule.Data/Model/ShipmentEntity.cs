@@ -66,6 +66,10 @@ namespace VirtoCommerce.CartModule.Data.Model
         public decimal Total { get; set; }
         [Column(TypeName = "Money")]
         public decimal TotalWithTax { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal Fee { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal FeeWithTax { get; set; }
 
         [StringLength(64)]
 		public string TaxType { get; set; }
@@ -140,6 +144,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (target == null)
                 throw new NullReferenceException("target");
 
+            target.Fee = this.Fee;
+            target.FeeWithTax = this.FeeWithTax;
             target.ShipmentMethodCode = this.ShipmentMethodCode;
             target.Total = this.Total;
             target.TotalWithTax = this.TotalWithTax;

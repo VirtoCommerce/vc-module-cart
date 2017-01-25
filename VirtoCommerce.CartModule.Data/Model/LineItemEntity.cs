@@ -119,6 +119,7 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException("lineItem");
 
             lineItem.InjectFrom(this);
+            lineItem.Note = this.Comment;
             if (!this.Discounts.IsNullOrEmpty())
             {
                 lineItem.Discounts = this.Discounts.Select(x=> x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
@@ -135,6 +136,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             pkMap.AddPair(lineItem, this);
 
             this.InjectFrom(lineItem);
+            this.Comment = lineItem.Note;
 
             if (!lineItem.Discounts.IsNullOrEmpty())
             {

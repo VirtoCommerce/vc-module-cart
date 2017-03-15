@@ -105,6 +105,10 @@
     <Compile Include="Migrations\201612291314050_FeeFields.Designer.cs">
       <DependentUpon>201612291314050_FeeFields.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703151338032_TaxPercentRateConversion.cs" />
+    <Compile Include="Migrations\201703151338032_TaxPercentRateConversion.Designer.cs">
+      <DependentUpon>201703151338032_TaxPercentRateConversion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\ShoppingCartBuilderImpl.cs" />
     <Compile Include="Services\IShoppingCartBuilder.cs" />
     <Compile Include="Common\StringExtension.cs" />
@@ -239,6 +243,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612291314050_FeeFields.resx">
       <DependentUpon>201612291314050_FeeFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703151338032_TaxPercentRateConversion.resx">
+      <DependentUpon>201703151338032_TaxPercentRateConversion.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

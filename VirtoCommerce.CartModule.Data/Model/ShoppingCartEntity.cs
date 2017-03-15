@@ -86,6 +86,7 @@ namespace VirtoCommerce.CartModule.Data.Model
         public decimal Fee { get; set; }
         [Column(TypeName = "Money")]
         public decimal FeeWithTax { get; set; }
+        public decimal TaxPercentRate { get; set; }
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; }
         public virtual ObservableCollection<AddressEntity> Addresses { get; set; }
@@ -115,7 +116,7 @@ namespace VirtoCommerce.CartModule.Data.Model
                 {
                     Code = this.Coupon
                 };
-            }
+            }           
             return cart;
         }
 
@@ -156,7 +157,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (cart.Coupon != null)
             {
                 this.Coupon = cart.Coupon.Code;
-            }
+            }           
             return this;
         }
 
@@ -189,7 +190,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.DiscountTotalWithTax = this.DiscountTotalWithTax;
             target.DiscountAmount = this.DiscountAmount;
             target.TaxTotal = this.TaxTotal;
-            target.Coupon = this.Coupon;         
+            target.Coupon = this.Coupon;
+            target.TaxPercentRate = this.TaxPercentRate;
 
             if (!this.Items.IsNullCollection())
             {

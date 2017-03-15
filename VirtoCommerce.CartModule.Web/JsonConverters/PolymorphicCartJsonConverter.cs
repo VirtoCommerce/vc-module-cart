@@ -29,26 +29,10 @@ namespace VirtoCommerce.CartModule.Web.JsonConverters
         {
             object retVal = null;
             var obj = JObject.Load(reader);
-            if (typeof(ShoppingCart).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
-            }
-            else if (typeof(ShoppingCartSearchCriteria).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<ShoppingCartSearchCriteria>.TryCreateInstance();
-            }
-            else if(typeof(LineItem).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<LineItem>.TryCreateInstance();
-            }
-            else if (typeof(Shipment).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<Shipment>.TryCreateInstance();
-            }
-            else if (typeof(Payment).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<Payment>.TryCreateInstance();
-            }
+
+            var tryCreateInstance = typeof(AbstractTypeFactory<>).MakeGenericType(objectType).GetMethods().FirstOrDefault(x => x.Name.EqualsInvariant("TryCreateInstance") && x.GetParameters().Count() == 0);
+            retVal = tryCreateInstance.Invoke(null, null);
+
             serializer.Populate(obj.CreateReader(), retVal);
             return retVal;
         }

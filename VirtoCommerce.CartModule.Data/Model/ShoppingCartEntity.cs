@@ -109,14 +109,6 @@ namespace VirtoCommerce.CartModule.Data.Model
             cart.Shipments = this.Shipments.Select(x => x.ToModel(AbstractTypeFactory<Shipment>.TryCreateInstance())).ToList();
             cart.Payments = this.Payments.Select(x => x.ToModel(AbstractTypeFactory<Payment>.TryCreateInstance())).ToList();
             cart.TaxDetails = this.TaxDetails.Select(x => x.ToModel(AbstractTypeFactory<TaxDetail>.TryCreateInstance())).ToList();
-
-            if (!string.IsNullOrEmpty(this.Coupon))
-            {
-                cart.Coupon = new Coupon
-                {
-                    Code = this.Coupon
-                };
-            }           
             return cart;
         }
 
@@ -154,10 +146,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             {
                 this.TaxDetails = new ObservableCollection<TaxDetailEntity>(cart.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
             }
-            if (cart.Coupon != null)
-            {
-                this.Coupon = cart.Coupon.Code;
-            }           
+     
             return this;
         }
 

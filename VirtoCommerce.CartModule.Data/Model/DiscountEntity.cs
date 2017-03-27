@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Omu.ValueInjecter;
-using VirtoCommerce.Domain.Cart.Model;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
-	public class DiscountEntity : Entity
+    public class DiscountEntity : Entity
 	{
 		[StringLength(64)]
 		public string PromotionId { get; set; }

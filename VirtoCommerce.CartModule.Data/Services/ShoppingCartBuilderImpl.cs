@@ -12,6 +12,7 @@ using VirtoCommerce.Platform.Core.Common;
 using System.Collections.Concurrent;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Domain.Commerce.Model;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
@@ -113,10 +114,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual IShoppingCartBuilder AddCoupon(string couponCode)
         {
-            _cart.Coupon = new Domain.Cart.Model.Coupon
-            {
-                Code = couponCode
-            };
+            _cart.Coupon = couponCode;
 
             return this;
         }

@@ -39,6 +39,7 @@ namespace VirtoCommerce.CartModule.Web
             base.Initialize();
 
             _container.RegisterType<IEventPublisher<CartChangeEvent>, EventPublisher<CartChangeEvent>>();
+            _container.RegisterType<IEventPublisher<CartChangedEvent>, EventPublisher<CartChangedEvent>>();
 
             _container.RegisterType<ICartRepository>(new InjectionFactory(c => new CartRepositoryImpl(ConnectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
 

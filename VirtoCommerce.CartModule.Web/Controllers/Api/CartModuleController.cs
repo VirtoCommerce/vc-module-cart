@@ -10,6 +10,7 @@ using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.Model;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Cart.Services;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Shipping.Model;
 using VirtoCommerce.Domain.Store.Services;
@@ -152,7 +153,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPost]
         [Route("{cartId}/coupons/{couponCode}")]
-        [ResponseType(typeof(Coupon))]
+        [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> AddCartCoupon(string cartId, string couponCode)
         {
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(cartId)).LockAsync())
@@ -160,7 +161,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
                 var cart = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();
                 _cartBuilder.TakeCart(cart).AddCoupon(couponCode).Save();
             }
-            return Ok(_cartBuilder.Cart.Coupon);
+            return Ok();
         }
 
         [HttpDelete]

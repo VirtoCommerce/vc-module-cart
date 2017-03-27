@@ -20,16 +20,16 @@ namespace VirtoCommerce.CartModule.Data.Services
 {
 	public class ShoppingCartServiceImpl : ServiceBase, IShoppingCartService, IShoppingCartSearchService
 	{
-		private const string _workflowName = "CartRecalculate";
 		private Func<ICartRepository> _repositoryFactory;
-		private readonly IEventPublisher<CartChangeEvent> _eventPublisher;
+		private readonly IEventPublisher<CartChangeEvent> _changingEventPublisher;
         private readonly IDynamicPropertyService _dynamicPropertyService;
-
-        public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IEventPublisher<CartChangeEvent> eventPublisher, IDynamicPropertyService dynamicPropertyService)
+        private readonly IEventPublisher<CartChangedEvent> _changedEventPublisher;
+        public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IEventPublisher<CartChangeEvent> changingEventPublisher, IDynamicPropertyService dynamicPropertyService, IEventPublisher<CartChangedEvent> changedEventPublisher)
 		{
 			_repositoryFactory = repositoryFactory;
-			_eventPublisher = eventPublisher;
+			_changingEventPublisher = changingEventPublisher;
             _dynamicPropertyService = dynamicPropertyService;
+            _changedEventPublisher = changedEventPublisher;
         }
 
         #region IShoppingCartService Members
@@ -52,6 +52,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         public virtual void SaveChanges(ShoppingCart[] carts)
         {
             var pkMap = new PrimaryKeyResolvingMap();
+            var changedEvents = new List<CartChangedEvent>();
 
             using (var repository = _repositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
@@ -67,15 +68,18 @@ namespace VirtoCommerce.CartModule.Data.Services
                         if (targetCartEntity != null)
                         {
                             var origCart = targetCartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
-                            _eventPublisher.Publish(new CartChangeEvent(EntryState.Modified, origCart, cart));
+                            _changingEventPublisher.Publish(new CartChangeEvent(EntryState.Modified, origCart, cart));
+                            changedEvents.Add(new CartChangedEvent(EntryState.Modified, origCart, cart));
 
                             changeTracker.Attach(targetCartEntity);
                             sourceCartEntity.Patch(targetCartEntity);
                         }
                         else
                         {
+                            _changingEventPublisher.Publish(new CartChangeEvent(EntryState.Added, cart, cart));
+                            changedEvents.Add(new CartChangedEvent(EntryState.Modified, cart, cart));
+
                             repository.Add(sourceCartEntity);
-                            _eventPublisher.Publish(new CartChangeEvent(EntryState.Added, cart, cart));
                         }
                     }
                 }
@@ -86,6 +90,11 @@ namespace VirtoCommerce.CartModule.Data.Services
             foreach (var cart in carts)
             {
                 _dynamicPropertyService.SaveDynamicPropertyValues(cart);
+            }
+            //Raise changed events
+            foreach (var changedEvent in changedEvents)
+            {
+                _changedEventPublisher.Publish(changedEvent);
             }
 
         }
@@ -98,7 +107,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 var cartEntities = repository.GetShoppingCartsByIds(ids);
                 foreach (var cart in carts)
                 {
-                    _eventPublisher.Publish(new CartChangeEvent(Platform.Core.Common.EntryState.Deleted, cart, cart));
+                    _changingEventPublisher.Publish(new CartChangeEvent(Platform.Core.Common.EntryState.Deleted, cart, cart));
                 }
                 repository.RemoveCarts(ids);
                 foreach (var cart in carts)
@@ -106,6 +115,10 @@ namespace VirtoCommerce.CartModule.Data.Services
                     _dynamicPropertyService.DeleteDynamicPropertyValues(cart);
                 }
                 repository.UnitOfWork.Commit();
+                foreach (var cart in carts)
+                {
+                    _changedEventPublisher.Publish(new CartChangedEvent(Platform.Core.Common.EntryState.Deleted, cart, cart));
+                }
             }
         }
         #endregion

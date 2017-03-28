@@ -60,27 +60,23 @@ namespace VirtoCommerce.CartModule.Data.Services
                 var dataExistCarts = repository.GetShoppingCartsByIds(carts.Where(x => !x.IsTransient()).Select(x => x.Id).ToArray());
                 foreach (var cart in carts)
                 {
-                    var sourceCartEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance();
-                    if (sourceCartEntity != null)
+                    var originalEntity = dataExistCarts.FirstOrDefault(x => x.Id == cart.Id);
+                    var originalCart = originalEntity != null ? (ShoppingCart)originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()) : cart;
+
+                    var changingEvent = new CartChangeEvent(originalEntity == null ? EntryState.Added : EntryState.Modified, originalCart, cart);
+                    _changingEventPublisher.Publish(changingEvent);
+                    changedEvents.Add(new CartChangedEvent(changingEvent.ChangeState, changingEvent.OrigCart, changingEvent.ModifiedCart));
+
+                    var modifiedEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance()
+                                                                                 .FromModel(cart, pkMap) as ShoppingCartEntity;
+                    if (originalEntity != null)
                     {
-                        sourceCartEntity = sourceCartEntity.FromModel(cart, pkMap);
-                        var targetCartEntity = dataExistCarts.FirstOrDefault(x => x.Id == cart.Id);
-                        if (targetCartEntity != null)
-                        {
-                            var origCart = targetCartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
-                            _changingEventPublisher.Publish(new CartChangeEvent(EntryState.Modified, origCart, cart));
-                            changedEvents.Add(new CartChangedEvent(EntryState.Modified, origCart, cart));
-
-                            changeTracker.Attach(targetCartEntity);
-                            sourceCartEntity.Patch(targetCartEntity);
-                        }
-                        else
-                        {
-                            _changingEventPublisher.Publish(new CartChangeEvent(EntryState.Added, cart, cart));
-                            changedEvents.Add(new CartChangedEvent(EntryState.Modified, cart, cart));
-
-                            repository.Add(sourceCartEntity);
-                        }
+                        changeTracker.Attach(originalEntity);
+                        modifiedEntity.Patch(originalEntity);
+                    }
+                    else
+                    {
+                        repository.Add(modifiedEntity);
                     }
                 }
                 CommitChanges(repository);

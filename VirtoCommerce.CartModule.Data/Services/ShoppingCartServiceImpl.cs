@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VirtoCommerce.CartModule.Data.Extensions;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Domain.Cart.Events;
@@ -38,7 +39,10 @@ namespace VirtoCommerce.CartModule.Data.Services
 			List<ShoppingCart> retVal = new List<ShoppingCart>();
 			using (var repository = _repositoryFactory())
 			{
-				var cartEntities = repository.GetShoppingCartsByIds(cartIds);
+                //Disable DBContext change tracking for better performance 
+                repository.DisableChangesTracking();
+
+                var cartEntities = repository.GetShoppingCartsByIds(cartIds);
 				foreach(var cartEntity in cartEntities)
 				{
 					var cart = cartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());

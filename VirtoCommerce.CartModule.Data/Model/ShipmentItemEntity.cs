@@ -52,7 +52,6 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException("target");
 
             target.BarCode = this.BarCode;
-            target.ShipmentId = this.ShipmentId;
             target.Quantity = this.Quantity;            
         }
 

@@ -14,10 +14,10 @@ Installing the module:
 # Available resources
 * Module related service implementations as a <a href="https://www.nuget.org/packages/VirtoCommerce.CartModule.Data" target="_blank">NuGet package</a>
 * API client as a <a href="https://www.nuget.org/packages/VirtoCommerce.CartModule.Client" target="_blank">NuGet package</a>
-* API client documentation http://demo.virtocommerce.com/admin/docs/ui/index#!/Shopping_cart_module
+* API client documentation http://admin-demo.virtocommerce.com/docs/ui/index#!/Shopping_cart_module
 
 # License
-Copyright (c) Virtosoftware Ltd.  All rights reserved.
+Copyright (c) Virto Solutions LTD.  All rights reserved.
 
 Licensed under the Virto Commerce Open Software License (the "License"); you
 may not use this file except in compliance with the License. You may

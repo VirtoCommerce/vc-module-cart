@@ -15,7 +15,7 @@
     <owners>
         <owner>Virto Commerce</owner>
     </owners>
-    <projectUrl>https://virtocommerce.com/virto-shoppingcart-module</projectUrl>
+    <projectUrl>https://virtocommerce.com/apps/extensions/virto-shoppingcart-module</projectUrl>
     <iconUrl>Modules/$(VirtoCommerce.Cart)/Content/logo.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
     <copyright>Copyright © 2011-2017 Virto Commerce. All rights reserved</copyright>

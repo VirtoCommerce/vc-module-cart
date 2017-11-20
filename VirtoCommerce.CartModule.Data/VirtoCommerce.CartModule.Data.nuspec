@@ -2,7 +2,7 @@
 <package>
     <metadata>
         <id>$id$</id>
-        <version>2.16.0</version>
+        <version>$version$</version>
         <title>$title$</title>
         <authors>VirtoCommerce</authors>
         <owners>VirtoCommerce</owners>
@@ -11,6 +11,6 @@
         <iconUrl>https://github.com/VirtoCommerce/vc-module-cart/raw/master/NuGet/icon.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Shopping cart implementation</description>
-        <copyright>Copyright © VirtoCommerce 2011-2016</copyright>
+        <copyright>Copyright © VirtoCommerce 2011-2017</copyright>
     </metadata>
 </package>

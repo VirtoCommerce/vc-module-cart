@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Platform.Core.Common;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
@@ -13,6 +14,9 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public int Quantity { get; set; }
 
+        [NotMapped]
+        public LineItem ModelLineItem { get; set; }
+        
         public string LineItemId { get; set; }
         public virtual LineItemEntity LineItem { get; set; }
 
@@ -36,7 +40,8 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException(nameof(shipmentItem));
 
             this.InjectFrom(shipmentItem);
-
+            //Preserve link of the  original model LineItem for future references binding LineItems with  ShipmentLineItems 
+            ModelLineItem = shipmentItem.LineItem;
             pkMap.AddPair(shipmentItem, this);
 
             return this;

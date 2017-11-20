@@ -152,6 +152,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (cart.Shipments != null)
             {
                 Shipments = new ObservableCollection<ShipmentEntity>(cart.Shipments.Select(x => AbstractTypeFactory<ShipmentEntity>.TryCreateInstance().FromModel(x, pkMap)));
+                //Trying to bind shipment items with the  lineItems by reference quality 
+                foreach (var shipmentItemEntity in this.Shipments.SelectMany(x => x.Items))
+                {
+                    shipmentItemEntity.LineItem = this.Items.FirstOrDefault(x => x.ModelLineItem == shipmentItemEntity.ModelLineItem);
+                }
             }
 
             if (cart.Payments != null)

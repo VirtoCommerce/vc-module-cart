@@ -119,6 +119,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string TaxType { get; set; }
 
+        [NotMapped]
+        public LineItem ModelLineItem { get; set; }
+
         public string ShoppingCartId { get; set; }
         public virtual ShoppingCartEntity ShoppingCart { get; set; }
 
@@ -155,6 +158,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             pkMap.AddPair(lineItem, this);
 
             this.InjectFrom(lineItem);
+            //Preserve link of the  original model LineItem for future references binding LineItems with  ShipmentLineItems 
+            ModelLineItem = lineItem;
 
             Comment = lineItem.Note;
 

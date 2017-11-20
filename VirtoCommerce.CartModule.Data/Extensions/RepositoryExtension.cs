@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CartModule.Data.Extensions
@@ -11,10 +7,11 @@ namespace VirtoCommerce.CartModule.Data.Extensions
     {
         public static void DisableChangesTracking(this IRepository repository)
         {
-            //http://stackoverflow.com/questions/29106477/nullreferenceexception-in-entity-framework-from-trygetcachedrelatedend
-            if (repository is System.Data.Entity.DbContext)
+            // http://stackoverflow.com/questions/29106477/nullreferenceexception-in-entity-framework-from-trygetcachedrelatedend
+            var dbContext = repository as DbContext;
+            if (dbContext != null)
             {
-                var dbConfiguration = ((System.Data.Entity.DbContext)repository).Configuration;
+                var dbConfiguration = dbContext.Configuration;
                 dbConfiguration.ProxyCreationEnabled = false;
                 dbConfiguration.AutoDetectChangesEnabled = false;
             }

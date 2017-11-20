@@ -110,6 +110,9 @@
     <Compile Include="Migrations\201703151338032_TaxPercentRateConversion.Designer.cs">
       <DependentUpon>201703151338032_TaxPercentRateConversion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\AddressComparer.cs" />
+    <Compile Include="Model\DiscountEntityComparer.cs" />
+    <Compile Include="Model\TaxDetailEntityComparer.cs" />
     <Compile Include="Services\ShoppingCartBuilderImpl.cs" />
     <Compile Include="Services\IShoppingCartBuilder.cs" />
     <Compile Include="Common\StringExtension.cs" />

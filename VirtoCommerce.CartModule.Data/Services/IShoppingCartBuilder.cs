@@ -8,7 +8,7 @@ namespace VirtoCommerce.CartModule.Data.Services
     /// Represent abstraction for working with customer shopping cart
     /// </summary>
     public interface IShoppingCartBuilder
-	{
+    {
         /// <summary>
         ///  Capture passed cart and all next changes will be implemented on it
         /// </summary>
@@ -25,17 +25,17 @@ namespace VirtoCommerce.CartModule.Data.Services
         /// <summary>
         /// Add new lineitem  to cart
         /// </summary>
-        /// <param name="addItemModel"></param>
+        /// <param name="lineItem"></param>
         /// <returns></returns>
         IShoppingCartBuilder AddItem(LineItem lineItem);
-               
+
         /// <summary>
         /// Change cart item qty by product index
         /// </summary>
         /// <param name="lineItemId"></param>
         /// <param name="quantity"></param>
         /// <returns></returns>
-        IShoppingCartBuilder ChangeItemQuantity(string lineItemId, int quantity);     
+        IShoppingCartBuilder ChangeItemQuantity(string lineItemId, int quantity);
 
         /// <summary>
         /// Remove item from cart by id
@@ -66,10 +66,9 @@ namespace VirtoCommerce.CartModule.Data.Services
         /// <summary>
         /// Add or update shipment to cart
         /// </summary>
-        /// <param name="updateModel"></param>
-        /// <param name="taxEvaluationContext"></param>
+        /// <param name="shipment"></param>
         /// <returns></returns>
-        IShoppingCartBuilder AddOrUpdateShipment(Domain.Cart.Model.Shipment shipment);
+        IShoppingCartBuilder AddOrUpdateShipment(Shipment shipment);
 
         /// <summary>
         /// Remove exist shipment from cart
@@ -98,22 +97,22 @@ namespace VirtoCommerce.CartModule.Data.Services
         /// <returns></returns>
         IShoppingCartBuilder RemoveCart();
 
-	    /// <summary>
-		/// Returns all available shipment methods for current cart
-		/// </summary>
-		/// <returns></returns>
-		ICollection<ShippingRate> GetAvailableShippingRates();
+        /// <summary>
+        /// Returns all available shipment methods for current cart
+        /// </summary>
+        /// <returns></returns>
+        ICollection<ShippingRate> GetAvailableShippingRates();
 
-		/// <summary>
-		/// Returns all available payment methods for current cart
-		/// </summary>
-		/// <returns></returns>
-		ICollection<Domain.Payment.Model.PaymentMethod> GetAvailablePaymentMethods();
+        /// <summary>
+        /// Returns all available payment methods for current cart
+        /// </summary>
+        /// <returns></returns>
+        ICollection<Domain.Payment.Model.PaymentMethod> GetAvailablePaymentMethods();
 
-       
+
         //Save cart changes
         void Save();
 
-		ShoppingCart Cart { get; }
-	}
+        ShoppingCart Cart { get; }
+    }
 }

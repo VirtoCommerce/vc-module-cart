@@ -188,7 +188,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Converters\" />
     <Folder Include="Scripts\" />
   </ItemGroup>
   <ItemGroup>

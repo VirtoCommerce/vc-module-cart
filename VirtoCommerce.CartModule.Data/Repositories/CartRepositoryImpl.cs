@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
@@ -23,7 +19,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             Configuration.LazyLoadingEnabled = false;
         }
-
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -162,39 +157,13 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         #region ICartRepository Members
 
-        public IQueryable<ShoppingCartEntity> ShoppingCarts
-        {
-            get { return GetAsQueryable<ShoppingCartEntity>(); }
-        }
-
-        public IQueryable<AddressEntity> Addresses
-        {
-            get { return GetAsQueryable<AddressEntity>(); }
-        }
-
-        public IQueryable<PaymentEntity> Payments
-        {
-            get { return GetAsQueryable<PaymentEntity>(); }
-        }
-
-        public IQueryable<LineItemEntity> LineItems
-        {
-            get { return GetAsQueryable<LineItemEntity>(); }
-        }
-        public IQueryable<ShipmentEntity> Shipments
-        {
-            get { return GetAsQueryable<ShipmentEntity>(); }
-        }
-
-        protected IQueryable<DiscountEntity> Discounts
-        {
-            get { return GetAsQueryable<DiscountEntity>(); }
-        }
-
-        protected IQueryable<TaxDetailEntity> TaxDetails
-        {
-            get { return GetAsQueryable<TaxDetailEntity>(); }
-        }
+        public IQueryable<ShoppingCartEntity> ShoppingCarts => GetAsQueryable<ShoppingCartEntity>();
+        public IQueryable<AddressEntity> Addresses => GetAsQueryable<AddressEntity>();
+        public IQueryable<PaymentEntity> Payments => GetAsQueryable<PaymentEntity>();
+        public IQueryable<LineItemEntity> LineItems => GetAsQueryable<LineItemEntity>();
+        public IQueryable<ShipmentEntity> Shipments => GetAsQueryable<ShipmentEntity>();
+        protected IQueryable<DiscountEntity> Discounts => GetAsQueryable<DiscountEntity>();
+        protected IQueryable<TaxDetailEntity> TaxDetails => GetAsQueryable<TaxDetailEntity>();
 
         public virtual ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null)
         {
@@ -234,6 +203,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 }
             }
         }
+
         #endregion
     }
 }

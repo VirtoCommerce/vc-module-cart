@@ -5,15 +5,11 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
-using CacheManager.Core;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.Model;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Cart.Services;
-using VirtoCommerce.Domain.Commerce.Model;
-using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Shipping.Model;
-using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Web.Security;
 
@@ -27,15 +23,12 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IShoppingCartSearchService _searchService;
         private readonly IShoppingCartBuilder _cartBuilder;
-        private readonly ICacheManager<object> _cacheManager;
 
-        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService,
-                                    IShoppingCartBuilder cartBuilder, ICacheManager<object> cacheManager)
+        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService, IShoppingCartBuilder cartBuilder)
         {
             _shoppingCartService = shoppingCartService;
             _searchService = searchService;
             _cartBuilder = cartBuilder;
-            _cacheManager = cacheManager;
         }
 
         [HttpGet]
@@ -56,9 +49,8 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         public IHttpActionResult GetCartItemsCount(string cartId)
         {
             var cart = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();
-            return Ok(cart.Items.Count);
+            return Ok(cart?.Items?.Count ?? 0);
         }
-
 
         [HttpPost]
         [Route("{cartId}/items")]
@@ -96,7 +88,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{cartId}/items/{lineItemId}")]
         [ResponseType(typeof(int))]
         public async Task<IHttpActionResult> RemoveCartItem(string cartId, string lineItemId)
-        {            
+        {
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(cartId)).LockAsync())
             {
                 var cart = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();
@@ -122,7 +114,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{cartId}")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> MergeWithCart(string cartId, [FromBody]ShoppingCart otherCart)
-        {           
+        {
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(cartId)).LockAsync())
             {
                 var cart = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();

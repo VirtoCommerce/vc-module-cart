@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VirtoCommerce.CartModule.Data.Common
 {
@@ -12,7 +9,7 @@ namespace VirtoCommerce.CartModule.Data.Common
         {
             if (input == null)
             {
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
             }
 
             var pieces = input.Split(separator);

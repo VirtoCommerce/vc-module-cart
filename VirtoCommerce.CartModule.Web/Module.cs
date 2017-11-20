@@ -14,7 +14,7 @@ namespace VirtoCommerce.CartModule.Web
 {
     public class Module : ModuleBase
     {
-        private const string ConnectionStringName = "VirtoCommerce";
+        private const string _connectionStringName = "VirtoCommerce";
         private readonly IUnityContainer _container;
 
         public Module(IUnityContainer container)
@@ -22,16 +22,13 @@ namespace VirtoCommerce.CartModule.Web
             _container = container;
         }
 
-        #region IModule Members
-
         public override void SetupDatabase()
         {
-            using (var context = new CartRepositoryImpl(ConnectionStringName, _container.Resolve<AuditableInterceptor>()))
+            using (var context = new CartRepositoryImpl(_connectionStringName, _container.Resolve<AuditableInterceptor>()))
             {
                 var initializer = new SetupDatabaseInitializer<CartRepositoryImpl, Data.Migrations.Configuration>();
                 initializer.InitializeDatabase(context);
             }
-
         }
 
         public override void Initialize()
@@ -41,11 +38,11 @@ namespace VirtoCommerce.CartModule.Web
             _container.RegisterType<IEventPublisher<CartChangeEvent>, EventPublisher<CartChangeEvent>>();
             _container.RegisterType<IEventPublisher<CartChangedEvent>, EventPublisher<CartChangedEvent>>();
 
-            _container.RegisterType<ICartRepository>(new InjectionFactory(c => new CartRepositoryImpl(ConnectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
+            _container.RegisterType<ICartRepository>(new InjectionFactory(c => new CartRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
 
             _container.RegisterType<IShoppingCartService, ShoppingCartServiceImpl>();
             _container.RegisterType<IShoppingCartSearchService, ShoppingCartServiceImpl>();
-       
+
             _container.RegisterType<IShoppingCartBuilder, ShoppingCartBuilderImpl>();
         }
 
@@ -57,6 +54,5 @@ namespace VirtoCommerce.CartModule.Web
             var httpConfiguration = _container.Resolve<HttpConfiguration>();
             httpConfiguration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new PolymorphicCartJsonConverter());
         }
-        #endregion
     }
 }

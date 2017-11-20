@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Commerce.Model;
@@ -13,176 +10,192 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
-	public class ShipmentEntity : AuditableEntity
-	{
-		public ShipmentEntity()
-		{
-            Items = new NullCollection<ShipmentItemEntity>();
-            Discounts = new NullCollection<DiscountEntity>();
-            Items = new NullCollection<ShipmentItemEntity>();
-			Addresses = new NullCollection<AddressEntity>();
-			TaxDetails = new NullCollection<TaxDetailEntity>();
-		}
+    public class ShipmentEntity : AuditableEntity
+    {
+        [StringLength(64)]
+        public string ShipmentMethodCode { get; set; }
 
-		[StringLength(64)]
-		public string ShipmentMethodCode { get; set; }
         [StringLength(64)]
         public string ShipmentMethodOption { get; set; }
 
         [StringLength(64)]
-		public string FulfilmentCenterId { get; set; }
-		[Required]
-		[StringLength(3)]
-		public string Currency { get; set; }
+        public string FulfilmentCenterId { get; set; }
 
-		[StringLength(16)]
-		public string WeightUnit { get; set; }
-		public decimal? WeightValue { get; set; }
-		public decimal? VolumetricWeight { get; set; }
+        [Required]
+        [StringLength(3)]
+        public string Currency { get; set; }
 
-		[StringLength(16)]
-		public string DimensionUnit { get; set; }
-		public decimal? DimensionHeight { get; set; }
-		public decimal? DimensionLength { get; set; }
-		public decimal? DimensionWidth { get; set; }
+        [StringLength(16)]
+        public string WeightUnit { get; set; }
 
-		public bool TaxIncluded { get; set; }
-		[Column(TypeName = "Money")]
-		public decimal Price { get; set; }
+        public decimal? WeightValue { get; set; }
+
+        public decimal? VolumetricWeight { get; set; }
+
+        [StringLength(16)]
+        public string DimensionUnit { get; set; }
+
+        public decimal? DimensionHeight { get; set; }
+
+        public decimal? DimensionLength { get; set; }
+
+        public decimal? DimensionWidth { get; set; }
+
+        public bool TaxIncluded { get; set; }
+
+        [Column(TypeName = "Money")]
+        public decimal Price { get; set; }
+
         [Column(TypeName = "Money")]
         public decimal PriceWithTax { get; set; }
 
         [Column(TypeName = "Money")]
-		public decimal DiscountAmount { get; set; }
+        public decimal DiscountAmount { get; set; }
+
         [Column(TypeName = "Money")]
         public decimal DiscountAmountWithTax { get; set; }
 
         public decimal TaxPercentRate { get; set; }
 
         [Column(TypeName = "Money")]
-		public decimal TaxTotal { get; set; }
+        public decimal TaxTotal { get; set; }
 
         [Column(TypeName = "Money")]
         public decimal Total { get; set; }
+
         [Column(TypeName = "Money")]
         public decimal TotalWithTax { get; set; }
+
         [Column(TypeName = "Money")]
         public decimal Fee { get; set; }
+
         [Column(TypeName = "Money")]
         public decimal FeeWithTax { get; set; }
 
         [StringLength(64)]
-		public string TaxType { get; set; }
+        public string TaxType { get; set; }
 
-        public virtual ObservableCollection<ShipmentItemEntity> Items { get; set; }
-        public virtual ObservableCollection<DiscountEntity> Discounts { get; set; }
-        public virtual ObservableCollection<AddressEntity> Addresses { get; set; }
-		public virtual ObservableCollection<TaxDetailEntity> TaxDetails { get; set; }
-		public virtual ShoppingCartEntity ShoppingCart { get; set; }
-		public string ShoppingCartId { get; set; }
+        public string ShoppingCartId { get; set; }
+        public virtual ShoppingCartEntity ShoppingCart { get; set; }
+
+        public virtual ObservableCollection<ShipmentItemEntity> Items { get; set; } = new NullCollection<ShipmentItemEntity>();
+        public virtual ObservableCollection<DiscountEntity> Discounts { get; set; } = new NullCollection<DiscountEntity>();
+        public virtual ObservableCollection<AddressEntity> Addresses { get; set; } = new NullCollection<AddressEntity>();
+        public virtual ObservableCollection<TaxDetailEntity> TaxDetails { get; set; } = new NullCollection<TaxDetailEntity>();
+
 
         public virtual Shipment ToModel(Shipment shipment)
-        {          
+        {
             if (shipment == null)
-                throw new NullReferenceException("shipment");
+                throw new ArgumentNullException(nameof(shipment));
 
             shipment.InjectFrom(this);
 
-            if (!this.Addresses.IsNullOrEmpty())
+            if (!Addresses.IsNullOrEmpty())
             {
-                shipment.DeliveryAddress = this.Addresses.First().ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
+                shipment.DeliveryAddress = Addresses.First().ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
             }
-            if (!this.Discounts.IsNullOrEmpty())
+
+            if (!Discounts.IsNullOrEmpty())
             {
-                shipment.Discounts = this.Discounts.Select(x=> x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
+                shipment.Discounts = Discounts.Select(x => x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
             }
-            if (!this.Items.IsNullOrEmpty())
+
+            if (!Items.IsNullOrEmpty())
             {
-                shipment.Items = this.Items.Select(x => x.ToModel(AbstractTypeFactory<ShipmentItem>.TryCreateInstance())).ToList();
+                shipment.Items = Items.Select(x => x.ToModel(AbstractTypeFactory<ShipmentItem>.TryCreateInstance())).ToList();
             }
-            if (!this.TaxDetails.IsNullOrEmpty())
+
+            if (!TaxDetails.IsNullOrEmpty())
             {
-                shipment.TaxDetails = this.TaxDetails.Select(x => x.ToModel(AbstractTypeFactory<TaxDetail>.TryCreateInstance())).ToList();
+                shipment.TaxDetails = TaxDetails.Select(x => x.ToModel(AbstractTypeFactory<TaxDetail>.TryCreateInstance())).ToList();
             }
 
             return shipment;
         }
 
         public virtual ShipmentEntity FromModel(Shipment shipment, PrimaryKeyResolvingMap pkMap)
-        {         
+        {
             if (shipment == null)
-                throw new NullReferenceException("shipment");
+                throw new ArgumentNullException(nameof(shipment));
+
+            pkMap.AddPair(shipment, this);
 
             this.InjectFrom(shipment);
 
-            pkMap.AddPair(shipment, this);
             //Allow to empty address
-            this.Addresses = new ObservableCollection<AddressEntity>();
+            Addresses = new ObservableCollection<AddressEntity>();
             if (shipment.DeliveryAddress != null)
             {
-                this.Addresses = new ObservableCollection<AddressEntity>(new AddressEntity[] { AbstractTypeFactory<AddressEntity>.TryCreateInstance().FromModel(shipment.DeliveryAddress) });
-            }
-            if (shipment.Items != null)
-            {
-                this.Items = new ObservableCollection<ShipmentItemEntity>(shipment.Items.Select(x => AbstractTypeFactory<ShipmentItemEntity>.TryCreateInstance().FromModel(x, pkMap)));
-            }          
-            if (shipment.TaxDetails != null)
-            {
-                this.TaxDetails = new ObservableCollection<TaxDetailEntity>(shipment.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
-            }
-            if (shipment.Discounts != null)
-            {
-                this.Discounts = new ObservableCollection<DiscountEntity>(shipment.Discounts.Select(x=> AbstractTypeFactory<DiscountEntity>.TryCreateInstance().FromModel(x)));
+                Addresses = new ObservableCollection<AddressEntity>(new[] { AbstractTypeFactory<AddressEntity>.TryCreateInstance().FromModel(shipment.DeliveryAddress) });
             }
 
+            if (shipment.Items != null)
+            {
+                Items = new ObservableCollection<ShipmentItemEntity>(shipment.Items.Select(x => AbstractTypeFactory<ShipmentItemEntity>.TryCreateInstance().FromModel(x, pkMap)));
+            }
+
+            if (shipment.TaxDetails != null)
+            {
+                TaxDetails = new ObservableCollection<TaxDetailEntity>(shipment.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
+            }
+
+            if (shipment.Discounts != null)
+            {
+                Discounts = new ObservableCollection<DiscountEntity>(shipment.Discounts.Select(x => AbstractTypeFactory<DiscountEntity>.TryCreateInstance().FromModel(x)));
+            }
 
             return this;
         }
 
         public virtual void Patch(ShipmentEntity target)
-        {         
+        {
             if (target == null)
-                throw new NullReferenceException("target");
+                throw new ArgumentNullException(nameof(target));
 
-            target.Fee = this.Fee;
-            target.FeeWithTax = this.FeeWithTax;
-            target.ShipmentMethodCode = this.ShipmentMethodCode;
-            target.Total = this.Total;
-            target.TotalWithTax = this.TotalWithTax;
-            target.TaxTotal = this.TaxTotal;
-            target.Price = this.Price;
-            target.PriceWithTax = this.PriceWithTax;
-            target.DiscountAmount = this.DiscountAmount;
-            target.DiscountAmountWithTax = this.DiscountAmountWithTax;
-            target.TaxPercentRate = this.TaxPercentRate;
-            target.TaxIncluded = this.TaxIncluded;
-            target.Currency = this.Currency;
-            target.WeightUnit = this.WeightUnit;
-            target.WeightValue = this.WeightValue;
-            target.DimensionHeight = this.DimensionHeight;
-            target.DimensionLength = this.DimensionLength;
-            target.DimensionUnit = this.DimensionUnit;
-            target.DimensionWidth = this.DimensionWidth;
-            target.TaxType = this.TaxType;
-            target.ShipmentMethodOption = this.ShipmentMethodOption;
+            target.Fee = Fee;
+            target.FeeWithTax = FeeWithTax;
+            target.ShipmentMethodCode = ShipmentMethodCode;
+            target.Total = Total;
+            target.TotalWithTax = TotalWithTax;
+            target.TaxTotal = TaxTotal;
+            target.Price = Price;
+            target.PriceWithTax = PriceWithTax;
+            target.DiscountAmount = DiscountAmount;
+            target.DiscountAmountWithTax = DiscountAmountWithTax;
+            target.TaxPercentRate = TaxPercentRate;
+            target.TaxIncluded = TaxIncluded;
+            target.Currency = Currency;
+            target.WeightUnit = WeightUnit;
+            target.WeightValue = WeightValue;
+            target.DimensionHeight = DimensionHeight;
+            target.DimensionLength = DimensionLength;
+            target.DimensionUnit = DimensionUnit;
+            target.DimensionWidth = DimensionWidth;
+            target.TaxType = TaxType;
+            target.ShipmentMethodOption = ShipmentMethodOption;
 
-            if (!this.Addresses.IsNullCollection())
+            if (!Addresses.IsNullCollection())
             {
-                this.Addresses.Patch(target.Addresses, new AddressComparer(), (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
+                var addressComparer = AbstractTypeFactory<AddressComparer>.TryCreateInstance();
+                Addresses.Patch(target.Addresses, addressComparer, (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
             }
-            if (this.Items != null)
+
+            if (!Items.IsNullCollection())
             {
-                this.Items.Patch(target.Items, (sourceItem, targetItem) => sourceItem.Patch(targetItem));
+                Items.Patch(target.Items, (sourceItem, targetItem) => sourceItem.Patch(targetItem));
             }
-            if (!this.TaxDetails.IsNullCollection())
+
+            if (!TaxDetails.IsNullCollection())
             {
-                var taxDetailComparer = AnonymousComparer.Create((TaxDetailEntity x) => x.Name);
-                this.TaxDetails.Patch(target.TaxDetails, taxDetailComparer, (sourceTaxDetail, targetTaxDetail) => sourceTaxDetail.Patch(targetTaxDetail));
+                var taxDetailComparer = AbstractTypeFactory<TaxDetailEntityComparer>.TryCreateInstance();
+                TaxDetails.Patch(target.TaxDetails, taxDetailComparer, (sourceTaxDetail, targetTaxDetail) => sourceTaxDetail.Patch(targetTaxDetail));
             }
-            if (!this.Discounts.IsNullCollection())
+
+            if (!Discounts.IsNullCollection())
             {
-                var discountComparer = AnonymousComparer.Create((DiscountEntity x) => x.PromotionId);
-                this.Discounts.Patch(target.Discounts, discountComparer, (sourceDiscount, targetDiscount) => sourceDiscount.Patch(targetDiscount));
+                var discountComparer = AbstractTypeFactory<DiscountEntityComparer>.TryCreateInstance();
+                Discounts.Patch(target.Discounts, discountComparer, (sourceDiscount, targetDiscount) => sourceDiscount.Patch(targetDiscount));
             }
         }
     }

@@ -81,9 +81,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             return this;
         }
 
-        public virtual IShoppingCartBuilder ChangeItemQuantity(string id, int quantity)
+        public virtual IShoppingCartBuilder ChangeItemQuantity(string lineItemId, int quantity)
         {
-            var lineItem = Cart.Items.FirstOrDefault(i => i.Id == id);
+            var lineItem = Cart.Items.FirstOrDefault(i => i.Id == lineItemId);
             if (lineItem != null)
             {
                 InnerChangeItemQuantity(lineItem, quantity);
@@ -92,9 +92,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             return this;
         }
 
-        public virtual IShoppingCartBuilder RemoveItem(string id)
+        public virtual IShoppingCartBuilder RemoveItem(string lineItemId)
         {
-            var lineItem = Cart.Items.FirstOrDefault(i => i.Id == id);
+            var lineItem = Cart.Items.FirstOrDefault(i => i.Id == lineItemId);
             if (lineItem != null)
             {
                 Cart.Items.Remove(lineItem);

@@ -101,9 +101,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-        public virtual void Delete(string[] ids)
+        public virtual void Delete(string[] cartIds)
         {
-            var carts = GetByIds(ids);
+            var carts = GetByIds(cartIds);
 
             using (var repository = _repositoryFactory())
             {
@@ -112,7 +112,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                     _changingEventPublisher.Publish(new CartChangeEvent(EntryState.Deleted, cart, cart));
                 }
 
-                repository.RemoveCarts(ids);
+                repository.RemoveCarts(cartIds);
 
                 foreach (var cart in carts)
                 {

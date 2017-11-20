@@ -80,9 +80,9 @@ namespace VirtoCommerce.CartModule.Data.Services
         /// <summary>
         /// Add or update payment in cart
         /// </summary>
-        /// <param name="updateModel"></param>
+        /// <param name="payment"></param>
         /// <returns></returns>
-        IShoppingCartBuilder AddOrUpdatePayment(Payment updateModel);
+        IShoppingCartBuilder AddOrUpdatePayment(Payment payment);
 
         /// <summary>
         /// Merge other cart with captured

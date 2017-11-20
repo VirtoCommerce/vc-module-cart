@@ -131,7 +131,6 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public virtual ShoppingCartEntity FromModel(ShoppingCart cart, PrimaryKeyResolvingMap pkMap)
         {
-
             if (cart == null)
                 throw new ArgumentNullException(nameof(cart));
 
@@ -152,10 +151,10 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (cart.Shipments != null)
             {
                 Shipments = new ObservableCollection<ShipmentEntity>(cart.Shipments.Select(x => AbstractTypeFactory<ShipmentEntity>.TryCreateInstance().FromModel(x, pkMap)));
-                //Trying to bind shipment items with the  lineItems by reference quality 
-                foreach (var shipmentItemEntity in this.Shipments.SelectMany(x => x.Items))
+                //Trying to bind shipment items with the  lineItems by reference quality
+                foreach (var shipmentItemEntity in Shipments.SelectMany(x => x.Items))
                 {
-                    shipmentItemEntity.LineItem = this.Items.FirstOrDefault(x => x.ModelLineItem == shipmentItemEntity.ModelLineItem);
+                    shipmentItemEntity.LineItem = Items.FirstOrDefault(x => x.ModelLineItem == shipmentItemEntity.ModelLineItem);
                 }
             }
 

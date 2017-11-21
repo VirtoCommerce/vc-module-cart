@@ -191,19 +191,23 @@ namespace VirtoCommerce.CartModule.Test
             return result;
         }
 
+        private static string GetConnectionString()
+        {
+            return ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
+        }
+
         private static Func<ICartRepository> GetCartRepositoryFactory()
         {
             Func<ICartRepository> cartRepositoryFactory = () =>
             {
-                var connectionString = ConfigurationHelper.GetAppSettingsValue("VC_DATABASE", "VirtoCommerce");
-                return new CartRepositoryImpl(connectionString, new AuditableInterceptor(null), new EntityPrimaryKeyGeneratorInterceptor());
+                return new CartRepositoryImpl(GetConnectionString(), new AuditableInterceptor(null), new EntityPrimaryKeyGeneratorInterceptor());
             };
             return cartRepositoryFactory;
         }
 
         private static ShoppingCartServiceImpl GetCartService()
         {
-            Func<IPlatformRepository> platformRepositoryFactory = () => new PlatformRepository("VirtoCommerce", new EntityPrimaryKeyGeneratorInterceptor(), new AuditableInterceptor(null));
+            Func<IPlatformRepository> platformRepositoryFactory = () => new PlatformRepository(GetConnectionString(), new EntityPrimaryKeyGeneratorInterceptor(), new AuditableInterceptor(null));
 
             //var dynamicPropertyService = new DynamicPropertyService(platformRepositoryFactory);
             var dynamicPropertyService = new Mock<IDynamicPropertyService>().Object;

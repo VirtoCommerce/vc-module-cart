@@ -5,6 +5,7 @@ using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.JsonConverters;
 using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Cart.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Data.Infrastructure;
@@ -14,7 +15,7 @@ namespace VirtoCommerce.CartModule.Web
 {
     public class Module : ModuleBase
     {
-        private const string _connectionStringName = ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
+        private readonly string _connectionStringName = ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
         private readonly IUnityContainer _container;
 
         public Module(IUnityContainer container)

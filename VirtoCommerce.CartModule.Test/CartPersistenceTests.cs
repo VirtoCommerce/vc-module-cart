@@ -7,6 +7,7 @@ using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Commerce.Model;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
@@ -194,9 +195,8 @@ namespace VirtoCommerce.CartModule.Test
         {
             Func<ICartRepository> cartRepositoryFactory = () =>
             {
-                return new CartRepositoryImpl("VirtoCommerce",
-                    new AuditableInterceptor(null),
-                    new EntityPrimaryKeyGeneratorInterceptor());
+                var connectionString = ConfigurationHelper.GetAppSettingsValue("VC_DATABASE", "VirtoCommerce");
+                return new CartRepositoryImpl(connectionString, new AuditableInterceptor(null), new EntityPrimaryKeyGeneratorInterceptor());
             };
             return cartRepositoryFactory;
         }

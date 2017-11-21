@@ -100,9 +100,8 @@
       <HintPath>..\packages\VirtoCommerce.MarketingModule.Data.2.13.2\lib\net461\VirtoCommerce.MarketingModule.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="VirtoCommerce.Platform.Core, Version=2.12.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.12.6\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="VirtoCommerce.Platform.Core, Version=2.13.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.13.17\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Data, Version=2.12.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VirtoCommerce.Platform.Data.2.12.5\lib\net461\VirtoCommerce.Platform.Data.dll</HintPath>

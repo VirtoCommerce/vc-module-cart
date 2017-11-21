@@ -151,7 +151,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (cart.Shipments != null)
             {
                 Shipments = new ObservableCollection<ShipmentEntity>(cart.Shipments.Select(x => AbstractTypeFactory<ShipmentEntity>.TryCreateInstance().FromModel(x, pkMap)));
-                //Trying to bind shipment items with the  lineItems by reference quality
+                //Trying to bind shipment items with the  lineItems by model object reference equality
                 foreach (var shipmentItemEntity in Shipments.SelectMany(x => x.Items))
                 {
                     shipmentItemEntity.LineItem = Items.FirstOrDefault(x => x.ModelLineItem == shipmentItemEntity.ModelLineItem);
@@ -227,6 +227,14 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             if (!Shipments.IsNullCollection())
             {
+                //Trying to set appropriator lineItem  from EF dynamic proxy lineItem to avoid EF exception (if shipmentItem.LineItem is new object with Id for already exist LineItem)
+                foreach (var sourceShipmentItem in Shipments.SelectMany(x => x.Items))
+                {
+                    if(sourceShipmentItem.LineItem != null)
+                    {
+                        sourceShipmentItem.LineItem = target.Items.FirstOrDefault(x => x ==  sourceShipmentItem.LineItem) ?? sourceShipmentItem.LineItem;
+                    }
+                }
                 Shipments.Patch(target.Shipments, (sourceShipment, targetShipment) => sourceShipment.Patch(targetShipment));
             }
 

@@ -121,6 +121,16 @@ namespace VirtoCommerce.CartModule.Data.Services
             return this;
         }
 
+        public virtual ICollection<ShippingRate> GetShippingRates(string shippingMethodCode)
+        {
+            var shippingEvaluationContext = new ShippingEvaluationContext(Cart);
+
+            var shippingMethod = Store.ShippingMethods.FirstOrDefault(x => x.IsActive
+                                                                           && x.Code.EqualsInvariant(shippingMethodCode));
+
+            return shippingMethod?.CalculateRates(shippingEvaluationContext).ToList();
+        }
+
         public virtual IShoppingCartBuilder AddOrUpdateShipment(Shipment shipment)
         {
             Shipment existingShipment = null;
@@ -140,11 +150,15 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             if (!string.IsNullOrEmpty(shipment.ShipmentMethodCode))
             {
-                var availableShippingRates = GetAvailableShippingRates();
-                var shippingRate = availableShippingRates.FirstOrDefault(sm => shipment.ShipmentMethodCode.EqualsInvariant(sm.ShippingMethod.Code) && shipment.ShipmentMethodOption.EqualsInvariant(sm.OptionName));
+                var shippingRates = GetShippingRates(shipment.ShipmentMethodCode);
+
+                var shippingRate = shippingRates
+                    .FirstOrDefault(sm => shipment.ShipmentMethodOption.EqualsInvariant(sm.OptionName));
+
                 if (shippingRate == null)
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Unknown shipment method: {0} with option: {1}", shipment.ShipmentMethodCode, shipment.ShipmentMethodOption));
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, 
+                        "Unknown shipment method: {0} with option: {1}", shipment.ShipmentMethodCode, shipment.ShipmentMethodOption));
                 }
                 shipment.ShipmentMethodCode = shippingRate.ShippingMethod.Code;
                 shipment.ShipmentMethodOption = shippingRate.OptionName;

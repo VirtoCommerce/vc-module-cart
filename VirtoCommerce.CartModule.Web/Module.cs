@@ -16,7 +16,7 @@ namespace VirtoCommerce.CartModule.Web
     public class Module : ModuleBase
     {
         private readonly string _connectionStringName = ConfigurationHelper.GetConnectionStringValue("{{ModuleId}}") ?? ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
-        private readonly IUnityContainer _container;
+        private readonly IUnityContainer _container; 
 
         public Module(IUnityContainer container)
         {

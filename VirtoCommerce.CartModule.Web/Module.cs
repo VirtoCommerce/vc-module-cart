@@ -15,8 +15,8 @@ namespace VirtoCommerce.CartModule.Web
 {
     public class Module : ModuleBase
     {
-        private readonly string _connectionStringName = ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
-        private readonly IUnityContainer _container;
+        private readonly string _connectionString = ConfigurationHelper.GetConnectionStringValue("VirtoCommerce.Cart") ?? ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
+        private readonly IUnityContainer _container; 
 
         public Module(IUnityContainer container)
         {
@@ -25,7 +25,7 @@ namespace VirtoCommerce.CartModule.Web
 
         public override void SetupDatabase()
         {
-            using (var context = new CartRepositoryImpl(_connectionStringName, _container.Resolve<AuditableInterceptor>()))
+            using (var context = new CartRepositoryImpl(_connectionString, _container.Resolve<AuditableInterceptor>()))
             {
                 var initializer = new SetupDatabaseInitializer<CartRepositoryImpl, Data.Migrations.Configuration>();
                 initializer.InitializeDatabase(context);
@@ -39,7 +39,7 @@ namespace VirtoCommerce.CartModule.Web
             _container.RegisterType<IEventPublisher<CartChangeEvent>, EventPublisher<CartChangeEvent>>();
             _container.RegisterType<IEventPublisher<CartChangedEvent>, EventPublisher<CartChangedEvent>>();
 
-            _container.RegisterType<ICartRepository>(new InjectionFactory(c => new CartRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
+            _container.RegisterType<ICartRepository>(new InjectionFactory(c => new CartRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
 
             _container.RegisterType<IShoppingCartService, ShoppingCartServiceImpl>();
             _container.RegisterType<IShoppingCartSearchService, ShoppingCartServiceImpl>();

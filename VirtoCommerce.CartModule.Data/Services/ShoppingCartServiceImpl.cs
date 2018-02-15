@@ -21,13 +21,15 @@ namespace VirtoCommerce.CartModule.Data.Services
         private readonly IEventPublisher<CartChangeEvent> _changingEventPublisher;
         private readonly IDynamicPropertyService _dynamicPropertyService;
         private readonly IEventPublisher<CartChangedEvent> _changedEventPublisher;
-
-        public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IEventPublisher<CartChangeEvent> changingEventPublisher, IDynamicPropertyService dynamicPropertyService, IEventPublisher<CartChangedEvent> changedEventPublisher)
-        {
-            _repositoryFactory = repositoryFactory;
-            _changingEventPublisher = changingEventPublisher;
+        private readonly IShopingCartTotalsCalculator _totalsCalculator;
+        public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IEventPublisher<CartChangeEvent> changingEventPublisher, IDynamicPropertyService dynamicPropertyService,
+                                      IShopingCartTotalsCalculator totalsCalculator, IEventPublisher<CartChangedEvent> changedEventPublisher)
+		{
+			_repositoryFactory = repositoryFactory;
+			_changingEventPublisher = changingEventPublisher;
             _dynamicPropertyService = dynamicPropertyService;
             _changedEventPublisher = changedEventPublisher;
+            _totalsCalculator = totalsCalculator;
         }
 
         #region IShoppingCartService Members
@@ -65,6 +67,9 @@ namespace VirtoCommerce.CartModule.Data.Services
                 var dataExistCarts = repository.GetShoppingCartsByIds(carts.Where(x => !x.IsTransient()).Select(x => x.Id).ToArray());
                 foreach (var cart in carts)
                 {
+                    //Calculate cart totals before save
+                    _totalsCalculator.CalculateTotals(cart);
+
                     var originalEntity = dataExistCarts.FirstOrDefault(x => x.Id == cart.Id);
                     var originalCart = originalEntity != null ? originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()) : cart;
 

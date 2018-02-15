@@ -45,6 +45,7 @@ namespace VirtoCommerce.CartModule.Web
             _container.RegisterType<IShoppingCartSearchService, ShoppingCartServiceImpl>();
 
             _container.RegisterType<IShoppingCartBuilder, ShoppingCartBuilderImpl>();
+            _container.RegisterType<IShopingCartTotalsCalculator, DefaultShopingCartTotalsCalculator>(new ContainerControlledLifetimeManager());
         }
 
         public override void PostInitialize()

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VirtoCommerce.CartModule.Data.Extensions;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Domain.Cart.Events;
@@ -47,10 +46,15 @@ namespace VirtoCommerce.CartModule.Data.Services
                 foreach (var cartEntity in cartEntities)
                 {
                     var cart = cartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
+                    //Calculate totals only for full responseGroup
+                    if (responseGroup == null)
+                    {
+                        _totalsCalculator.CalculateTotals(cart);
+                    }
                     retVal.Add(cart);
                 }
             }
-
+          
             _dynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray<IHasDynamicProperties>());
 
             return retVal.ToArray();

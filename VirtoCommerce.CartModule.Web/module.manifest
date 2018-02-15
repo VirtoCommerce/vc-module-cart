@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <module>
     <id>VirtoCommerce.Cart</id>
-    <version>2.16.4</version>
-    <platformVersion>2.12.4</platformVersion>
+    <version>2.16.5</version>
+    <platformVersion>2.13.21</platformVersion>
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="2.24.27" />
     </dependencies>

@@ -28,6 +28,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region ShoppingCart
             modelBuilder.Entity<ShoppingCartEntity>().HasKey(x => x.Id)
                     .Property(x => x.Id);
+            modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.TaxPercentRate).HasPrecision(18, 4);
 
             modelBuilder.Entity<ShoppingCartEntity>().ToTable("Cart");
             #endregion
@@ -35,6 +36,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region LineItem
             modelBuilder.Entity<LineItemEntity>().HasKey(x => x.Id)
                     .Property(x => x.Id);
+            modelBuilder.Entity<LineItemEntity>().Property(x => x.TaxPercentRate).HasPrecision(18, 4);
 
             modelBuilder.Entity<LineItemEntity>().HasRequired(x => x.ShoppingCart)
                                        .WithMany(x => x.Items)
@@ -46,7 +48,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region Shipment
             modelBuilder.Entity<ShipmentEntity>().HasKey(x => x.Id)
                 .Property(x => x.Id);
-
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.TaxPercentRate).HasPrecision(18, 4);
             modelBuilder.Entity<ShipmentEntity>().HasRequired(x => x.ShoppingCart)
                                            .WithMany(x => x.Shipments)
                                            .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(true);
@@ -94,7 +96,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region Payment
             modelBuilder.Entity<PaymentEntity>().HasKey(x => x.Id)
                 .Property(x => x.Id);
-
+            modelBuilder.Entity<PaymentEntity>().Property(x => x.TaxPercentRate).HasPrecision(18, 4);
             modelBuilder.Entity<PaymentEntity>().HasRequired(x => x.ShoppingCart)
                                        .WithMany(x => x.Payments)
                                        .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(true);

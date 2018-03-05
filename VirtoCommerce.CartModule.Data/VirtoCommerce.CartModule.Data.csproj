@@ -106,6 +106,10 @@
     <Compile Include="Migrations\201703151338032_TaxPercentRateConversion.Designer.cs">
       <DependentUpon>201703151338032_TaxPercentRateConversion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803050858016_IncreasePrecisionTaxPercentRate.cs" />
+    <Compile Include="Migrations\201803050858016_IncreasePrecisionTaxPercentRate.Designer.cs">
+      <DependentUpon>201803050858016_IncreasePrecisionTaxPercentRate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\DefaultShopingCartTotalsCalculator.cs" />
     <Compile Include="Model\AddressComparer.cs" />
     <Compile Include="Model\DiscountEntityComparer.cs" />
@@ -247,6 +251,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703151338032_TaxPercentRateConversion.resx">
       <DependentUpon>201703151338032_TaxPercentRateConversion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803050858016_IncreasePrecisionTaxPercentRate.resx">
+      <DependentUpon>201803050858016_IncreasePrecisionTaxPercentRate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -94,8 +94,8 @@
     <Reference Include="VirtoCommerce.CoreModule.Data, Version=2.24.27.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VirtoCommerce.CoreModule.Data.2.24.27\lib\net461\VirtoCommerce.CoreModule.Data.dll</HintPath>
     </Reference>
-    <Reference Include="VirtoCommerce.Domain, Version=2.24.27.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.24.27\lib\net461\VirtoCommerce.Domain.dll</HintPath>
+    <Reference Include="VirtoCommerce.Domain, Version=2.24.30.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Domain.2.24.30\lib\net461\VirtoCommerce.Domain.dll</HintPath>
     </Reference>
     <Reference Include="VirtoCommerce.MarketingModule.Data, Version=2.13.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VirtoCommerce.MarketingModule.Data.2.13.2\lib\net461\VirtoCommerce.MarketingModule.Data.dll</HintPath>

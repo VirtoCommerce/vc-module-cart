@@ -173,6 +173,11 @@ namespace VirtoCommerce.CartModule.Data.Services
                     query = query.Where(x => x.Currency == criteria.Currency);
                 }
 
+                if (!string.IsNullOrEmpty(criteria.Type))
+                {
+                    query = query.Where(x => x.Type == criteria.Type);
+                }
+
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {

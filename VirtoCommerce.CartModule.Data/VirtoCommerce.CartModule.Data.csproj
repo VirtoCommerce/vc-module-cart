@@ -72,8 +72,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="VirtoCommerce.Domain, Version=2.24.27.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.24.27\lib\net461\VirtoCommerce.Domain.dll</HintPath>
+    <Reference Include="VirtoCommerce.Domain, Version=2.24.30.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Domain.2.24.30\lib\net461\VirtoCommerce.Domain.dll</HintPath>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Core, Version=2.13.21.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VirtoCommerce.Platform.Core.2.13.21\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
@@ -109,6 +109,10 @@
     <Compile Include="Migrations\201803050858016_IncreasePrecisionTaxPercentRate.cs" />
     <Compile Include="Migrations\201803050858016_IncreasePrecisionTaxPercentRate.Designer.cs">
       <DependentUpon>201803050858016_IncreasePrecisionTaxPercentRate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803120853157_AddCartType.cs" />
+    <Compile Include="Migrations\201803120853157_AddCartType.Designer.cs">
+      <DependentUpon>201803120853157_AddCartType.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\DefaultShopingCartTotalsCalculator.cs" />
     <Compile Include="Model\AddressComparer.cs" />
@@ -254,6 +258,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803050858016_IncreasePrecisionTaxPercentRate.resx">
       <DependentUpon>201803050858016_IncreasePrecisionTaxPercentRate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803120853157_AddCartType.resx">
+      <DependentUpon>201803120853157_AddCartType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

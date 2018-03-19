@@ -104,6 +104,9 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public decimal TaxPercentRate { get; set; }
 
+        [StringLength(64)]
+        public string Type { get; set; }
+
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; } = new NullCollection<DiscountEntity>();
         public virtual ObservableCollection<AddressEntity> Addresses { get; set; } = new NullCollection<AddressEntity>();
         public virtual ObservableCollection<LineItemEntity> Items { get; set; } = new NullCollection<LineItemEntity>();
@@ -208,6 +211,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.TaxTotal = TaxTotal;
             target.Coupon = Coupon;
             target.TaxPercentRate = TaxPercentRate;
+            target.Type = Type;
 
             if (!Items.IsNullCollection())
             {

@@ -4,7 +4,7 @@
     <version>2.16.6</version>
     <platformVersion>2.13.21</platformVersion>
     <dependencies>
-        <dependency id="VirtoCommerce.Core" version="2.24.27" />
+        <dependency id="VirtoCommerce.Core" version="2.24.30" />
     </dependencies>
     
     <title>Shopping cart module</title>

@@ -114,6 +114,10 @@
     <Compile Include="Migrations\201803120853157_AddCartType.Designer.cs">
       <DependentUpon>201803120853157_AddCartType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804161350135_LongerEmailAddress.cs" />
+    <Compile Include="Migrations\201804161350135_LongerEmailAddress.Designer.cs">
+      <DependentUpon>201804161350135_LongerEmailAddress.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\DefaultShopingCartTotalsCalculator.cs" />
     <Compile Include="Model\AddressComparer.cs" />
     <Compile Include="Model\DiscountEntityComparer.cs" />
@@ -261,6 +265,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803120853157_AddCartType.resx">
       <DependentUpon>201803120853157_AddCartType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804161350135_LongerEmailAddress.resx">
+      <DependentUpon>201804161350135_LongerEmailAddress.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,9 +2,9 @@
 <module>
     <id>VirtoCommerce.Cart</id>
     <version>2.16.7</version>
-    <platformVersion>2.13.21</platformVersion>
+    <platformVersion>2.13.24</platformVersion>
     <dependencies>
-        <dependency id="VirtoCommerce.Core" version="2.24.30" />
+        <dependency id="VirtoCommerce.Core" version="2.24.32" />
     </dependencies>
     
     <title>Shopping cart module</title>

@@ -7,6 +7,7 @@ using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Cart.Services;
 using VirtoCommerce.Domain.Commerce.Model.Search;
+using VirtoCommerce.Domain.Common.Events;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
@@ -17,17 +18,15 @@ namespace VirtoCommerce.CartModule.Data.Services
     public class ShoppingCartServiceImpl : ServiceBase, IShoppingCartService, IShoppingCartSearchService
     {
         private readonly Func<ICartRepository> _repositoryFactory;
-        private readonly IEventPublisher<CartChangeEvent> _changingEventPublisher;
         private readonly IDynamicPropertyService _dynamicPropertyService;
-        private readonly IEventPublisher<CartChangedEvent> _changedEventPublisher;
         private readonly IShopingCartTotalsCalculator _totalsCalculator;
-        public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IEventPublisher<CartChangeEvent> changingEventPublisher, IDynamicPropertyService dynamicPropertyService,
-                                      IShopingCartTotalsCalculator totalsCalculator, IEventPublisher<CartChangedEvent> changedEventPublisher)
+        private readonly IEventPublisher _eventPublisher;
+        public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService,
+                                      IShopingCartTotalsCalculator totalsCalculator, IEventPublisher eventPublisher)
 		{
 			_repositoryFactory = repositoryFactory;
-			_changingEventPublisher = changingEventPublisher;
+            _eventPublisher = eventPublisher;
             _dynamicPropertyService = dynamicPropertyService;
-            _changedEventPublisher = changedEventPublisher;
             _totalsCalculator = totalsCalculator;
         }
 
@@ -63,7 +62,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         public virtual void SaveChanges(ShoppingCart[] carts)
         {
             var pkMap = new PrimaryKeyResolvingMap();
-            var changedEvents = new List<CartChangedEvent>();
+            var changedEntries = new List<GenericChangedEntry<ShoppingCart>>();
 
             using (var repository = _repositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
@@ -76,37 +75,31 @@ namespace VirtoCommerce.CartModule.Data.Services
 
                     var originalEntity = dataExistCarts.FirstOrDefault(x => x.Id == cart.Id);
                     var originalCart = originalEntity != null ? originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()) : cart;
-
-                    var changingEvent = new CartChangeEvent(originalEntity == null ? EntryState.Added : EntryState.Modified, originalCart, cart);
-                    _changingEventPublisher.Publish(changingEvent);
-                    changedEvents.Add(new CartChangedEvent(changingEvent.ChangeState, changingEvent.OrigCart, changingEvent.ModifiedCart));
-
                     var modifiedEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance().FromModel(cart, pkMap);
                     if (originalEntity != null)
                     {
                         changeTracker.Attach(originalEntity);
                         modifiedEntity.Patch(originalEntity);
+                        changedEntries.Add(new GenericChangedEntry<ShoppingCart>(originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()), cart, EntryState.Modified));
                     }
                     else
                     {
                         repository.Add(modifiedEntity);
+                        changedEntries.Add(new GenericChangedEntry<ShoppingCart>(cart, EntryState.Added));
                     }
                 }
 
+                //Raise domain events
+                _eventPublisher.Publish(new CartChangeEvent(changedEntries));
                 CommitChanges(repository);
                 pkMap.ResolvePrimaryKeys();
+                _eventPublisher.Publish(new CartChangedEvent(changedEntries));
             }
 
             //Save dynamic properties
             foreach (var cart in carts)
             {
                 _dynamicPropertyService.SaveDynamicPropertyValues(cart);
-            }
-
-            //Raise changed events
-            foreach (var changedEvent in changedEvents)
-            {
-                _changedEventPublisher.Publish(changedEvent);
             }
         }
 
@@ -116,10 +109,9 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             using (var repository = _repositoryFactory())
             {
-                foreach (var cart in carts)
-                {
-                    _changingEventPublisher.Publish(new CartChangeEvent(EntryState.Deleted, cart, cart));
-                }
+                //Raise domain events before deletion
+                var changedEntries = carts.Select(x => new GenericChangedEntry<ShoppingCart>(x, EntryState.Deleted));
+                _eventPublisher.Publish(new CartChangeEvent(changedEntries));
 
                 repository.RemoveCarts(cartIds);
 
@@ -127,13 +119,9 @@ namespace VirtoCommerce.CartModule.Data.Services
                 {
                     _dynamicPropertyService.DeleteDynamicPropertyValues(cart);
                 }
-
                 repository.UnitOfWork.Commit();
-
-                foreach (var cart in carts)
-                {
-                    _changedEventPublisher.Publish(new CartChangedEvent(EntryState.Deleted, cart, cart));
-                }
+                //Raise domain events after deletion
+                _eventPublisher.Publish(new CartChangedEvent(changedEntries));
             }
         }
 

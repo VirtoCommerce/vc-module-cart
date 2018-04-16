@@ -133,6 +133,15 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return Ok(shippingRates);
         }
 
+        [HttpPost]
+        [Route("availshippingrates")]
+        [ResponseType(typeof(ICollection<ShippingRate>))]
+        public IHttpActionResult GetAvailableShippingRatesByContext(ShippingEvaluationContext context)
+        {
+            var shippingRates = _cartBuilder.TakeCart(context.ShoppingCart).GetAvailableShippingRates();
+            return Ok(shippingRates);
+        }
+
         [HttpGet]
         [Route("{cartId}/availpaymentmethods")]
         [ResponseType(typeof(ICollection<Domain.Payment.Model.PaymentMethod>))]

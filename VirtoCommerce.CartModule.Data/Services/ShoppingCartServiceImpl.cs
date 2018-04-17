@@ -79,8 +79,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                     if (originalEntity != null)
                     {
                         changeTracker.Attach(originalEntity);
+                        changedEntries.Add(new GenericChangedEntry<ShoppingCart>(cart, originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()), EntryState.Modified));
                         modifiedEntity.Patch(originalEntity);
-                        changedEntries.Add(new GenericChangedEntry<ShoppingCart>(originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()), cart, EntryState.Modified));
                     }
                     else
                     {

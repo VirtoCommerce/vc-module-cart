@@ -166,6 +166,16 @@ namespace VirtoCommerce.CartModule.Data.Services
                     query = query.Where(x => x.Type == criteria.Type);
                 }
 
+                if (!string.IsNullOrEmpty(criteria.OrganizationId))
+                {
+                    query = query.Where(x => x.OrganizationId == criteria.OrganizationId);
+                }
+
+                if (!criteria.CustomerIds.IsNullOrEmpty())
+                {
+                    query = query.Where(x => criteria.CustomerIds.Contains(x.CustomerId));
+                }
+
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {

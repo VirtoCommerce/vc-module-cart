@@ -90,6 +90,8 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException(nameof(shipment));
 
             shipment.InjectFrom(this);
+            // workaround for mis-spelling 
+            // shipment.FulfillmentCenterId = FulfilmentCenterId;
 
             if (!Addresses.IsNullOrEmpty())
             {
@@ -122,6 +124,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             pkMap.AddPair(shipment, this);
 
             this.InjectFrom(shipment);
+            // workarounf for mis-spelling 
+            // FulfilmentCenterId = shipment.FulfillmentCenterId;
 
             //Allow to empty address
             Addresses = new ObservableCollection<AddressEntity>();
@@ -155,6 +159,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             target.Fee = Fee;
             target.FeeWithTax = FeeWithTax;
+            target.FulfilmentCenterId = FulfilmentCenterId;
             target.ShipmentMethodCode = ShipmentMethodCode;
             target.Total = Total;
             target.TotalWithTax = TotalWithTax;

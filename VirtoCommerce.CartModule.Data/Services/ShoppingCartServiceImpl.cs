@@ -74,8 +74,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                     _totalsCalculator.CalculateTotals(cart);
 
                     var originalEntity = dataExistCarts.FirstOrDefault(x => x.Id == cart.Id);
-                    var originalCart = originalEntity != null ? originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()) : cart;
-                    var modifiedEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance().FromModel(cart, pkMap);
+                    var modifiedEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance()
+                                                                                .FromModel(cart, pkMap);
                     if (originalEntity != null)
                     {
                         changeTracker.Attach(originalEntity);

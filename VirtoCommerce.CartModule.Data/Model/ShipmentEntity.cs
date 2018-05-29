@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Omu.ValueInjecter;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -91,7 +91,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             shipment.InjectFrom(this);
             // workaround for mis-spelling 
-            // shipment.FulfillmentCenterId = FulfilmentCenterId;
+            shipment.FulfillmentCenterId = FulfilmentCenterId;
 
             if (!Addresses.IsNullOrEmpty())
             {
@@ -124,8 +124,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             pkMap.AddPair(shipment, this);
 
             this.InjectFrom(shipment);
-            // workarounf for mis-spelling 
-            // FulfilmentCenterId = shipment.FulfillmentCenterId;
+            // workaround for mis-spelling 
+            FulfilmentCenterId = shipment.FulfillmentCenterId;
 
             //Allow to empty address
             Addresses = new ObservableCollection<AddressEntity>();

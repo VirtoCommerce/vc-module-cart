@@ -1,10 +1,12 @@
-﻿using System.Web.Http;
+using System.Web.Http;
 using Microsoft.Practices.Unity;
+using VirtoCommerce.CartModule.Data.Handlers;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.JsonConverters;
 using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Cart.Services;
+using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.Modularity;
@@ -36,6 +38,10 @@ namespace VirtoCommerce.CartModule.Web
         {
             base.Initialize();
 
+            var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
+
+            eventHandlerRegistrar.RegisterHandler<CartChangedEvent>(async (message, token) => await _container.Resolve<DeletePropertyCartChangedEventHandler>().Handle(message));
+
             _container.RegisterType<ICartRepository>(new InjectionFactory(c => new CartRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
 
             _container.RegisterType<IShoppingCartService, ShoppingCartServiceImpl>();
@@ -43,6 +49,7 @@ namespace VirtoCommerce.CartModule.Web
 
             _container.RegisterType<IShoppingCartBuilder, ShoppingCartBuilderImpl>();
             _container.RegisterType<IShopingCartTotalsCalculator, DefaultShopingCartTotalsCalculator>(new ContainerControlledLifetimeManager());
+
         }
 
         public override void PostInitialize()

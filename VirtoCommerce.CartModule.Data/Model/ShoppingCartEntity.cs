@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Omu.ValueInjecter;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -225,8 +225,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             if (!Addresses.IsNullCollection())
             {
-                var addressComparer = AbstractTypeFactory<AddressComparer>.TryCreateInstance();
-                Addresses.Patch(target.Addresses, addressComparer, (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
+                Addresses.Patch(target.Addresses, (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
             }
 
             if (!Shipments.IsNullCollection())
@@ -234,9 +233,9 @@ namespace VirtoCommerce.CartModule.Data.Model
                 //Trying to set appropriator lineItem  from EF dynamic proxy lineItem to avoid EF exception (if shipmentItem.LineItem is new object with Id for already exist LineItem)
                 foreach (var sourceShipmentItem in Shipments.SelectMany(x => x.Items))
                 {
-                    if(sourceShipmentItem.LineItem != null)
+                    if (sourceShipmentItem.LineItem != null)
                     {
-                        sourceShipmentItem.LineItem = target.Items.FirstOrDefault(x => x ==  sourceShipmentItem.LineItem) ?? sourceShipmentItem.LineItem;
+                        sourceShipmentItem.LineItem = target.Items.FirstOrDefault(x => x == sourceShipmentItem.LineItem) ?? sourceShipmentItem.LineItem;
                     }
                 }
                 Shipments.Patch(target.Shipments, (sourceShipment, targetShipment) => sourceShipment.Patch(targetShipment));

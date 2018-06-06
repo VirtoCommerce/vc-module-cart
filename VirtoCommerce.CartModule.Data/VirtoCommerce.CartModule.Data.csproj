@@ -120,7 +120,6 @@
       <DependentUpon>201804161350135_LongerEmailAddress.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\DefaultShopingCartTotalsCalculator.cs" />
-    <Compile Include="Model\AddressComparer.cs" />
     <Compile Include="Model\DiscountEntityComparer.cs" />
     <Compile Include="Model\TaxDetailEntityComparer.cs" />
     <Compile Include="Services\ShoppingCartBuilderImpl.cs" />

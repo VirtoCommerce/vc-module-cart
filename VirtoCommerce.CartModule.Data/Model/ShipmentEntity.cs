@@ -182,8 +182,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             if (!Addresses.IsNullCollection())
             {
-                var addressComparer = AbstractTypeFactory<AddressComparer>.TryCreateInstance();
-                Addresses.Patch(target.Addresses, addressComparer, (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
+                Addresses.Patch(target.Addresses, (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
             }
 
             if (!Items.IsNullCollection())

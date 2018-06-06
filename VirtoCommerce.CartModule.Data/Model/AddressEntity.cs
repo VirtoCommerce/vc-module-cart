@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Omu.ValueInjecter;
+using System;
 using System.ComponentModel.DataAnnotations;
-using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -71,6 +71,7 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException(nameof(address));
 
             address.InjectFrom(this);
+            address.Key = Id;
             address.AddressType = EnumUtility.SafeParse(AddressType, Domain.Commerce.Model.AddressType.BillingAndShipping);
 
             return address;
@@ -82,7 +83,7 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException(nameof(address));
 
             this.InjectFrom(address);
-
+            Id = address.Key;
             AddressType = address.AddressType.ToString();
 
             return this;
@@ -104,6 +105,30 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.LastName = LastName;
             target.Line1 = Line1;
             target.Line2 = Line2;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var result = base.Equals(obj);
+            //For transient addresses need to compare two objects as value object (by content)
+            if (!result && IsTransient() && obj is AddressEntity otherAddressEntity)
+            {
+                var domainAddress = ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
+                var otherAddress = otherAddressEntity.ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
+                result = domainAddress.Equals(otherAddress);
+            }
+            return result;
+        }
+
+        public override int GetHashCode()
+        {
+            if (IsTransient())
+            {
+                //need to convert to domain address model to allow use ValueObject.GetHashCode
+                var domainAddress = ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
+                return domainAddress.GetHashCode();
+            }
+            return base.GetHashCode();
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using Omu.ValueInjecter;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -212,6 +212,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Coupon = Coupon;
             target.TaxPercentRate = TaxPercentRate;
             target.Type = Type;
+            target.Name = Name;
 
             if (!Items.IsNullCollection())
             {

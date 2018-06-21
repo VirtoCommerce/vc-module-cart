@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.Domain.Cart.Model;
 using Xunit;
@@ -8,6 +8,25 @@ namespace VirtoCommerce.CartModule.Test
     [Trait("Category", "CI")]
     public class OrderTotalsCalculationTest
     {
+
+        [Fact]
+        public void CalculateTotals_CartTotals_MustBe_Sum_Of_Parts_After_Round()
+        {
+            var item1 = new LineItem { ListPrice = 49.95m, SalePrice = 49.95m, DiscountAmount = 4.995m, TaxPercentRate = 0m, Fee = 0m, Quantity = 1 };
+
+            var cart = new ShoppingCart
+            {
+                Items = new List<LineItem> { item1 },
+            };
+            var totalsCalculator = new DefaultShopingCartTotalsCalculator();
+            totalsCalculator.CalculateTotals(cart);
+
+            Assert.Equal(49.95m, cart.SubTotal);
+            Assert.Equal(5m, cart.DiscountTotal);
+            Assert.Equal(44.95m, cart.Total);
+        }
+
+
         [Fact]
         public void CalculateTotals_Should_Be_RightTotals()
         {
@@ -28,46 +47,46 @@ namespace VirtoCommerce.CartModule.Test
             var totalsCalculator = new DefaultShopingCartTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
 
-            Assert.Equal(item1.ListPriceWithTax, 12.3088m);
-            Assert.Equal(item1.SalePriceWithTax, 10.8192m);
-            Assert.Equal(item1.PlacedPrice, 9.66m);
-            Assert.Equal(item1.ExtendedPrice, 19.32m);
-            Assert.Equal(item1.DiscountAmountWithTax, 1.4896m);
-            Assert.Equal(item1.DiscountTotal, 2.66m);
-            Assert.Equal(item1.FeeWithTax, 0.3696m);
-            Assert.Equal(item1.PlacedPriceWithTax, 10.8192m);
-            Assert.Equal(item1.ExtendedPriceWithTax, 21.6384m);
-            Assert.Equal(item1.DiscountTotalWithTax, 2.9792m);
-            Assert.Equal(item1.TaxTotal, 2.358m);
+            Assert.Equal(12.3088m, item1.ListPriceWithTax);
+            Assert.Equal(10.8192m, item1.SalePriceWithTax);
+            Assert.Equal(9.66m, item1.PlacedPrice);
+            Assert.Equal(19.32m, item1.ExtendedPrice);
+            Assert.Equal(1.4896m, item1.DiscountAmountWithTax);
+            Assert.Equal(2.66m, item1.DiscountTotal);
+            Assert.Equal(0.3696m, item1.FeeWithTax);
+            Assert.Equal(10.8192m, item1.PlacedPriceWithTax);
+            Assert.Equal(21.6384m, item1.ExtendedPriceWithTax);
+            Assert.Equal(2.9792m, item1.DiscountTotalWithTax);
+            Assert.Equal(2.358m, item1.TaxTotal);
 
-            Assert.Equal(shipment.DiscountAmountWithTax, 5.6m);
-            Assert.Equal(shipment.PriceWithTax, 24.64m);
-            Assert.Equal(shipment.FeeWithTax, 0.0m);
-            Assert.Equal(shipment.Total, 17.0m);
-            Assert.Equal(shipment.TotalWithTax, 19.04m);
-            Assert.Equal(shipment.TaxTotal, 2.04m);
+            Assert.Equal(5.6m, shipment.DiscountAmountWithTax);
+            Assert.Equal(24.64m, shipment.PriceWithTax);
+            Assert.Equal(0.0m, shipment.FeeWithTax);
+            Assert.Equal(17.0m, shipment.Total);
+            Assert.Equal(19.04m, shipment.TotalWithTax);
+            Assert.Equal(2.04m, shipment.TaxTotal);
 
-            Assert.Equal(payment.Total, 34.52m);
-            Assert.Equal(payment.PriceWithTax, 49.8624m);
-            Assert.Equal(payment.TotalWithTax, 38.6624m);
-            Assert.Equal(payment.DiscountAmountWithTax, 11.2m);
-            Assert.Equal(payment.TaxTotal, 4.1424m);
+            Assert.Equal(34.52m, payment.Total);
+            Assert.Equal(49.8624m, payment.PriceWithTax);
+            Assert.Equal(38.6624m, payment.TotalWithTax);
+            Assert.Equal(11.2m, payment.DiscountAmountWithTax);
+            Assert.Equal(4.1424m, payment.TaxTotal);
 
-            Assert.Equal(cart.SubTotal, 1359.48m);
-            Assert.Equal(cart.SubTotalDiscount, 161.47m);
-            Assert.Equal(cart.SubTotalDiscountWithTax, 180.8464m);
-            Assert.Equal(cart.SubTotalWithTax, 1522.6176m);
-            Assert.Equal(cart.ShippingSubTotal, 22.00m);
-            Assert.Equal(cart.ShippingSubTotalWithTax, 24.64m);
-            Assert.Equal(cart.PaymentSubTotal, 44.52m);
-            Assert.Equal(cart.PaymentSubTotalWithTax, 49.8624m);
-            Assert.Equal(cart.TaxTotal, 150.0072m);
-            Assert.Equal(cart.DiscountTotal, 176.47m);
-            Assert.Equal(cart.DiscountTotalWithTax, 197.6464m);
-            Assert.Equal(cart.FeeTotal, 13.64m);
-            Assert.Equal(cart.FeeTotalWithTax, 15.2768m);
-            Assert.Equal(cart.FeeWithTax, 14.6832m);
-            Assert.Equal(cart.Total, 1413.1772m);
+            Assert.Equal(1359.48m, cart.SubTotal);
+            Assert.Equal(161.47m, cart.SubTotalDiscount);
+            Assert.Equal(180.85m, cart.SubTotalDiscountWithTax);
+            Assert.Equal(1522.62m, cart.SubTotalWithTax);
+            Assert.Equal(22.00m, cart.ShippingSubTotal);
+            Assert.Equal(24.64m, cart.ShippingSubTotalWithTax);
+            Assert.Equal(44.52m, cart.PaymentSubTotal);
+            Assert.Equal(49.86m, cart.PaymentSubTotalWithTax);
+            Assert.Equal(150.01m, cart.TaxTotal);
+            Assert.Equal(176.47m, cart.DiscountTotal);
+            Assert.Equal(197.65m, cart.DiscountTotalWithTax);
+            Assert.Equal(13.64m, cart.FeeTotal);
+            Assert.Equal(15.28m, cart.FeeTotalWithTax);
+            Assert.Equal(14.68m, cart.FeeWithTax);
+            Assert.Equal(1413.18m, cart.Total);
         }
     }
 }

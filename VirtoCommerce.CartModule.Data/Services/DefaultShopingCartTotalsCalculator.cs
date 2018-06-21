@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Globalization;
 using System.Linq;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Cart.Services;
@@ -23,6 +24,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 throw new ArgumentNullException(nameof(cart));
             }
+
             //Calculate totals for line items
             if (!cart.Items.IsNullOrEmpty())
             {
@@ -101,6 +103,30 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.DiscountTotalWithTax += cart.DiscountAmount * taxFactor;
             //Subtract from cart tax total self discount tax amount
             cart.TaxTotal -= cart.DiscountAmount * cart.TaxPercentRate;
+
+            //Need to round all cart totals
+            cart.SubTotal = Math.Round(cart.SubTotal, 2, MidpointRounding.AwayFromZero);
+            cart.SubTotalWithTax = Math.Round(cart.SubTotalWithTax, 2, MidpointRounding.AwayFromZero);
+            cart.SubTotalDiscount = Math.Round(cart.SubTotalDiscount, 2, MidpointRounding.AwayFromZero);
+            cart.SubTotalDiscountWithTax = Math.Round(cart.SubTotalDiscountWithTax, 2, MidpointRounding.AwayFromZero);
+            cart.TaxTotal = Math.Round(cart.TaxTotal, 2, MidpointRounding.AwayFromZero);
+            cart.DiscountTotal = Math.Round(cart.DiscountTotal, 2, MidpointRounding.AwayFromZero);
+            cart.DiscountTotalWithTax = Math.Round(cart.DiscountTotalWithTax, 2, MidpointRounding.AwayFromZero);
+            cart.Fee = Math.Round(cart.Fee, 2, MidpointRounding.AwayFromZero);
+            cart.FeeWithTax = Math.Round(cart.FeeWithTax, 2, MidpointRounding.AwayFromZero);
+            cart.FeeTotal = Math.Round(cart.FeeTotal, 2, MidpointRounding.AwayFromZero);
+            cart.FeeTotalWithTax = Math.Round(cart.FeeTotalWithTax, 2, MidpointRounding.AwayFromZero);
+            cart.ShippingTotal = Math.Round(cart.ShippingTotal, 2, MidpointRounding.AwayFromZero);
+            cart.ShippingTotalWithTax = Math.Round(cart.ShippingTotal, 2, MidpointRounding.AwayFromZero);
+            cart.ShippingSubTotal = Math.Round(cart.ShippingSubTotal, 2, MidpointRounding.AwayFromZero);
+            cart.ShippingSubTotalWithTax = Math.Round(cart.ShippingSubTotalWithTax, 2, MidpointRounding.AwayFromZero);
+            cart.PaymentTotal = Math.Round(cart.PaymentTotal, 2, MidpointRounding.AwayFromZero);
+            cart.PaymentTotalWithTax = Math.Round(cart.PaymentTotalWithTax, 2, MidpointRounding.AwayFromZero);
+            cart.PaymentSubTotal = Math.Round(cart.PaymentSubTotal, 2, MidpointRounding.AwayFromZero);
+            cart.PaymentSubTotalWithTax = Math.Round(cart.PaymentSubTotalWithTax, 2, MidpointRounding.AwayFromZero);
+            cart.PaymentDiscountTotal = Math.Round(cart.PaymentDiscountTotal, 2, MidpointRounding.AwayFromZero);
+            cart.PaymentDiscountTotalWithTax = Math.Round(cart.PaymentDiscountTotalWithTax, 2, MidpointRounding.AwayFromZero);
+
             cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
         }
 

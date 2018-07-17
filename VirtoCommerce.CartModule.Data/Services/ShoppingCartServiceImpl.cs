@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.CartModule.Data.Model;
@@ -17,18 +17,19 @@ namespace VirtoCommerce.CartModule.Data.Services
 {
     public class ShoppingCartServiceImpl : ServiceBase, IShoppingCartService, IShoppingCartSearchService
     {
-        private readonly Func<ICartRepository> _repositoryFactory;
-        private readonly IDynamicPropertyService _dynamicPropertyService;
-        private readonly IShopingCartTotalsCalculator _totalsCalculator;
-        private readonly IEventPublisher _eventPublisher;
         public ShoppingCartServiceImpl(Func<ICartRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService,
                                       IShopingCartTotalsCalculator totalsCalculator, IEventPublisher eventPublisher)
-		{
-			_repositoryFactory = repositoryFactory;
-            _eventPublisher = eventPublisher;
-            _dynamicPropertyService = dynamicPropertyService;
-            _totalsCalculator = totalsCalculator;
+        {
+            RepositoryFactory = repositoryFactory;
+            EventPublisher = eventPublisher;
+            DynamicPropertyService = dynamicPropertyService;
+            TotalsCalculator = totalsCalculator;
         }
+
+        protected Func<ICartRepository> RepositoryFactory { get; }
+        protected IDynamicPropertyService DynamicPropertyService { get; }
+        protected IShopingCartTotalsCalculator TotalsCalculator { get; }
+        protected IEventPublisher EventPublisher { get; }
 
         #region IShoppingCartService Members
 
@@ -36,7 +37,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             var retVal = new List<ShoppingCart>();
 
-            using (var repository = _repositoryFactory())
+            using (var repository = RepositoryFactory())
             {
                 //Disable DBContext change tracking for better performance 
                 repository.DisableChangesTracking();
@@ -48,13 +49,13 @@ namespace VirtoCommerce.CartModule.Data.Services
                     //Calculate totals only for full responseGroup
                     if (responseGroup == null)
                     {
-                        _totalsCalculator.CalculateTotals(cart);
+                        TotalsCalculator.CalculateTotals(cart);
                     }
                     retVal.Add(cart);
                 }
             }
-          
-            _dynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray<IHasDynamicProperties>());
+
+            DynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray<IHasDynamicProperties>());
 
             return retVal.ToArray();
         }
@@ -64,14 +65,14 @@ namespace VirtoCommerce.CartModule.Data.Services
             var pkMap = new PrimaryKeyResolvingMap();
             var changedEntries = new List<GenericChangedEntry<ShoppingCart>>();
 
-            using (var repository = _repositoryFactory())
+            using (var repository = RepositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
             {
                 var dataExistCarts = repository.GetShoppingCartsByIds(carts.Where(x => !x.IsTransient()).Select(x => x.Id).ToArray());
                 foreach (var cart in carts)
                 {
                     //Calculate cart totals before save
-                    _totalsCalculator.CalculateTotals(cart);
+                    TotalsCalculator.CalculateTotals(cart);
 
                     var originalEntity = dataExistCarts.FirstOrDefault(x => x.Id == cart.Id);
                     var modifiedEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance()
@@ -79,7 +80,9 @@ namespace VirtoCommerce.CartModule.Data.Services
                     if (originalEntity != null)
                     {
                         changeTracker.Attach(originalEntity);
-                        changedEntries.Add(new GenericChangedEntry<ShoppingCart>(cart, originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()), EntryState.Modified));
+                        var oldEntry = originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
+                        DynamicPropertyService.LoadDynamicPropertyValues(oldEntry);
+                        changedEntries.Add(new GenericChangedEntry<ShoppingCart>(cart, oldEntry, EntryState.Modified));
                         modifiedEntity.Patch(originalEntity);
                     }
                     else
@@ -90,16 +93,16 @@ namespace VirtoCommerce.CartModule.Data.Services
                 }
 
                 //Raise domain events
-                _eventPublisher.Publish(new CartChangeEvent(changedEntries));
+                EventPublisher.Publish(new CartChangeEvent(changedEntries));
                 CommitChanges(repository);
                 pkMap.ResolvePrimaryKeys();
-                _eventPublisher.Publish(new CartChangedEvent(changedEntries));
+                EventPublisher.Publish(new CartChangedEvent(changedEntries));
             }
 
             //Save dynamic properties
             foreach (var cart in carts)
             {
-                _dynamicPropertyService.SaveDynamicPropertyValues(cart);
+                DynamicPropertyService.SaveDynamicPropertyValues(cart);
             }
         }
 
@@ -107,21 +110,21 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             var carts = GetByIds(cartIds);
 
-            using (var repository = _repositoryFactory())
+            using (var repository = RepositoryFactory())
             {
                 //Raise domain events before deletion
                 var changedEntries = carts.Select(x => new GenericChangedEntry<ShoppingCart>(x, EntryState.Deleted));
-                _eventPublisher.Publish(new CartChangeEvent(changedEntries));
+                EventPublisher.Publish(new CartChangeEvent(changedEntries));
 
                 repository.RemoveCarts(cartIds);
 
                 foreach (var cart in carts)
                 {
-                    _dynamicPropertyService.DeleteDynamicPropertyValues(cart);
+                    DynamicPropertyService.DeleteDynamicPropertyValues(cart);
                 }
                 repository.UnitOfWork.Commit();
                 //Raise domain events after deletion
-                _eventPublisher.Publish(new CartChangedEvent(changedEntries));
+                EventPublisher.Publish(new CartChangedEvent(changedEntries));
             }
         }
 
@@ -132,7 +135,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         public GenericSearchResult<ShoppingCart> Search(ShoppingCartSearchCriteria criteria)
         {
             var retVal = new GenericSearchResult<ShoppingCart>();
-            using (var repository = _repositoryFactory())
+            using (var repository = RepositoryFactory())
             {
                 var query = repository.ShoppingCarts;
 

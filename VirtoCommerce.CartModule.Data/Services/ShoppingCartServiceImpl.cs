@@ -149,7 +149,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-        protected IQueryable<ShoppingCartEntity> GetQuery(ICartRepository repository, ShoppingCartSearchCriteria criteria)
+        protected virtual IQueryable<ShoppingCartEntity> GetQuery(ICartRepository repository, ShoppingCartSearchCriteria criteria)
         {
             var query = repository.ShoppingCarts;
 

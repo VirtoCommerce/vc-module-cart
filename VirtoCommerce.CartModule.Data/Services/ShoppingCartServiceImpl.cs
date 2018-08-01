@@ -137,64 +137,75 @@ namespace VirtoCommerce.CartModule.Data.Services
             var retVal = new GenericSearchResult<ShoppingCart>();
             using (var repository = RepositoryFactory())
             {
-                var query = repository.ShoppingCarts;
-
-                if (!string.IsNullOrEmpty(criteria.Status))
-                {
-                    query = query.Where(x => x.Status == criteria.Status);
-                }
-
-                if (!string.IsNullOrEmpty(criteria.Name))
-                {
-                    query = query.Where(x => x.Name == criteria.Name);
-                }
-
-                if (!string.IsNullOrEmpty(criteria.CustomerId))
-                {
-                    query = query.Where(x => x.CustomerId == criteria.CustomerId);
-                }
-
-                if (!string.IsNullOrEmpty(criteria.StoreId))
-                {
-                    query = query.Where(x => criteria.StoreId == x.StoreId);
-                }
-
-                if (!string.IsNullOrEmpty(criteria.Currency))
-                {
-                    query = query.Where(x => x.Currency == criteria.Currency);
-                }
-
-                if (!string.IsNullOrEmpty(criteria.Type))
-                {
-                    query = query.Where(x => x.Type == criteria.Type);
-                }
-
-                if (!string.IsNullOrEmpty(criteria.OrganizationId))
-                {
-                    query = query.Where(x => x.OrganizationId == criteria.OrganizationId);
-                }
-
-                if (!criteria.CustomerIds.IsNullOrEmpty())
-                {
-                    query = query.Where(x => criteria.CustomerIds.Contains(x.CustomerId));
-                }
-
-                var sortInfos = criteria.SortInfos;
-                if (sortInfos.IsNullOrEmpty())
-                {
-                    sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<ShoppingCartEntity>(x => x.CreatedDate), SortDirection = SortDirection.Descending } };
-                }
-
-                query = query.OrderBySortInfos(sortInfos);
+                var query = GetQuery(repository, criteria);
 
                 retVal.TotalCount = query.Count();
 
                 var cartIds = query.Select(x => x.Id).Skip(criteria.Skip).Take(criteria.Take).ToArray();
                 var carts = GetByIds(cartIds);
-                retVal.Results = carts.AsQueryable().OrderBySortInfos(sortInfos).ToList();
+                retVal.Results = carts.AsQueryable().OrderBySortInfos(GetSortInfos(criteria)).ToList();
 
                 return retVal;
             }
+        }
+
+        protected virtual IQueryable<ShoppingCartEntity> GetQuery(ICartRepository repository, ShoppingCartSearchCriteria criteria)
+        {
+            var query = repository.ShoppingCarts;
+
+            if (!string.IsNullOrEmpty(criteria.Status))
+            {
+                query = query.Where(x => x.Status == criteria.Status);
+            }
+
+            if (!string.IsNullOrEmpty(criteria.Name))
+            {
+                query = query.Where(x => x.Name == criteria.Name);
+            }
+
+            if (!string.IsNullOrEmpty(criteria.CustomerId))
+            {
+                query = query.Where(x => x.CustomerId == criteria.CustomerId);
+            }
+
+            if (!string.IsNullOrEmpty(criteria.StoreId))
+            {
+                query = query.Where(x => criteria.StoreId == x.StoreId);
+            }
+
+            if (!string.IsNullOrEmpty(criteria.Currency))
+            {
+                query = query.Where(x => x.Currency == criteria.Currency);
+            }
+
+            if (!string.IsNullOrEmpty(criteria.Type))
+            {
+                query = query.Where(x => x.Type == criteria.Type);
+            }
+
+            if (!string.IsNullOrEmpty(criteria.OrganizationId))
+            {
+                query = query.Where(x => x.OrganizationId == criteria.OrganizationId);
+            }
+
+            if (!criteria.CustomerIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.CustomerIds.Contains(x.CustomerId));
+            }
+
+            query = query.OrderBySortInfos(GetSortInfos(criteria));
+
+            return query;
+        }
+
+        protected virtual SortInfo[] GetSortInfos(ShoppingCartSearchCriteria criteria)
+        {
+            var sortInfos = criteria.SortInfos;
+            if (sortInfos.IsNullOrEmpty())
+            {
+                sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<ShoppingCartEntity>(x => x.CreatedDate), SortDirection = SortDirection.Descending } };
+            }
+            return sortInfos;
         }
 
         #endregion

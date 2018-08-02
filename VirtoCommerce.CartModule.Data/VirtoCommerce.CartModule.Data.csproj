@@ -120,6 +120,10 @@
     <Compile Include="Migrations\201804161350135_LongerEmailAddress.Designer.cs">
       <DependentUpon>201804161350135_LongerEmailAddress.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201808021642245_AddressName.cs" />
+    <Compile Include="Migrations\201808021642245_AddressName.Designer.cs">
+      <DependentUpon>201808021642245_AddressName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\DefaultShopingCartTotalsCalculator.cs" />
     <Compile Include="Model\DiscountEntityComparer.cs" />
     <Compile Include="Model\TaxDetailEntityComparer.cs" />
@@ -269,6 +273,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804161350135_LongerEmailAddress.resx">
       <DependentUpon>201804161350135_LongerEmailAddress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808021642245_AddressName.resx">
+      <DependentUpon>201808021642245_AddressName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

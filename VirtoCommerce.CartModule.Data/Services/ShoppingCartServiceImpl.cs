@@ -139,6 +139,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 var query = GetQuery(repository, criteria);
 
+                query = SortQuery(query, criteria);
+
                 retVal.TotalCount = query.Count();
 
                 var cartIds = query.Select(x => x.Id).Skip(criteria.Skip).Take(criteria.Take).ToArray();
@@ -149,9 +151,14 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
+        protected virtual IQueryable<ShoppingCartEntity> SortQuery(IQueryable<ShoppingCartEntity> query, ShoppingCartSearchCriteria criteria)
+        {
+            return query.OrderBySortInfos(GetSortInfos(criteria));
+        }
+
         protected virtual IQueryable<ShoppingCartEntity> GetQuery(ICartRepository repository, ShoppingCartSearchCriteria criteria)
         {
-            var query = repository.ShoppingCarts;
+            var query = GetQueryable(repository);
 
             if (!string.IsNullOrEmpty(criteria.Status))
             {
@@ -193,9 +200,12 @@ namespace VirtoCommerce.CartModule.Data.Services
                 query = query.Where(x => criteria.CustomerIds.Contains(x.CustomerId));
             }
 
-            query = query.OrderBySortInfos(GetSortInfos(criteria));
-
             return query;
+        }
+
+        protected virtual IQueryable<ShoppingCartEntity> GetQueryable(ICartRepository repository)
+        {
+            return repository.ShoppingCarts;
         }
 
         protected virtual SortInfo[] GetSortInfos(ShoppingCartSearchCriteria criteria)

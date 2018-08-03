@@ -1,4 +1,4 @@
-﻿using Omu.ValueInjecter;
+using Omu.ValueInjecter;
 using System;
 using System.ComponentModel.DataAnnotations;
 using VirtoCommerce.Domain.Commerce.Model;
@@ -8,6 +8,9 @@ namespace VirtoCommerce.CartModule.Data.Model
 {
     public class AddressEntity : Entity
     {
+        [StringLength(2048)]
+        public string Name { get; set; }
+
         [StringLength(32)]
         public string AddressType { get; set; }
 

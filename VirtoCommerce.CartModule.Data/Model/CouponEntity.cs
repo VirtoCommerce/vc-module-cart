@@ -17,23 +17,5 @@ namespace VirtoCommerce.CartModule.Data.Model
         // navigation properties
         public string ShoppingCartId { get; set; }
         public virtual ShoppingCartEntity ShoppingCart { get; set; }
-
-
-        public virtual string ToModel()
-        {
-            return Code;
-        }
-
-        public virtual CouponEntity FromModel(string model)
-        {
-            Code = model;
-
-            return this;
-        }
-
-        public virtual void Patch(CouponEntity target)
-        {
-            target.Code = Code;
-        }
     }
 }

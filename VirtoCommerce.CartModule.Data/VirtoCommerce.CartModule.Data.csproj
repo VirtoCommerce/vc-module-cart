@@ -129,7 +129,6 @@
       <DependentUpon>201809051333524_ManyCoupons.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\CouponEntity.cs" />
-    <Compile Include="Model\CouponEntityComparer.cs" />
     <Compile Include="Services\DefaultShopingCartTotalsCalculator.cs" />
     <Compile Include="Model\DiscountEntityComparer.cs" />
     <Compile Include="Model\TaxDetailEntityComparer.cs" />

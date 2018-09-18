@@ -127,6 +127,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             cart.Payments = Payments.Select(x => x.ToModel(AbstractTypeFactory<Payment>.TryCreateInstance())).ToList();
             cart.TaxDetails = TaxDetails.Select(x => x.ToModel(AbstractTypeFactory<TaxDetail>.TryCreateInstance())).ToList();
             cart.Coupons = Coupons.Select(x => x.Code).ToList();
+            //back compatibility changes
+            cart.Coupon = cart.Coupons.FirstOrDefault();
 
             return cart;
         }
@@ -174,7 +176,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             {
                 TaxDetails = new ObservableCollection<TaxDetailEntity>(cart.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
             }
-
+            //back compatibility changes
+            if (cart.Coupon != null)
+            {
+                Coupons = new ObservableCollection<CouponEntity>(new[] { new CouponEntity { Code = cart.Coupon } });
+            }
             if (cart.Coupons != null)
             {
                 Coupons = new ObservableCollection<CouponEntity>(cart.Coupons.Select(x => new CouponEntity { Code = x }));
@@ -260,7 +266,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (!Coupons.IsNullCollection())
             {
                 var couponComparer = AnonymousComparer.Create((CouponEntity x) => x.Code);
-                Coupons.Patch(target.Coupons, couponComparer, (sourceCoupon, targetCoupon) => { targetCoupon.Code = sourceCoupon.Code; });
+                Coupons.Patch(target.Coupons, couponComparer, (sourceCoupon, targetCoupon) => { return; });
             }
         }
     }

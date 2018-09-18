@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,12 +23,14 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IShoppingCartSearchService _searchService;
         private readonly IShoppingCartBuilder _cartBuilder;
+        private readonly IShopingCartTotalsCalculator _cartTotalsCalculator;
 
-        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService, IShoppingCartBuilder cartBuilder)
+        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService, IShoppingCartBuilder cartBuilder, IShopingCartTotalsCalculator cartTotalsCalculator)
         {
             _shoppingCartService = shoppingCartService;
             _searchService = searchService;
             _cartBuilder = cartBuilder;
+            _cartTotalsCalculator = cartTotalsCalculator;
         }
 
         [HttpGet]
@@ -281,6 +283,15 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         {
             _shoppingCartService.Delete(ids);
             return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [HttpPost]
+        [Route("recalculate")]
+        [ResponseType(typeof(ShoppingCart))]
+        public IHttpActionResult RecalculateTotals(ShoppingCart cart)
+        {
+            _cartTotalsCalculator.CalculateTotals(cart);
+            return Ok(cart);
         }
 
         private static string GetAsyncLockCartKey(string cartId)

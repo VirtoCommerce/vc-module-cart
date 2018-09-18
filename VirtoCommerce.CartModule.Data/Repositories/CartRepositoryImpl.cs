@@ -1,4 +1,4 @@
-﻿using System.Data.Entity;
+using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using VirtoCommerce.CartModule.Data.Model;
@@ -154,6 +154,19 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<DiscountEntity>().ToTable("CartDiscount");
             #endregion
 
+            #region Coupon
+            modelBuilder.Entity<CouponEntity>().HasKey(x => x.Id)
+                        .Property(x => x.Id);
+
+
+            modelBuilder.Entity<CouponEntity>().HasRequired(x => x.ShoppingCart)
+                                       .WithMany(x => x.Coupons)
+                                       .HasForeignKey(x => x.ShoppingCartId).WillCascadeOnDelete(true);
+
+
+            modelBuilder.Entity<CouponEntity>().ToTable("CartCoupon");
+            #endregion
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -166,6 +179,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         public IQueryable<ShipmentEntity> Shipments => GetAsQueryable<ShipmentEntity>();
         protected IQueryable<DiscountEntity> Discounts => GetAsQueryable<DiscountEntity>();
         protected IQueryable<TaxDetailEntity> TaxDetails => GetAsQueryable<TaxDetailEntity>();
+        protected IQueryable<CouponEntity> Coupons => GetAsQueryable<CouponEntity>();
 
         public virtual ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null)
         {
@@ -174,6 +188,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             var cartTaxDetails = TaxDetails.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
             var cartDiscounts = Discounts.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
             var cartAddresses = Addresses.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+            var cartCoupons = Coupons.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
 
             var paymentIds = Payments.Include(x => x.Addresses)
                                     .Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();

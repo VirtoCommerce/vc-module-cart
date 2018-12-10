@@ -32,6 +32,7 @@ namespace VirtoCommerce.CartModule.Test
         [Fact]
         public void CalculateTotals_Should_Be_RightTotals()
         {
+
             var item1 = new LineItem { ListPrice = 10.99m, SalePrice = 9.66m, DiscountAmount = 1.33m, TaxPercentRate = 0.12m, Fee = 0.33m, Quantity = 2 };
             var item2 = new LineItem { ListPrice = 55.22m, SalePrice = 49.33m, DiscountAmount = 5.89m, TaxPercentRate = 0.12m, Fee = 0.12m, Quantity = 5 };
             var item3 = new LineItem { ListPrice = 88.45m, SalePrice = 77.67m, DiscountAmount = 10.78m, TaxPercentRate = 0.12m, Fee = 0.08m, Quantity = 12 };
@@ -78,6 +79,8 @@ namespace VirtoCommerce.CartModule.Test
             Assert.Equal(161.47m, cart.SubTotalDiscount);
             Assert.Equal(180.85m, cart.SubTotalDiscountWithTax);
             Assert.Equal(1522.62m, cart.SubTotalWithTax);
+            Assert.Equal(17.00m, cart.ShippingTotal);
+            Assert.Equal(19.04m, cart.ShippingTotalWithTax);
             Assert.Equal(22.00m, cart.ShippingSubTotal);
             Assert.Equal(24.64m, cart.ShippingSubTotalWithTax);
             Assert.Equal(44.52m, cart.PaymentSubTotal);

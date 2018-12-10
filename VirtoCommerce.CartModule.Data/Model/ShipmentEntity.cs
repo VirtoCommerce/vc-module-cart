@@ -1,4 +1,4 @@
-﻿using Omu.ValueInjecter;
+using Omu.ValueInjecter;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -133,10 +133,13 @@ namespace VirtoCommerce.CartModule.Data.Model
             {
                 Addresses = new ObservableCollection<AddressEntity>(new[] { AbstractTypeFactory<AddressEntity>.TryCreateInstance().FromModel(shipment.DeliveryAddress) });
             }
-
             if (shipment.Items != null)
             {
                 Items = new ObservableCollection<ShipmentItemEntity>(shipment.Items.Select(x => AbstractTypeFactory<ShipmentItemEntity>.TryCreateInstance().FromModel(x, pkMap)));
+                foreach (var shipmentItem in Items)
+                {
+                    shipmentItem.ShipmentId = Id;
+                }
             }
 
             if (shipment.TaxDetails != null)

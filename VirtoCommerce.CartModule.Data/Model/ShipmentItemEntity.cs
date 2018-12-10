@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Cart.Model;
@@ -16,7 +16,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         [NotMapped]
         public LineItem ModelLineItem { get; set; }
-        
+
         public string LineItemId { get; set; }
         public virtual LineItemEntity LineItem { get; set; }
 
@@ -40,9 +40,13 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException(nameof(shipmentItem));
 
             this.InjectFrom(shipmentItem);
-            //Preserve link of the  original model LineItem for future references binding LineItems with  ShipmentLineItems 
-            ModelLineItem = shipmentItem.LineItem;
+
             pkMap.AddPair(shipmentItem, this);
+            //Store ModelLineItem for future linking with the order line item only for new objects otherwise we will get error when saving
+            if (shipmentItem.LineItem != null && shipmentItem.LineItem.IsTransient())
+            {
+                ModelLineItem = shipmentItem.LineItem;
+            }
 
             return this;
         }

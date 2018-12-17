@@ -175,7 +175,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             using (await AsyncLock.GetLockByKey(GetAsyncLockCartKey(cartId)).LockAsync())
             {
                 var cart = _shoppingCartService.GetByIds(new[] { cartId }).FirstOrDefault();
-                _cartBuilder.TakeCart(cart).RemoveCoupon().Save();
+                _cartBuilder.TakeCart(cart).RemoveCoupon(couponCode).Save();
             }
             return StatusCode(HttpStatusCode.NoContent);
         }

@@ -111,22 +111,23 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual IShoppingCartBuilder AddCoupon(string couponCode)
         {
-            if (!Cart.Coupons.Contains(couponCode, StringComparer.OrdinalIgnoreCase))
+            if (!Cart.Coupons.Any(x => x.EqualsInvariant(couponCode)))
             {
                 Cart.Coupons.Add(couponCode);
             }
-            Cart.Coupon = couponCode;
             return this;
         }
 
-        public virtual IShoppingCartBuilder RemoveCoupon()
+        public virtual IShoppingCartBuilder RemoveCoupon(string couponCode)
         {
-            var existentCoupon = Cart.Coupons.FirstOrDefault(x => x.EqualsInvariant(Cart.Coupon));
-            if (existentCoupon != null)
+            if (string.IsNullOrEmpty(couponCode))
             {
-                Cart.Coupons.Remove(existentCoupon);
+                Cart.Coupons.Clear();
             }
-            Cart.Coupon = null;
+            else
+            {
+                Cart.Coupons.Remove(Cart.Coupons.FirstOrDefault(x => x.EqualsInvariant(couponCode)));
+            }
             return this;
         }
 
@@ -225,7 +226,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                 AddLineItem(lineItem);
             }
 
-            Cart.Coupon = cart.Coupon;
+            Cart.Coupons.Clear();
+            Cart.Coupons = cart.Coupons;
 
             Cart.Shipments.Clear();
             Cart.Shipments = cart.Shipments;

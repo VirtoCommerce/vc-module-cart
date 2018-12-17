@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -111,12 +111,21 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual IShoppingCartBuilder AddCoupon(string couponCode)
         {
+            if (!Cart.Coupons.Contains(couponCode, StringComparer.OrdinalIgnoreCase))
+            {
+                Cart.Coupons.Add(couponCode);
+            }
             Cart.Coupon = couponCode;
             return this;
         }
 
         public virtual IShoppingCartBuilder RemoveCoupon()
         {
+            var existentCoupon = Cart.Coupons.FirstOrDefault(x => x.EqualsInvariant(Cart.Coupon));
+            if (existentCoupon != null)
+            {
+                Cart.Coupons.Remove(existentCoupon);
+            }
             Cart.Coupon = null;
             return this;
         }
@@ -157,7 +166,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
                 if (shippingRate == null)
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, 
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture,
                         "Unknown shipment method: {0} with option: {1}", shipment.ShipmentMethodCode, shipment.ShipmentMethodOption));
                 }
                 shipment.ShipmentMethodCode = shippingRate.ShippingMethod.Code;

@@ -177,13 +177,20 @@ namespace VirtoCommerce.CartModule.Data.Model
                 TaxDetails = new ObservableCollection<TaxDetailEntity>(cart.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
             }
             //back compatibility changes
-            if (cart.Coupon != null)
-            {
-                Coupons = new ObservableCollection<CouponEntity>(new[] { new CouponEntity { Code = cart.Coupon } });
-            }
             if (cart.Coupons != null)
             {
                 Coupons = new ObservableCollection<CouponEntity>(cart.Coupons.Select(x => new CouponEntity { Code = x }));
+            }
+            if (cart.Coupon != null)
+            {
+                if (Coupons == null)
+                {
+                    Coupons = new ObservableCollection<CouponEntity>(new[] { new CouponEntity { Code = cart.Coupon } });
+                }
+                else if (!Coupons.Any(x => x.Code == cart.Coupon))
+                {
+                    Coupons.Add(new CouponEntity { Code = cart.Coupon });
+                }
             }
 
             return this;

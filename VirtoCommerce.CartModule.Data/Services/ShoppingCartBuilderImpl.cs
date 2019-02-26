@@ -226,7 +226,6 @@ namespace VirtoCommerce.CartModule.Data.Services
                 AddLineItem(lineItem);
             }
 
-            Cart.Coupons.Clear();
             Cart.Coupons = cart.Coupons;
 
             Cart.Shipments.Clear();

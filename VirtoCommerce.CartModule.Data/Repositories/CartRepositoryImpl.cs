@@ -1,3 +1,4 @@
+using System;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
@@ -183,19 +184,18 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null)
         {
-            ShoppingCartEntity[] result;
+            // Array.Empty does not create empty array each time, all creations returns the same static object:
+            // https://stackoverflow.com/a/33515349/5907312
+            ShoppingCartEntity[] result = Array.Empty<ShoppingCartEntity>();
 
-            if (ids.IsNullOrEmpty())
-            {
-                result = new ShoppingCartEntity[0];
-            }
-            else
+            if (!ids.IsNullOrEmpty())
             {
                 result = ShoppingCarts.Where(x => ids.Contains(x.Id)).ToArray();
 
                 if (result.Any())
                 {
                     ids = result.Select(x => x.Id).ToArray();
+
                     var cartTaxDetails = TaxDetails.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
                     var cartDiscounts = Discounts.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
                     var cartAddresses = Addresses.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
@@ -203,17 +203,29 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                     var paymentIds = Payments.Include(x => x.Addresses)
                         .Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
-                    var paymentTaxDetails = TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).ToArray();
-                    var paymentDiscounts = Discounts.Where(x => paymentIds.Contains(x.PaymentId)).ToArray();
+
+                    if (paymentIds.Any())
+                    {
+                        var paymentTaxDetails = TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).ToArray();
+                        var paymentDiscounts = Discounts.Where(x => paymentIds.Contains(x.PaymentId)).ToArray();
+                    }
 
                     var lineItemIds = LineItems.Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
-                    var lineItemsTaxDetails = TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();
-                    var lineItemsDiscounts = Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();
+
+                    if (lineItemIds.Any())
+                    {
+                        var lineItemsTaxDetails = TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();
+                        var lineItemsDiscounts = Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();
+                    }
 
                     var shipmentIds = Shipments.Include(x => x.Items).Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
-                    var shipmentTaxDetails = TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
-                    var shipmentDiscounts = Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
-                    var shipmentAddresses = Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
+
+                    if (shipmentIds.Any())
+                    {
+                        var shipmentTaxDetails = TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
+                        var shipmentDiscounts = Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
+                        var shipmentAddresses = Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
+                    }
                 }
             }
 

@@ -186,7 +186,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             // Array.Empty does not create empty array each time, all creations returns the same static object:
             // https://stackoverflow.com/a/33515349/5907312
-            ShoppingCartEntity[] result = Array.Empty<ShoppingCartEntity>();
+            var result = Array.Empty<ShoppingCartEntity>();
 
             if (!ids.IsNullOrEmpty())
             {
@@ -196,35 +196,37 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 {
                     ids = result.Select(x => x.Id).ToArray();
 
-                    var cartTaxDetails = TaxDetails.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
-                    var cartDiscounts = Discounts.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
-                    var cartAddresses = Addresses.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
-                    var cartCoupons = Coupons.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+                    TaxDetails.Where(x => ids.Contains(x.ShoppingCartId)).Load();
+                    Discounts.Where(x => ids.Contains(x.ShoppingCartId)).Load();
+                    Addresses.Where(x => ids.Contains(x.ShoppingCartId)).Load();
+                    Coupons.Where(x => ids.Contains(x.ShoppingCartId)).Load();
 
-                    var paymentIds = Payments.Include(x => x.Addresses)
-                        .Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
+                    var payments = Payments.Include(x => x.Addresses).Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+                    var paymentIds = payments.Select(x => x.Id).ToArray();
 
                     if (paymentIds.Any())
                     {
-                        var paymentTaxDetails = TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).ToArray();
-                        var paymentDiscounts = Discounts.Where(x => paymentIds.Contains(x.PaymentId)).ToArray();
+                        TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).Load();
+                        Discounts.Where(x => paymentIds.Contains(x.PaymentId)).Load();
                     }
 
-                    var lineItemIds = LineItems.Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
+                    var lineItems = LineItems.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+                    var lineItemIds = lineItems.Select(x => x.Id).ToArray();
 
                     if (lineItemIds.Any())
                     {
-                        var lineItemsTaxDetails = TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();
-                        var lineItemsDiscounts = Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).ToArray();
+                        TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).Load();
+                        Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).Load();
                     }
 
-                    var shipmentIds = Shipments.Include(x => x.Items).Where(x => ids.Contains(x.ShoppingCartId)).ToArray().Select(x => x.Id).ToArray();
+                    var shipments = Shipments.Include(x => x.Items).Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+                    var shipmentIds = shipments.Select(x => x.Id).ToArray();
 
                     if (shipmentIds.Any())
                     {
-                        var shipmentTaxDetails = TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
-                        var shipmentDiscounts = Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
-                        var shipmentAddresses = Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).ToArray();
+                        TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).Load();
+                        Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).Load();
+                        Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).Load();
                     }
                 }
             }
@@ -234,13 +236,12 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual void RemoveCarts(string[] ids)
         {
-
             var carts = GetShoppingCartsByIds(ids);
+
             if (!carts.IsNullOrEmpty())
             {
                 foreach (var cart in carts)
                 {
-
                     Remove(cart);
                 }
             }

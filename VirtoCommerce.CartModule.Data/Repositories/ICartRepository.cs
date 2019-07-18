@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -9,5 +9,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         IQueryable<ShoppingCartEntity> ShoppingCarts { get; }
         ShoppingCartEntity[] GetShoppingCartsByIds(string[] ids, string responseGroup = null);
         void RemoveCarts(string[] ids);
+
+        void SoftRemoveCarts(string[] ids);
     }
 }

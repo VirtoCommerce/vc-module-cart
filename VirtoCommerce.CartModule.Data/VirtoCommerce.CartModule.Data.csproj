@@ -128,6 +128,10 @@
     <Compile Include="Migrations\201809180910372_ManyCoupons.Designer.cs">
       <DependentUpon>201809180910372_ManyCoupons.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907181419463_SoftCartDelete.cs" />
+    <Compile Include="Migrations\201907181419463_SoftCartDelete.Designer.cs">
+      <DependentUpon>201907181419463_SoftCartDelete.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\CouponEntity.cs" />
     <Compile Include="Services\DefaultShopingCartTotalsCalculator.cs" />
     <Compile Include="Model\DiscountEntityComparer.cs" />
@@ -284,6 +288,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201809180910372_ManyCoupons.resx">
       <DependentUpon>201809180910372_ManyCoupons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907181419463_SoftCartDelete.resx">
+      <DependentUpon>201907181419463_SoftCartDelete.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

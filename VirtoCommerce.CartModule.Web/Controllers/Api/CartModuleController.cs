@@ -296,6 +296,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
                 repository.SoftRemoveCarts(ids);
                 repository.UnitOfWork.Commit();
             }
+
             //Complete the hard shopping cart deletion in the asynchronous background task
             BackgroundJob.Enqueue(() => HardCartDeleteBackgroundJob(ids));
 
@@ -321,7 +322,5 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         {
             _shoppingCartService.Delete(ids);
         }
-
-
     }
 }

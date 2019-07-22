@@ -249,10 +249,13 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual void SoftRemoveCarts(string[] ids)
         {
-            var carts = ShoppingCarts.Where(x => ids.Contains(x.Id));
-            foreach(var cart in carts)
+            if (!ids.IsNullOrEmpty())
             {
-                cart.IsDeleted = true;
+                var carts = ShoppingCarts.Where(x => ids.Contains(x.Id));
+                foreach (var cart in carts)
+                {
+                    cart.IsDeleted = true;
+                }
             }
         }
 

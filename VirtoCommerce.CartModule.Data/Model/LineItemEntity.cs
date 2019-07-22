@@ -84,6 +84,12 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public bool IsReadOnly { get; set; }
 
+        [StringLength(64)]
+        public string FulfilmentCenterId { get; set; }
+
+        [StringLength(128)]
+        public string FulfillmentCenterName { get; set; }
+
         [StringLength(128)]
         public string PriceId { get; set; }
 
@@ -213,6 +219,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.RequiredShipping = RequiredShipping;
             target.ProductType = ProductType;
             target.FulfilmentLocationCode = FulfilmentLocationCode;
+            target.FulfilmentCenterId = FulfilmentCenterId;
+            target.FulfillmentCenterName = FulfillmentCenterName;
 
             if (!Discounts.IsNullCollection())
             {

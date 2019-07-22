@@ -21,6 +21,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string FulfilmentCenterId { get; set; }
 
+        [StringLength(128)]
+        public string FulfillmentCenterName { get; set; }
+
         [Required]
         [StringLength(3)]
         public string Currency { get; set; }
@@ -163,6 +166,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Fee = Fee;
             target.FeeWithTax = FeeWithTax;
             target.FulfilmentCenterId = FulfilmentCenterId;
+            target.FulfillmentCenterName = FulfillmentCenterName;
             target.ShipmentMethodCode = ShipmentMethodCode;
             target.Total = Total;
             target.TotalWithTax = TotalWithTax;

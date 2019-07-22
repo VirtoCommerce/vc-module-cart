@@ -104,6 +104,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string Type { get; set; }
 
+        //Soft delete
+        public bool IsDeleted { get; set; }
+
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; } = new NullCollection<DiscountEntity>();
         public virtual ObservableCollection<AddressEntity> Addresses { get; set; } = new NullCollection<AddressEntity>();
         public virtual ObservableCollection<LineItemEntity> Items { get; set; } = new NullCollection<LineItemEntity>();

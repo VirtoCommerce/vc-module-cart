@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -5,6 +6,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
+using Hangfire;
+using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.Model;
 using VirtoCommerce.Domain.Cart.Model;
@@ -24,13 +27,19 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         private readonly IShoppingCartSearchService _searchService;
         private readonly IShoppingCartBuilder _cartBuilder;
         private readonly IShopingCartTotalsCalculator _cartTotalsCalculator;
-
-        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService, IShoppingCartBuilder cartBuilder, IShopingCartTotalsCalculator cartTotalsCalculator)
+        private readonly Func<ICartRepository> _repositoryFactory;
+        public CartModuleController(
+            IShoppingCartService shoppingCartService
+            , IShoppingCartSearchService searchService
+            , IShoppingCartBuilder cartBuilder
+            , IShopingCartTotalsCalculator cartTotalsCalculator,
+            Func<ICartRepository> repositoryFactory)
         {
             _shoppingCartService = shoppingCartService;
             _searchService = searchService;
             _cartBuilder = cartBuilder;
             _cartTotalsCalculator = cartTotalsCalculator;
+            _repositoryFactory = repositoryFactory;
         }
 
         [HttpGet]
@@ -281,7 +290,16 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [CheckPermission(Permission = PredefinedPermissions.Delete)]
         public IHttpActionResult DeleteCarts([FromUri] string[] ids)
         {
-            _shoppingCartService.Delete(ids);
+            //For performance reasons use soft shoping cart deletion synchronously first
+            using(var repository = _repositoryFactory())
+            {
+                repository.SoftRemoveCarts(ids);
+                repository.UnitOfWork.Commit();
+            }
+
+            //Complete the hard shopping cart deletion in the asynchronous background task
+            BackgroundJob.Enqueue(() => HardCartDeleteBackgroundJob(ids));
+
             return StatusCode(HttpStatusCode.NoContent);
         }
 
@@ -299,5 +317,10 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return "Cart:" + cartId;
         }
 
+        [DisableConcurrentExecution(60 * 60 * 24)]
+        public void HardCartDeleteBackgroundJob(string[] ids)
+        {
+            _shoppingCartService.Delete(ids);
+        }
     }
 }

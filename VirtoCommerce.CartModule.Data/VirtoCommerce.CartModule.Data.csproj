@@ -128,13 +128,9 @@
     <Compile Include="Migrations\201809180910372_ManyCoupons.Designer.cs">
       <DependentUpon>201809180910372_ManyCoupons.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201907181419463_SoftCartDelete.cs" />
-    <Compile Include="Migrations\201907181419463_SoftCartDelete.Designer.cs">
-      <DependentUpon>201907181419463_SoftCartDelete.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907221021020_NewFulfilmentFields.cs" />
-    <Compile Include="Migrations\201907221021020_NewFulfilmentFields.Designer.cs">
-      <DependentUpon>201907221021020_NewFulfilmentFields.cs</DependentUpon>
+    <Compile Include="Migrations\201907221319198_SoftDeleteAndMissedColumns.cs" />
+    <Compile Include="Migrations\201907221319198_SoftDeleteAndMissedColumns.Designer.cs">
+      <DependentUpon>201907221319198_SoftDeleteAndMissedColumns.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\CouponEntity.cs" />
     <Compile Include="Services\DefaultShopingCartTotalsCalculator.cs" />
@@ -293,11 +289,8 @@
     <EmbeddedResource Include="Migrations\201809180910372_ManyCoupons.resx">
       <DependentUpon>201809180910372_ManyCoupons.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907181419463_SoftCartDelete.resx">
-      <DependentUpon>201907181419463_SoftCartDelete.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907221021020_NewFulfilmentFields.resx">
-      <DependentUpon>201907221021020_NewFulfilmentFields.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201907221319198_SoftDeleteAndMissedColumns.resx">
+      <DependentUpon>201907221319198_SoftDeleteAndMissedColumns.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

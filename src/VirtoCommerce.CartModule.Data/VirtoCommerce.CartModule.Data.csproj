@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <noWarn>1591</noWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Hangfire" Version="1.6.22" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.3" />
+        <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.0.0-beta0001" />
+        <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.0.0-beta.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\VirtoCommerce.CartModule.Core\VirtoCommerce.CartModule.Core.csproj" />
+    </ItemGroup>
+
+</Project>

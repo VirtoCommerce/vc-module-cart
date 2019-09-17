@@ -20,9 +20,9 @@ Shopping cart module manages customers accumulated list of items, calculates a t
 1. Multiple payments methods
 1. Create new cart from orders history
 
-The main purpose of the cart module is to save and store the shopping cart data and changes on VC Manager side.
+The main purpose of the Cart module is to implement customer shopping cart management in VC eCommerce solution. It encapsulates data persistence, management services and exposes REST API endpoints.
 
-The cart module is connected with the shopping cart via two types of API requests:
+The cart module is connected with the shopping cart API requests:
 
 1. General API request that allows saving the entire shopping cart information on the database;
 1. Specific API requests that allow call specific operations, for example delete, edit, choose payment method, choose delivery type, etc.
@@ -31,9 +31,9 @@ For more details about the available cart-module API, please follow the link bel
 
 https://admin-demo.virtocommerce.com/docs/ui/index#/Shopping%2520cart%2520module
 
-The cart-module functionality can be extended and customized based on the specific business needs. In order to extend the cart module functionality, use the carte module template that can be accessed by following the link below:
+The cart-module functionality can be extended and customized based on the specific business needs. In order to extend the cart module functionality, use "Virto Commerce 2.x Cart and Order Module extension" template that can be accessed by following the link below:
 
-https://marketplace.visualstudio.com/items?itemName=VirtoCommerce2xModuleProjectTemplate.VirtoCommerce2xModule
+https://marketplace.visualstudio.com/items?itemName=Virto-Commerce.VirtoCommerceModuleTemplates
 
 
 ## Installation
@@ -44,7 +44,7 @@ Installing the module:
 ## Available resources
 * Module related service implementations as a <a href="https://www.nuget.org/packages/VirtoCommerce.CartModule.Data" target="_blank">NuGet package</a>
 * API client as a <a href="https://www.nuget.org/packages/VirtoCommerce.CartModule.Client" target="_blank">NuGet package</a>
-* API client documentation http://admin-demo.virtocommerce.com/docs/ui/index#!/Shopping_cart_module
+* API client documentation  https://admin-demo.virtocommerce.com/docs/ui/index#/Shopping%2520cart%2520module
 
 ## License
 Copyright (c) Virto Solutions LTD.  All rights reserved.

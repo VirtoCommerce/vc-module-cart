@@ -20,6 +20,9 @@
     <owners>
         <owner>Virto Commerce</owner>
     </owners>
+	<groups>
+        <group>commerce</group>
+    </groups>
     <projectUrl>https://virtocommerce.com/apps/extensions/virto-shoppingcart-module</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/VirtoCommerce/vc-module-cart/master/VirtoCommerce.CartModule.Web/Content/logo.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>

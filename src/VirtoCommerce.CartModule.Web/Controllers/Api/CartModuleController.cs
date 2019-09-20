@@ -18,7 +18,6 @@ using VirtoCommerce.ShippingModule.Core.Model;
 namespace VirtoCommerce.CartModule.Web.Controllers.Api
 {
     [Route("api/carts")]
-    [EnableCors]
     public class CartModuleController : Controller
     {
         private readonly IShoppingCartService _shoppingCartService;

@@ -12,20 +12,14 @@ VirtoCommerce.Cart module manages customers accumulated list of items, calculate
 
 ## Features
 
-1. Supports multiple carts- if the user is using more than one cart at the same time, all of the carts will be supported by VirtoCommerce.Cart module.
+1. Supports multiple carts - if the user is using more than one cart at the same time, all of the carts will be supported by VirtoCommerce.Cart module.
 
-1. Wishlist-
-the user can add the desired products to the  wishlist , which will be saved in the cart. The user can later use the products added to the wishlist to make an order. The wishlist details will be saved by the VirtoCommerce.Cart module.
-1. Grouping multiple carts to one order-
-If the user is using more than one cart, the final order will be created by grouping the details from all the carts filled out by user.
-1. Anonymous carts-
-the user is allowed to use an anonymous account, not necessarily to login under his own account. Such carts information will also be saved on the database by the cart module.
-1. Stock reservation-
-the selected products will be reserved in stock after adding them to the cart.
-1. Multiple payments methods-
-the user can choose the payment methods he wants before checkout.
-1. Create new cart from orders history-
-the user can add products to a new cart using the previously completed orders (orders history).
+1. Wishlist - the user can add the desired products to the  wishlist , which will be saved in the cart. The user can later use the products added to the wishlist to make an order. The wishlist details will be saved by the VirtoCommerce.Cart module.
+1. Grouping multiple carts to one order - if the user is using more than one cart, the final order will be created by grouping the details from all the carts filled out by user.
+1. Anonymous carts - the user is allowed to use an anonymous account, not necessarily to login under his own account. Such carts information will also be saved on the database by the cart module.
+1. Stock reservation - the selected products will be reserved in stock after adding them to the cart.
+1. Multiple payments methods - the user can choose the payment methods he wants before checkout.
+1. Create new cart from orders history - the user can add products to a new cart using the previously completed orders (orders history).
 
 The main purpose of the VirtoCommerce.Cart module is to implement customer shopping cart management in VC eCommerce solution. It encapsulates data persistence, management services and exposes REST API endpoints.
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using VirtoCommerce.CartModule.Core.Model;
@@ -11,13 +12,13 @@ using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
-using VirtoCommerce.Platform.Data.Caching;
 using Xunit;
 
 namespace VirtoCommerce.CartModule.Test.UnitTests
@@ -100,8 +101,9 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         {
             var provider = new ServiceCollection().AddMemoryCache().BuildServiceProvider();
             var memoryCache = provider.GetService<IMemoryCache>();
+            var mockLog = new Mock<ILogger<PlatformMemoryCache>>();
 
-            return new PlatformMemoryCache(memoryCache, Options.Create(new PlatformOptions()));
+            return new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), mockLog.Object);
         }
     }
 }

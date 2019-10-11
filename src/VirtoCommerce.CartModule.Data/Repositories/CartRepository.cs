@@ -89,6 +89,18 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             }
         }
 
+        public virtual async Task SoftRemoveCartsAsync(string[] ids)
+        {
+            if (!ids.IsNullOrEmpty())
+            {
+                var carts = await ShoppingCarts.Where(x => ids.Contains(x.Id)).ToListAsync();
+                foreach (var cart in carts)
+                {
+                    cart.IsDeleted = true;
+                }
+            }
+        }
+
         #endregion
     }
 }

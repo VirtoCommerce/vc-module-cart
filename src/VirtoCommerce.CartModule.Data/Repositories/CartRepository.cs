@@ -28,6 +28,9 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual async Task<ShoppingCartEntity[]> GetShoppingCartsByIdsAsync(string[] ids, string responseGroup = null)
         {
+            if (ids.IsNullOrEmpty())
+                return new ShoppingCartEntity[0];
+
             var carts = await ShoppingCarts.Where(x => ids.Contains(x.Id)).ToArrayAsync();
             var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
 

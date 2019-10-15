@@ -53,15 +53,13 @@ namespace VirtoCommerce.CartModule.Data.Model
             BarCode = shipmentItem.BarCode;
             Quantity = shipmentItem.Quantity;
 
-            pkMap.AddPair(shipmentItem, this);
+            //Preserve link of the  original model LineItem for future references binding LineItems with  ShipmentLineItems
             if (shipmentItem.LineItem != null)
             {
-                LineItemId = shipmentItem.LineItem.Id;
-                if (shipmentItem.LineItem.IsTransient())
-                {
-                    ModelLineItem = shipmentItem.LineItem;
-                }
+                ModelLineItem = shipmentItem.LineItem;
             }
+
+            pkMap.AddPair(shipmentItem, this);
 
             return this;
         }

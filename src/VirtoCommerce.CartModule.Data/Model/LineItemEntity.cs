@@ -85,12 +85,6 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public bool IsReadOnly { get; set; }
 
-        [StringLength(64)]
-        public string FulfilmentCenterId { get; set; }
-
-        [StringLength(128)]
-        public string FulfillmentCenterName { get; set; }
-
         [StringLength(128)]
         public string PriceId { get; set; }
 
@@ -139,9 +133,6 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; }
             = new NullCollection<DiscountEntity>();
-
-        public virtual ObservableCollection<ShipmentItemEntity> ShipmentItems { get; set; }
-            = new NullCollection<ShipmentItemEntity>();
 
         public virtual ObservableCollection<CartDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues { get; set; }
             = new NullCollection<CartDynamicPropertyObjectValueEntity>();
@@ -329,8 +320,6 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.RequiredShipping = RequiredShipping;
             target.ProductType = ProductType;
             target.FulfillmentLocationCode = FulfillmentLocationCode;
-            target.FulfilmentCenterId = FulfilmentCenterId;
-            target.FulfillmentCenterName = FulfillmentCenterName;
             target.Sku = Sku;
             if (!Discounts.IsNullCollection())
             {

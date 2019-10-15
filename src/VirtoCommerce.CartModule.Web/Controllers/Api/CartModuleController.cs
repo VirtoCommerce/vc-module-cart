@@ -1,16 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Services;
-using VirtoCommerce.CartModule.Data.Repositories;
+using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
+
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.ShippingModule.Core.Model;
@@ -24,19 +24,14 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         private readonly IShoppingCartSearchService _searchService;
         private readonly IShoppingCartBuilder _cartBuilder;
         private readonly IShoppingCartTotalsCalculator _cartTotalsCalculator;
-        private readonly Func<ICartRepository> _repositoryFactory;
 
-        public CartModuleController(IShoppingCartService shoppingCartService,
-            IShoppingCartSearchService searchService,
-            IShoppingCartBuilder cartBuilder,
-            IShoppingCartTotalsCalculator cartTotalsCalculator,
-            Func<ICartRepository> repositoryFactory)
+        public CartModuleController(IShoppingCartService shoppingCartService, IShoppingCartSearchService searchService,
+                                    IShoppingCartBuilder cartBuilder, IShoppingCartTotalsCalculator cartTotalsCalculator)
         {
             _shoppingCartService = shoppingCartService;
             _searchService = searchService;
             _cartBuilder = cartBuilder;
             _cartTotalsCalculator = cartTotalsCalculator;
-            _repositoryFactory = repositoryFactory;
         }
 
         [HttpGet]
@@ -266,15 +261,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
         public async Task<ActionResult> DeleteCarts([FromQuery] string[] ids)
         {
-            //For performance reasons use soft shoping cart deletion synchronously first
-            using (var repository = _repositoryFactory())
-            {
-                await repository.SoftRemoveCartsAsync(ids);
-                repository.UnitOfWork.Commit();
-            }
-            //Complete the hard shopping cart deletion in the asynchronous background task
-            BackgroundJob.Enqueue(() => HardCartDeleteBackgroundJob(ids));
-
+            await _shoppingCartService.DeleteAsync(ids);
             return NoContent();
         }
 
@@ -288,12 +275,6 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         {
             _cartTotalsCalculator.CalculateTotals(cart);
             return Ok(cart);
-        }
-
-        [DisableConcurrentExecution(60 * 60 * 24)]
-        public async Task HardCartDeleteBackgroundJob(string[] ids)
-        {
-            await _shoppingCartService.DeleteAsync(ids);
         }
     }
 }

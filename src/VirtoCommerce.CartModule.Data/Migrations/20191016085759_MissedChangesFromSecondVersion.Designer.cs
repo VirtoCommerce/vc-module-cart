@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CartModule.Data.Repositories;
 
 namespace VirtoCommerce.CartModule.Data.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    partial class CartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191016085759_MissedChangesFromSecondVersion")]
+    partial class MissedChangesFromSecondVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -762,17 +764,17 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.PaymentEntity", "Payment")
                         .WithMany("DynamicPropertyObjectValues")
                         .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.ShipmentEntity", "Shipment")
                         .WithMany("DynamicPropertyObjectValues")
                         .HasForeignKey("ShipmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.ShoppingCartEntity", "ShoppingCart")
                         .WithMany("DynamicPropertyObjectValues")
                         .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.CouponEntity", b =>

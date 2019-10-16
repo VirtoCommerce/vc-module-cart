@@ -23,6 +23,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string FulfillmentCenterId { get; set; }
 
+        [StringLength(128)]
+        public string FulfillmentCenterName { get; set; }
+
         [Required]
         [StringLength(3)]
         public string Currency { get; set; }
@@ -207,6 +210,10 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (shipment.Items != null)
             {
                 Items = new ObservableCollection<ShipmentItemEntity>(shipment.Items.Select(x => AbstractTypeFactory<ShipmentItemEntity>.TryCreateInstance().FromModel(x, pkMap)));
+                foreach (var shipmentItem in Items)
+                {
+                    shipmentItem.ShipmentId = Id;
+                }
             }
 
             if (shipment.TaxDetails != null)
@@ -236,6 +243,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Fee = Fee;
             target.FeeWithTax = FeeWithTax;
             target.FulfillmentCenterId = FulfillmentCenterId;
+            target.FulfillmentCenterName = FulfillmentCenterName;
             target.ShipmentMethodCode = ShipmentMethodCode;
             target.Total = Total;
             target.TotalWithTax = TotalWithTax;

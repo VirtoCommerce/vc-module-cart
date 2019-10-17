@@ -61,7 +61,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                     if (cartResponseGroup.HasFlag(CartResponseGroup.WithLineItems))
                     {
-                        var lineItems = LineItems.Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+                        var lineItems = await LineItems.Where(x => ids.Contains(x.ShoppingCartId)).ToArrayAsync();
                         var lineItemIds = lineItems.Select(x => x.Id).ToArray();
 
                         if (lineItemIds.Any())
@@ -73,7 +73,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                     if (cartResponseGroup.HasFlag(CartResponseGroup.WithShipments))
                     {
-                        var shipments = Shipments.Include(x => x.Items).Where(x => ids.Contains(x.ShoppingCartId)).ToArray();
+                        var shipments = await Shipments.Include(x => x.Items).Where(x => ids.Contains(x.ShoppingCartId)).ToArrayAsync();
                         var shipmentIds = shipments.Select(x => x.Id).ToArray();
 
                         if (shipmentIds.Any())

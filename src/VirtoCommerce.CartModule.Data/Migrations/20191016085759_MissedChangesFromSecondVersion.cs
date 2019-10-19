@@ -28,7 +28,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
-                name: "FulfilmentCenterId",
+                name: "FulfillmentCenterId",
                 table: "CartLineItem",
                 maxLength: 64,
                 nullable: true);
@@ -88,7 +88,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 table: "CartLineItem");
 
             migrationBuilder.DropColumn(
-                name: "FulfilmentCenterId",
+                name: "FulfillmentCenterId",
                 table: "CartLineItem");
 
             migrationBuilder.DropColumn(

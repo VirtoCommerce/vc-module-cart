@@ -287,7 +287,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.Property<string>("FulfillmentLocationCode")
                         .HasMaxLength(64);
 
-                    b.Property<string>("FulfilmentCenterId")
+                    b.Property<string>("FulfillmentCenterId")
                         .HasMaxLength(64);
 
                     b.Property<decimal?>("Height");

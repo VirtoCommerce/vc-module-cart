@@ -68,7 +68,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPut]
         [Route("{cartId}/items")]
-        public async Task<ActionResult> ChangeCartItem(string cartId, string lineItemId, int quantity)
+        public async Task<ActionResult> ChangeCartItem(string cartId, [FromQuery] string lineItemId, [FromQuery] int quantity)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
@@ -133,7 +133,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPost]
         [Route("availshippingrates")]
-        public async Task<ActionResult<ICollection<ShippingRate>>> GetAvailableShippingRatesByContext(ShippingEvaluationContext context)
+        public async Task<ActionResult<ICollection<ShippingRate>>> GetAvailableShippingRatesByContext([FromBody] ShippingEvaluationContext context)
         {
             var builder = _cartBuilder.TakeCart(context.ShoppingCart);
             var shippingRates = await builder.GetAvailableShippingRatesAsync();

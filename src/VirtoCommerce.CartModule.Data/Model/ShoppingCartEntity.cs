@@ -106,6 +106,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string Type { get; set; }
 
+        //Soft delete
+        public bool IsDeleted { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; } = new NullCollection<DiscountEntity>();

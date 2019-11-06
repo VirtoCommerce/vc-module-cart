@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Notifications;
 using VirtoCommerce.CartModule.Core.Services;
+using VirtoCommerce.CartModule.Data.BackgroundJobs;
 using VirtoCommerce.CartModule.Data.Handlers;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
@@ -84,6 +86,8 @@ namespace VirtoCommerce.CartModule.Web
                     dbContext.Database.Migrate();
                 }
             }
+
+            RecurringJob.AddOrUpdate<CheckingAbandonedCartJob>(j => j.CheckingJob(JobCancellationToken.Null), "0 * 0 ? * * *");
         }
 
         public void Uninstall()

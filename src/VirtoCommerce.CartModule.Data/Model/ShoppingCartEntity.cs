@@ -109,6 +109,8 @@ namespace VirtoCommerce.CartModule.Data.Model
         //Soft delete
         public bool IsDeleted { get; set; }
 
+        public bool IsAbandoned { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; } = new NullCollection<DiscountEntity>();
@@ -163,6 +165,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             cart.TaxPercentRate = TaxPercentRate;
             cart.Type = Type;
             cart.Name = Name;
+            cart.IsAbandoned = IsAbandoned;
 
             cart.Discounts = Discounts.Select(x => x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
             cart.Items = Items.Select(x => x.ToModel(AbstractTypeFactory<LineItem>.TryCreateInstance())).ToList();
@@ -229,6 +232,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             Type = cart.Type;
             Name = cart.Name;
             StoreId = cart.StoreId;
+            IsAbandoned = cart.IsAbandoned;
 
             if (cart.Addresses != null)
             {
@@ -318,6 +322,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.TaxPercentRate = TaxPercentRate;
             target.Type = Type;
             target.Name = Name;
+            target.IsAbandoned = IsAbandoned;
 
             if (!Items.IsNullCollection())
             {

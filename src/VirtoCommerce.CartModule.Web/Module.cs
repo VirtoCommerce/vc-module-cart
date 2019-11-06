@@ -9,11 +9,13 @@ using Microsoft.Extensions.Options;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
+using VirtoCommerce.CartModule.Core.Notifications;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Handlers;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.JsonConverters;
+using VirtoCommerce.NotificationsModule.Core.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
@@ -68,6 +70,10 @@ namespace VirtoCommerce.CartModule.Web
             dynamicPropertyRegistrar.RegisterType<Payment>();
             dynamicPropertyRegistrar.RegisterType<Shipment>();
             dynamicPropertyRegistrar.RegisterType<ShoppingCart>();
+
+            var notificationRegistr = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
+            notificationRegistr.RegisterNotification<Abandon1stNotification>();
+            notificationRegistr.RegisterNotification<Abandon2ndNotification>();
 
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {

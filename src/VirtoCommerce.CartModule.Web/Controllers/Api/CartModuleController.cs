@@ -291,7 +291,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         }
 
         [DisableConcurrentExecution(60 * 60 * 24)]
-        private async Task HardCartDeleteBackgroundJob(string[] ids)
+        public async Task HardCartDeleteBackgroundJob(string[] ids)
         {
             await _shoppingCartService.DeleteAsync(ids);
         }

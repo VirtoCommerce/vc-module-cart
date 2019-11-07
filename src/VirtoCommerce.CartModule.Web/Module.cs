@@ -17,6 +17,7 @@ using VirtoCommerce.CartModule.Data.Handlers;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.JsonConverters;
+using VirtoCommerce.NotificationsModule.Core.Model;
 using VirtoCommerce.NotificationsModule.Core.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
@@ -74,8 +75,17 @@ namespace VirtoCommerce.CartModule.Web
             dynamicPropertyRegistrar.RegisterType<ShoppingCart>();
 
             var notificationRegistr = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
-            notificationRegistr.RegisterNotification<Abandon1stNotification>();
-            notificationRegistr.RegisterNotification<Abandon2ndNotification>();
+            notificationRegistr.RegisterNotification<Abandon1stNotification>().WithTemplates(new EmailNotificationTemplate() {
+                Subject = "Please complete your order",
+                Body = "Dear Customer,<br>You have not completed your order.Please follow the link bellow to access your abandoned shopping cart and complete your shopping. (link) <br>Please enter the promo code(promo code) we are offering and get a(example, 30 %) discount. <br>Should you have any questions,please don't hesitate to contact our Customer Support team (provide contacts)<br> Sincerely yours,<br>(Company name)",
+                IsReadonly = false
+            });
+            notificationRegistr.RegisterNotification<Abandon2ndNotification>().WithTemplates(new EmailNotificationTemplate()
+            {
+                Subject = "Last notification to complete the order",
+                Body = "Your order is still not completed. Please follow the link bellow to access your shopping cart and complete your shopping (link). Get a (example, 30%) discount using the promo code we are kindly providing. Unless you don't complete your order, your shopping cart will be deleted within x hours (time set by the admin).<br> Should you have any questions,please don't hesitate to contact our Customer Support team (provide contacts)<br> Sincerely yours,<br>(Company name)",
+                IsReadonly = false
+            });
 
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {
@@ -87,7 +97,7 @@ namespace VirtoCommerce.CartModule.Web
                 }
             }
 
-            RecurringJob.AddOrUpdate<CheckingAbandonedCartJob>(j => j.CheckingJob(JobCancellationToken.Null), "0 * 0 ? * * *");
+            //RecurringJob.AddOrUpdate<CheckingAbandonedCartJob>(j => j.CheckingJob(JobCancellationToken.Null), "0 * 0 ? * * *");
         }
 
         public void Uninstall()

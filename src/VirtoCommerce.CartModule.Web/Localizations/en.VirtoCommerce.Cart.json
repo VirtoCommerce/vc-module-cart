@@ -56,6 +56,15 @@
       "title": "Abandoned cart: expire after (min)",
       "description": "Cart will be completely deleted after this time in minutes"
     }
+  },
+  "notificationTypes": {
+    "Abandon1stNotification": {
+      "displayName": "Abandoned cart notification (1st iteration)",
+      "description": "This notification is sent by email to a client when his cart is abandoned within setted amount of minutes"
+    },
+    "Abandon2ndNotification": {
+      "displayName": "Abandoned cart notification (2nd iteration)",
+      "description": "This notification is sent by email to a client when his cart is abandoned within setted amount of minutes"
+    }
   }
-
 }

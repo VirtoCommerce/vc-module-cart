@@ -36,7 +36,7 @@ namespace VirtoCommerce.CartModule.Core
                     Name = "Cart.AbandonedCart2ndEvent",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.Integer,
-                    DefaultValue = 20
+                    DefaultValue = 10
                 };
 
                 public static readonly SettingDescriptor AbandonedCartDrop = new SettingDescriptor
@@ -44,7 +44,7 @@ namespace VirtoCommerce.CartModule.Core
                     Name = "Cart.AbandonedCartDrop",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.Integer,
-                    DefaultValue = 30
+                    DefaultValue = 10
                 };
 
                 public static IEnumerable<SettingDescriptor> AllSettings

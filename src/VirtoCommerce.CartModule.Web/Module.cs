@@ -74,10 +74,6 @@ namespace VirtoCommerce.CartModule.Web
             dynamicPropertyRegistrar.RegisterType<Shipment>();
             dynamicPropertyRegistrar.RegisterType<ShoppingCart>();
 
-            var notificationRegistr = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
-            notificationRegistr.RegisterNotification<Abandon1stNotification>();
-            notificationRegistr.RegisterNotification<Abandon2ndNotification>();
-
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {
                 using (var dbContext = serviceScope.ServiceProvider.GetRequiredService<CartDbContext>())
@@ -89,6 +85,11 @@ namespace VirtoCommerce.CartModule.Web
             }
 
             RecurringJob.AddOrUpdate<CheckingAbandonedCartJob>(j => j.CheckingJob(JobCancellationToken.Null), Cron.MinuteInterval(1));
+            var notificationRegistrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
+            notificationRegistrar.RegisterNotification<Abandon1stNotification>();
+            notificationRegistrar.RegisterNotification<Abandon2ndNotification>();
+
+            //RecurringJob.AddOrUpdate<CheckingAbandonedCartJob>(j => j.CheckingJob(JobCancellationToken.Null), "0 * 0 ? * * *");
         }
 
         public void Uninstall()

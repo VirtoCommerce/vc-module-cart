@@ -87,7 +87,7 @@ namespace VirtoCommerce.CartModule.Web
                 }
             }
 
-            RecurringJob.AddOrUpdate<CheckingAbandonedCartJob>(j => j.CheckingJob(JobCancellationToken.Null), "0 * 0 ? * * *");
+            RecurringJob.AddOrUpdate<CheckingAbandonedCartJob>(j => j.CheckingJob(JobCancellationToken.Null), Cron.MinuteInterval(1));
         }
 
         public void Uninstall()

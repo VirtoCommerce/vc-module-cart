@@ -6,7 +6,6 @@
         <!--This line is necessary to copy all dependencies in the bin folder-->
         <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
         <noWarn>1591</noWarn>
-        <IsPackable>False</IsPackable>
         <OutputType>Library</OutputType>
     </PropertyGroup>
 
@@ -29,7 +28,6 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.0-preview2.19525.6" />
         <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.0.0-v3-feature-vp-7-0001" />
@@ -40,9 +38,4 @@
         <ProjectReference Include="..\VirtoCommerce.CartModule.Core\VirtoCommerce.CartModule.Core.csproj" />
         <ProjectReference Include="..\VirtoCommerce.CartModule.Data\VirtoCommerce.CartModule.Data.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Properties\" />
-    </ItemGroup>
-
 </Project>

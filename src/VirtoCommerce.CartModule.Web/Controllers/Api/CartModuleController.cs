@@ -290,6 +290,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return Ok(cart);
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [DisableConcurrentExecution(60 * 60 * 24)]
         public async Task HardCartDeleteBackgroundJob(string[] ids)
         {

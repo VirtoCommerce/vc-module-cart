@@ -17,7 +17,6 @@ using VirtoCommerce.CartModule.Data.Handlers;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Web.JsonConverters;
-using VirtoCommerce.NotificationsModule.Core.Model;
 using VirtoCommerce.NotificationsModule.Core.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
@@ -43,6 +42,7 @@ namespace VirtoCommerce.CartModule.Web
             serviceCollection.AddTransient<IShoppingCartSearchService, ShoppingCartSearchService>();
             serviceCollection.AddTransient<IShoppingCartTotalsCalculator, DefaultShoppingCartTotalsCalculator>();
             serviceCollection.AddTransient<IShoppingCartBuilder, ShoppingCartBuilder>();
+            serviceCollection.AddTransient<IAbandonedCartResolver, AbandonedCartResolver>();
 
             serviceCollection.AddTransient<CartChangedEventHandler>();
             var providerSnapshot = serviceCollection.BuildServiceProvider();

@@ -28,6 +28,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
         private readonly INotificationSender _notificationSender;
         private readonly INotificationMessageSearchService _notificationMessageSearchService;
         private readonly EmailSendingOptions _emailSendingOptions;
+        private readonly IAbandonedCartResolver _abandonedCartResolver;
 
         private int _firstEventPeriod;
         private int _secondEventPeriod;
@@ -58,7 +59,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
 
         private async Task CheckingCarts()
         {
-            _firstEventPeriod = _settingsManager.GetValue(ModuleConstants.Settings.General.AbandonedCart2ndEvent.Name, (int)ModuleConstants.Settings.General.AbandonedCart2ndEvent.DefaultValue);
+            _firstEventPeriod = _settingsManager.GetValue(ModuleConstants.Settings.General.AbandonedCart1stEvent.Name, (int)ModuleConstants.Settings.General.AbandonedCart1stEvent.DefaultValue);
             _secondEventPeriod = _settingsManager.GetValue(ModuleConstants.Settings.General.AbandonedCart2ndEvent.Name, (int)ModuleConstants.Settings.General.AbandonedCart2ndEvent.DefaultValue);
             _dropEventPeriod = _settingsManager.GetValue(ModuleConstants.Settings.General.AbandonedCartDrop.Name, (int)ModuleConstants.Settings.General.AbandonedCartDrop.DefaultValue);
 
@@ -84,54 +85,25 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
 
         private async Task CheckAbandonedAndNotifyAsync(ShoppingCart cart)
         {
-            
             var now = DateTime.UtcNow;
 
             var sendDateTimeSpan = now - cart.ModifiedDate.Value;
-            var notification = AbstractTypeFactory<Notification>.TryCreateInstance();
-            var tenantIdentity = new TenantIdentity(cart.Id, nameof(ShoppingCart));
-            var searchNotiicationMessageCriteria = AbstractTypeFactory<NotificationMessageSearchCriteria>.TryCreateInstance();
-            searchNotiicationMessageCriteria.ObjectType = nameof(ShoppingCart);
-            searchNotiicationMessageCriteria.ObjectIds = new[] { cart.Id };
-            var searchMessageResult = await _notificationMessageSearchService.SearchMessageAsync(searchNotiicationMessageCriteria);
+            var abandonedCart = await _abandonedCartResolver.ResolveAsync(cart);
 
-            bool isSent1stEvent = false;
-            bool isSent2ndEvent = false;
-            if (searchMessageResult.TotalCount > 0
-                && searchMessageResult.Results.Any(x => x.NotificationType.EqualsInvariant(nameof(Abandon1stNotification))
-                    || x.NotificationType.EqualsInvariant(nameof(Abandon2ndNotification))))
-            {
-                var lastNotification = searchMessageResult.Results.OrderBy(x => x.CreatedDate).LastOrDefault();
-                sendDateTimeSpan = now - lastNotification.CreatedDate;
-                isSent1stEvent = searchMessageResult.Results.Any(x => x.NotificationType.EqualsInvariant(nameof(Abandon1stNotification)));
-                isSent2ndEvent = searchMessageResult.Results.Any(x => x.NotificationType.EqualsInvariant(nameof(Abandon2ndNotification)));
-            }
-
-            if (!isSent1stEvent && !isSent2ndEvent && sendDateTimeSpan > TimeSpan.FromMinutes(_firstEventPeriod)
-                    && sendDateTimeSpan < TimeSpan.FromMinutes(_firstEventPeriod + _secondEventPeriod))
-            {
-                notification = await _notificationSearchService.GetNotificationAsync<Abandon1stNotification>(tenantIdentity);
-            }
-
-            if (!isSent2ndEvent && ((!isSent1stEvent && sendDateTimeSpan > TimeSpan.FromMinutes(_firstEventPeriod + _secondEventPeriod)
-                    && sendDateTimeSpan < TimeSpan.FromMinutes(_firstEventPeriod + _secondEventPeriod + _dropEventPeriod))
-                    || (isSent1stEvent
-                    && sendDateTimeSpan > TimeSpan.FromMinutes(_secondEventPeriod) && (sendDateTimeSpan < TimeSpan.FromMinutes(_secondEventPeriod + _dropEventPeriod)))))
-            {
-                notification = await _notificationSearchService.GetNotificationAsync<Abandon2ndNotification>(tenantIdentity);
-            }
-
-            if ((isSent1stEvent && sendDateTimeSpan > TimeSpan.FromMinutes(_secondEventPeriod + _dropEventPeriod))
-                || (isSent2ndEvent && sendDateTimeSpan > TimeSpan.FromMinutes(_dropEventPeriod))
-                || (!isSent1stEvent && !isSent2ndEvent && sendDateTimeSpan > TimeSpan.FromMinutes(_firstEventPeriod + _secondEventPeriod + _dropEventPeriod)))
+            if (abandonedCart.Status == AbandonedCartStatus.AbandonedCartDrop)
             {
                 await _shoppingCartService.DeleteAsync(new[] { cart.Id });
             }
-            else 
+            else
             {
-                if ((!isSent1stEvent && notification.Type.EqualsInvariant(nameof(Abandon1stNotification)))
-                    || (!isSent2ndEvent && notification.Type.EqualsInvariant(nameof(Abandon2ndNotification))))
+                if (abandonedCart.Status == AbandonedCartStatus.AbandonedCart1stEvent
+                    || abandonedCart.Status == AbandonedCartStatus.AbandonedCart2ndEvent)
                 {
+                    var notification = AbstractTypeFactory<Notification>.TryCreateInstance();
+                    var tenantIdentity = new TenantIdentity(cart.Id, nameof(ShoppingCart));
+
+
+                    notification = await _notificationSearchService.GetNotificationAsync(abandonedCart.Status.ToString(),tenantIdentity);
                     var recipientEmail = GetRecipientEmail(cart);
 
                     if (!string.IsNullOrEmpty(recipientEmail))

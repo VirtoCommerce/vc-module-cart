@@ -25,6 +25,29 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public async Task<AbandonedCart> ResolveAsync(ShoppingCart cart)
         {
+            var result = AbstractTypeFactory<AbandonedCart>.TryCreateInstance();
+
+            var searchNotiicationMessageCriteria = AbstractTypeFactory<NotificationMessageSearchCriteria>.TryCreateInstance();
+            searchNotiicationMessageCriteria.ObjectType = nameof(ShoppingCart);
+            searchNotiicationMessageCriteria.ObjectIds = new[] { cart.Id };
+            var searchMessageResult = await _notificationMessageSearchService.SearchMessageAsync(searchNotiicationMessageCriteria);
+
+            var abandonedCartContext = AbstractTypeFactory<AbandonedCartContext>.TryCreateInstance();
+            abandonedCartContext.ShoppingCartId = cart.Id;
+            abandonedCartContext.ShoppingCartModifiedDate = cart.ModifiedDate;
+
+            var abandonedConditionTree = AbstractTypeFactory<AbandonedCartConditionTree>.TryCreateInstance();
+            var firstCondition = abandonedConditionTree.AvailableChildren.FirstOrDefault(x => x.IsSatisfiedBy(abandonedCartContext));
+            if (firstCondition is AbandonedCartCondition abandonedCartCondition)
+            {
+                result.Status = abandonedCartCondition.Status;
+            }
+
+            return result;
+        }
+
+        public async Task<AbandonedCart> ResolveAsyncOld(ShoppingCart cart)
+        {
             var result = new AbandonedCart
             {
                 AbandonedDate = cart.ModifiedDate.GetValueOrDefault()
@@ -58,6 +81,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                     && sendDateTimeSpan < TimeSpan.FromMinutes(firstEventPeriod + secondEventPeriod))
             {
                 result.Status = AbandonedCartStatus.AbandonedCart1stEvent;
+                result.IsAbandoned = true;
             }
 
             if (!isSent2ndEvent && ((!isSent1stEvent && sendDateTimeSpan > TimeSpan.FromMinutes(firstEventPeriod + secondEventPeriod)
@@ -66,6 +90,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                     && sendDateTimeSpan > TimeSpan.FromMinutes(secondEventPeriod) && (sendDateTimeSpan < TimeSpan.FromMinutes(secondEventPeriod + dropEventPeriod)))))
             {
                 result.Status = AbandonedCartStatus.AbandonedCart2ndEvent;
+                result.IsAbandoned = true;
             }
 
             if ((isSent1stEvent && sendDateTimeSpan > TimeSpan.FromMinutes(secondEventPeriod + dropEventPeriod))
@@ -73,6 +98,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 || (!isSent1stEvent && !isSent2ndEvent && sendDateTimeSpan > TimeSpan.FromMinutes(firstEventPeriod + secondEventPeriod + dropEventPeriod)))
             {
                 result.Status = AbandonedCartStatus.AbandonedCartDrop;
+                result.IsAbandoned = true;
             }
 
             return result;

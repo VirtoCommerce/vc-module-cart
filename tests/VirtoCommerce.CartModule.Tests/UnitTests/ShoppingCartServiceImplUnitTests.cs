@@ -13,15 +13,13 @@ using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.Platform.Caching;
-using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
-using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
 using Xunit;
 
-namespace VirtoCommerce.CartModule.Test.UnitTests
+namespace VirtoCommerce.CartModule.Tests.UnitTests
 {
     public class ShoppingCartServiceImplUnitTests
     {

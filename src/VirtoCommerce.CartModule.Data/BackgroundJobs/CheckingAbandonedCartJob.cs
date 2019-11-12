@@ -40,7 +40,8 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
             , INotificationSearchService notificationSearchService
             , INotificationSender notificationSender
             , INotificationMessageSearchService notificationMessageSearchService
-            , IOptions<EmailSendingOptions> emailSendingOptions)
+            , IOptions<EmailSendingOptions> emailSendingOptions
+            , IAbandonedCartResolver abandonedCartResolver)
         {
             _shoppingCartSearchService = shoppingCartSearchService;
             _settingsManager = settingsManager;
@@ -49,6 +50,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
             _notificationSender = notificationSender;
             _notificationMessageSearchService = notificationMessageSearchService;
             _emailSendingOptions = emailSendingOptions.Value;
+            _abandonedCartResolver = abandonedCartResolver;
         }
 
         [Queue(JobPriority.Normal)]

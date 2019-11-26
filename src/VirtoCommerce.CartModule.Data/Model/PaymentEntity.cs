@@ -14,6 +14,10 @@ namespace VirtoCommerce.CartModule.Data.Model
 {
     public class PaymentEntity : AuditableEntity
     {
+
+        [StringLength(128)]
+        public string OuterId { get; set; }
+
         [Required]
         [StringLength(64)]
         public string Currency { get; set; }
@@ -78,6 +82,7 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException(nameof(payment));
 
             payment.Id = Id;
+            payment.OuterId = OuterId;
             payment.CreatedBy = CreatedBy;
             payment.CreatedDate = CreatedDate;
             payment.ModifiedBy = ModifiedBy;
@@ -133,6 +138,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             pkMap.AddPair(payment, this);
 
             Id = payment.Id;
+            OuterId = payment.OuterId;
             CreatedBy = payment.CreatedBy;
             CreatedDate = payment.CreatedDate;
             ModifiedBy = payment.ModifiedBy;

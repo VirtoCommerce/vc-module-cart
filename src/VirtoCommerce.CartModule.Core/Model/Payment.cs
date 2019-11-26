@@ -9,7 +9,7 @@ using VirtoCommerce.Platform.Core.DynamicProperties;
 
 namespace VirtoCommerce.CartModule.Core.Model
 {
-    public class Payment : AuditableEntity, IHasTaxDetalization, ITaxable, IHasDiscounts, IHasDynamicProperties, ICloneable
+    public class Payment : AuditableEntity, IHasTaxDetalization, ITaxable, IHasDiscounts, IHasDynamicProperties, ICloneable, IHasOuterId
     {
         public string Currency { get; set; }
         public string PaymentGatewayCode { get; set; }
@@ -41,7 +41,7 @@ namespace VirtoCommerce.CartModule.Core.Model
         public decimal TaxPercentRate { get; set; }
 
         #endregion
-               
+
         #region IHasDiscounts
         public ICollection<Discount> Discounts { get; set; }
         #endregion
@@ -55,6 +55,10 @@ namespace VirtoCommerce.CartModule.Core.Model
         #region IHasDynamicProperties Members
         public string ObjectType => typeof(Payment).FullName;
         public ICollection<DynamicObjectProperty> DynamicProperties { get; set; }
+        #endregion
+
+        #region IHasOuterId Members
+        public string OuterId { get; set; }
         #endregion
 
         public object Clone()

@@ -137,6 +137,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(maxLength: 128, nullable: false),
+                    OuterId = table.Column<string>(maxLength: 128, nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 64, nullable: true),

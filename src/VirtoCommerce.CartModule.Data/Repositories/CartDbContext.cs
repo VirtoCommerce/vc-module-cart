@@ -48,7 +48,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region ShipmentItemEntity
             modelBuilder.Entity<ShipmentItemEntity>().ToTable("CartShipmentItem").HasKey(x => x.Id);
             modelBuilder.Entity<ShipmentItemEntity>().Property(x => x.Id).HasMaxLength(128);
-            modelBuilder.Entity<ShipmentItemEntity>().HasOne(x => x.LineItem).WithMany()
+            modelBuilder.Entity<ShipmentItemEntity>().HasOne(x => x.LineItem).WithMany(x => x.ShipmentItems)
                         .HasForeignKey(x => x.LineItemId).IsRequired().OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<ShipmentItemEntity>().HasOne(x => x.Shipment).WithMany(x => x.Items)
                         .HasForeignKey(x => x.ShipmentId).IsRequired().OnDelete(DeleteBehavior.Cascade);

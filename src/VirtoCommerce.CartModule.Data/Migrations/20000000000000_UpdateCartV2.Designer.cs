@@ -708,7 +708,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ShipmentItemEntity", b =>
             {
                 b.HasOne("VirtoCommerce.CartModule.Data.Model.LineItemEntity", "LineItem")
-                    .WithMany()
+                    .WithMany("ShipmentItems")
                     .HasForeignKey("LineItemId")
                     .OnDelete(DeleteBehavior.Cascade);
 

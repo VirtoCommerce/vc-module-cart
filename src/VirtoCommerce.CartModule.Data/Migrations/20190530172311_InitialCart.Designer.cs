@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CartModule.Data.Repositories;
 
 namespace VirtoCommerce.CartModule.Data.Migrations
@@ -320,6 +319,9 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasMaxLength(64);
 
                     b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("OuterId")
+                        .HasMaxLength(128);
 
                     b.Property<string>("PaymentGatewayCode")
                         .HasMaxLength(64);

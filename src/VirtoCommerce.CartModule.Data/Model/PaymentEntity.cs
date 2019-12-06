@@ -12,12 +12,8 @@ using Address = VirtoCommerce.CartModule.Core.Model.Address;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
-    public class PaymentEntity : AuditableEntity
+    public class PaymentEntity : AuditableEntity, IHasOuterId
     {
-
-        [StringLength(128)]
-        public string OuterId { get; set; }
-
         [Required]
         [StringLength(64)]
         public string Currency { get; set; }
@@ -56,6 +52,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         public decimal TaxTotal { get; set; }
 
         public decimal TaxPercentRate { get; set; }
+
+        [StringLength(128)]
+        public string OuterId { get; set; }
 
         public string ShoppingCartId { get; set; }
         public virtual ShoppingCartEntity ShoppingCart { get; set; }

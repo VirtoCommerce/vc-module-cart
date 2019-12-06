@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CartModule.Data.Repositories;
 
 namespace VirtoCommerce.CartModule.Data.Migrations
@@ -320,6 +319,9 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasMaxLength(64);
 
                     b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("OuterId")
+                        .HasMaxLength(128);
 
                     b.Property<string>("PaymentGatewayCode")
                         .HasMaxLength(64);
@@ -709,7 +711,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ShipmentItemEntity", b =>
                 {
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.LineItemEntity", "LineItem")
-                        .WithMany()
+                        .WithMany("ShipmentItems")
                         .HasForeignKey("LineItemId")
                         .OnDelete(DeleteBehavior.Cascade);
 

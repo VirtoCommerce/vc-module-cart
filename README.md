@@ -32,9 +32,7 @@ For more details about the available cart-module API, please follow the link bel
 
 https://admin-demo.virtocommerce.com/docs/ui/index#/Shopping%2520cart%2520module
 
-The VirtoCommerce.Cart module functionality can be extended and customized based on the specific business needs. In order to extend the cart module functionality, use "Virto Commerce 2.x Cart and Order Module extension" template that can be accessed by following the link below:
-
-https://marketplace.visualstudio.com/items?itemName=Virto-Commerce.VirtoCommerceModuleTemplates
+The VirtoCommerce.Cart module functionality can be extended and customized based on the specific business needs.
 
 
 ## Installation

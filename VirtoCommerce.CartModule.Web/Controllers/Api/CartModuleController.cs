@@ -20,7 +20,6 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 {
     [RoutePrefix("api/carts")]
     [CheckPermission(Permission = PredefinedPermissions.Query)]
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CartModuleController : ApiController
     {
         private readonly IShoppingCartService _shoppingCartService;
@@ -291,7 +290,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         public IHttpActionResult DeleteCarts([FromUri] string[] ids)
         {
             //For performance reasons use soft shoping cart deletion synchronously first
-            using(var repository = _repositoryFactory())
+            using (var repository = _repositoryFactory())
             {
                 repository.SoftRemoveCarts(ids);
                 repository.UnitOfWork.Commit();

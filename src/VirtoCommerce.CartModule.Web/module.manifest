@@ -3,7 +3,7 @@
     <id>VirtoCommerce.Cart</id>
     <version>3.0.0</version>
     <platformVersion>3.0.0</platformVersion>
-    <version-tag>rc.1</version-tag>
+    <version-tag>rc.2</version-tag>
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="3.0.0" />
         <dependency id="VirtoCommerce.Store" version="3.0.0" />

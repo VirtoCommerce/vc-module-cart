@@ -41,10 +41,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 {
                     ids = result.Select(x => x.Id).ToArray();
 
-                    TaxDetails.Where(x => ids.Contains(x.ShoppingCartId)).Load();
-                    Discounts.Where(x => ids.Contains(x.ShoppingCartId)).Load();
-                    Addresses.Where(x => ids.Contains(x.ShoppingCartId)).Load();
-                    Coupons.Where(x => ids.Contains(x.ShoppingCartId)).Load();
+                    await TaxDetails.Where(x => ids.Contains(x.ShoppingCartId)).LoadAsync();
+                    await Discounts.Where(x => ids.Contains(x.ShoppingCartId)).LoadAsync();
+                    await Addresses.Where(x => ids.Contains(x.ShoppingCartId)).LoadAsync();
+                    await Coupons.Where(x => ids.Contains(x.ShoppingCartId)).LoadAsync();
 
                     var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
 
@@ -54,8 +54,8 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                         var paymentIds = payments.Select(x => x.Id).ToArray();
                         if (paymentIds.Any())
                         {
-                            TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).Load();
-                            Discounts.Where(x => paymentIds.Contains(x.PaymentId)).Load();
+                            await TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).LoadAsync();
+                            await Discounts.Where(x => paymentIds.Contains(x.PaymentId)).LoadAsync();
                         }
                     }
 
@@ -66,8 +66,8 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                         if (lineItemIds.Any())
                         {
-                            TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).Load();
-                            Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).Load();
+                            await TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();
+                            await Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();
                         }
                     }
 
@@ -78,15 +78,15 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                         if (shipmentIds.Any())
                         {
-                            TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).Load();
-                            Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).Load();
-                            Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).Load();
+                            await TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
+                            await Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
+                            await Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
                         }
                     }
 
                     if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
                     {
-                        DynamicPropertyObjectValues.Where(x => x.ObjectType.EqualsInvariant(typeof(ShoppingCart).FullName) && ids.Contains(x.ShoppingCartId)).Load();
+                        await DynamicPropertyObjectValues.Where(x => x.ObjectType.EqualsInvariant(typeof(ShoppingCart).FullName) && ids.Contains(x.ShoppingCartId)).LoadAsync();
                     }
                 }
             }

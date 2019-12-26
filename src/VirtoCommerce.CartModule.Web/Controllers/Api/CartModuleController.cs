@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
@@ -61,6 +62,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPost]
         [Route("{cartId}/items")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AddItemToCart(string cartId, [FromBody] LineItem lineItem)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
@@ -73,6 +75,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPut]
         [Route("{cartId}/items")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> ChangeCartItem(string cartId, [FromQuery] string lineItemId, [FromQuery] int quantity)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
@@ -115,6 +118,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPatch]
         [Route("{cartId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> MergeWithCart(string cartId, [FromBody]ShoppingCart otherCart)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
@@ -156,6 +160,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPost]
         [Route("{cartId}/coupons/{couponCode}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AddCartCoupon(string cartId, string couponCode)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
@@ -168,6 +173,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpDelete]
         [Route("{cartId}/coupons/{couponCode}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> RemoveCartCoupon(string cartId, string couponCode)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
@@ -180,6 +186,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPost]
         [Route("{cartId}/shipments")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AddOrUpdateCartShipment(string cartId, [FromBody] Shipment shipment)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
@@ -192,6 +199,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPost]
         [Route("{cartId}/payments")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AddOrUpdateCartPayment(string cartId, [FromBody] Payment payment)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
@@ -264,6 +272,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [HttpDelete]
         [Route("")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteCarts([FromQuery] string[] ids)
         {
             //For performance reasons use soft shoping cart deletion synchronously first

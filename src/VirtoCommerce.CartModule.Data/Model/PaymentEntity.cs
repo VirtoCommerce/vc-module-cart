@@ -12,7 +12,7 @@ using Address = VirtoCommerce.CartModule.Core.Model.Address;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
-    public class PaymentEntity : AuditableEntity
+    public class PaymentEntity : AuditableEntity, IHasOuterId
     {
         [Required]
         [StringLength(64)]
@@ -53,6 +53,9 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public decimal TaxPercentRate { get; set; }
 
+        [StringLength(128)]
+        public string OuterId { get; set; }
+
         public string ShoppingCartId { get; set; }
         public virtual ShoppingCartEntity ShoppingCart { get; set; }
 
@@ -78,6 +81,7 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException(nameof(payment));
 
             payment.Id = Id;
+            payment.OuterId = OuterId;
             payment.CreatedBy = CreatedBy;
             payment.CreatedDate = CreatedDate;
             payment.ModifiedBy = ModifiedBy;
@@ -133,6 +137,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             pkMap.AddPair(payment, this);
 
             Id = payment.Id;
+            OuterId = payment.OuterId;
             CreatedBy = payment.CreatedBy;
             CreatedDate = payment.CreatedDate;
             ModifiedBy = payment.ModifiedBy;

@@ -15,7 +15,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -281,13 +281,13 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.Property<decimal>("FeeWithTax")
                         .HasColumnType("Money");
 
+                    b.Property<string>("FulfillmentCenterId")
+                        .HasMaxLength(64);
+
                     b.Property<string>("FulfillmentCenterName")
                         .HasMaxLength(128);
 
                     b.Property<string>("FulfillmentLocationCode")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("FulfillmentCenterId")
                         .HasMaxLength(64);
 
                     b.Property<decimal?>("Height");
@@ -412,6 +412,9 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasMaxLength(64);
 
                     b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("OuterId")
+                        .HasMaxLength(128);
 
                     b.Property<string>("PaymentGatewayCode")
                         .HasMaxLength(64);
@@ -557,8 +560,6 @@ namespace VirtoCommerce.CartModule.Data.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<string>("LineItemEntityId");
-
                     b.Property<string>("LineItemId")
                         .IsRequired();
 
@@ -573,8 +574,6 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .IsRequired();
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LineItemEntityId");
 
                     b.HasIndex("LineItemId");
 
@@ -832,12 +831,8 @@ namespace VirtoCommerce.CartModule.Data.Migrations
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ShipmentItemEntity", b =>
                 {
-                    b.HasOne("VirtoCommerce.CartModule.Data.Model.LineItemEntity")
-                        .WithMany("ShipmentItems")
-                        .HasForeignKey("LineItemEntityId");
-
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.LineItemEntity", "LineItem")
-                        .WithMany()
+                        .WithMany("ShipmentItems")
                         .HasForeignKey("LineItemId")
                         .OnDelete(DeleteBehavior.Cascade);
 

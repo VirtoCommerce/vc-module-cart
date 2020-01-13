@@ -21,13 +21,13 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region ShoppingCart
 
             modelBuilder.Entity<ShoppingCartEntity>().ToTable("Cart").HasKey(x => x.Id);
-            modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
             #endregion
 
             #region LineItem
             modelBuilder.Entity<LineItemEntity>().ToTable("CartLineItem").HasKey(x => x.Id);
-            modelBuilder.Entity<LineItemEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<LineItemEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<LineItemEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
             modelBuilder.Entity<LineItemEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Items)
                         .HasForeignKey(x => x.ShoppingCartId).IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -37,7 +37,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region Shipment
 
             modelBuilder.Entity<ShipmentEntity>().ToTable("CartShipment").HasKey(x => x.Id);
-            modelBuilder.Entity<ShipmentEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<ShipmentEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
             modelBuilder.Entity<ShipmentEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Shipments)
                         .HasForeignKey(x => x.ShoppingCartId).IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -47,7 +47,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             #region ShipmentItemEntity
             modelBuilder.Entity<ShipmentItemEntity>().ToTable("CartShipmentItem").HasKey(x => x.Id);
-            modelBuilder.Entity<ShipmentItemEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<ShipmentItemEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<ShipmentItemEntity>().HasOne(x => x.LineItem).WithMany(x => x.ShipmentItems)
                         .HasForeignKey(x => x.LineItemId).IsRequired().OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<ShipmentItemEntity>().HasOne(x => x.Shipment).WithMany(x => x.Items)
@@ -56,7 +56,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             #region Address
             modelBuilder.Entity<AddressEntity>().ToTable("CartAddress").HasKey(x => x.Id);
-            modelBuilder.Entity<AddressEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<AddressEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<AddressEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Addresses)
                         .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<AddressEntity>().HasOne(x => x.Shipment).WithMany(x => x.Addresses)
@@ -70,7 +70,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region Payment
 
             modelBuilder.Entity<PaymentEntity>().ToTable("CartPayment").HasKey(x => x.Id);
-            modelBuilder.Entity<PaymentEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<PaymentEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<PaymentEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
             modelBuilder.Entity<PaymentEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Payments)
                         .HasForeignKey(x => x.ShoppingCartId).IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -80,7 +80,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             #region TaxDetail
             modelBuilder.Entity<TaxDetailEntity>().ToTable("CartTaxDetail").HasKey(x => x.Id);
-            modelBuilder.Entity<TaxDetailEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<TaxDetailEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<TaxDetailEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.TaxDetails)
                         .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<TaxDetailEntity>().HasOne(x => x.Shipment).WithMany(x => x.TaxDetails)
@@ -93,7 +93,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             #region Discount
             modelBuilder.Entity<DiscountEntity>().ToTable("CartDiscount").HasKey(x => x.Id);
-            modelBuilder.Entity<DiscountEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<DiscountEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<DiscountEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Discounts)
                         .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<DiscountEntity>().HasOne(x => x.Shipment).WithMany(x => x.Discounts)
@@ -106,7 +106,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             #region Coupons
             modelBuilder.Entity<CouponEntity>().ToTable("CartCoupon").HasKey(x => x.Id);
-            modelBuilder.Entity<CouponEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<CouponEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<CouponEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Coupons).IsRequired()
                         .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
             #endregion
@@ -114,7 +114,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region DynamicPropertyValues
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().ToTable("CartDynamicPropertyObjectValue").HasKey(x => x.Id);
-            modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().Property(x => x.DecimalValue).HasColumnType("decimal(18,5)");
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.ObjectId })

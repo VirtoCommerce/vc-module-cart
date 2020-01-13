@@ -86,7 +86,9 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                     if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
                     {
-                        await DynamicPropertyObjectValues.Where(x => x.ObjectType.EqualsInvariant(typeof(ShoppingCart).FullName) && ids.Contains(x.ShoppingCartId)).LoadAsync();
+                        var shoppingCartTypeFullName = typeof(ShoppingCart).FullName;
+                        // Function calls removed from LINQ Where because these can't be translated to SQL
+                        await DynamicPropertyObjectValues.Where(x => x.ObjectType == shoppingCartTypeFullName && ids.Contains(x.ShoppingCartId)).LoadAsync();
                     }
                 }
             }

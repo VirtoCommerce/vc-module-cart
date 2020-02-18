@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -112,12 +112,26 @@ namespace VirtoCommerce.CartModule.Data.Services
         public virtual IShoppingCartBuilder AddCoupon(string couponCode)
         {
             Cart.Coupon = couponCode;
+
+            if (!Cart.Coupons.Any(x => x.EqualsInvariant(couponCode)))
+            {
+                Cart.Coupons.Add(couponCode);
+            }
             return this;
         }
 
-        public virtual IShoppingCartBuilder RemoveCoupon()
+        public virtual IShoppingCartBuilder RemoveCoupon(string couponCode)
         {
             Cart.Coupon = null;
+
+            if (string.IsNullOrEmpty(couponCode))
+            {
+                Cart.Coupons.Clear();
+            }
+            else
+            {
+                Cart.Coupons.Remove(Cart.Coupons.FirstOrDefault(x => x.EqualsInvariant(couponCode)));
+            }
             return this;
         }
 
@@ -216,7 +230,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                 AddLineItem(lineItem);
             }
 
-            Cart.Coupon = cart.Coupon;
+            Cart.Coupons.Clear();
+            Cart.Coupons = cart.Coupons;
 
             Cart.Shipments.Clear();
             Cart.Shipments = cart.Shipments;

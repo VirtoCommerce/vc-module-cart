@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Shipping.Model;
 
@@ -54,8 +54,9 @@ namespace VirtoCommerce.CartModule.Data.Services
         /// <summary>
         /// remove exist coupon from cart
         /// </summary>
+        /// <param name="couponCode"></param>
         /// <returns></returns>
-        IShoppingCartBuilder RemoveCoupon();
+        IShoppingCartBuilder RemoveCoupon(string couponCode);
 
         /// <summary>
         /// Clear cart remove all items and shipments and payments

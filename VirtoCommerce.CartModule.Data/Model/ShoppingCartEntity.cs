@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -179,15 +180,17 @@ namespace VirtoCommerce.CartModule.Data.Model
             {
                 TaxDetails = new ObservableCollection<TaxDetailEntity>(cart.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
             }
-            //back compatibility changes
+
+            var couponsToAdd = new List<CouponEntity>();
             if (cart.Coupon != null)
             {
-                Coupons = new ObservableCollection<CouponEntity>(new[] { new CouponEntity { Code = cart.Coupon } });
+                couponsToAdd.Add(new CouponEntity { Code = cart.Coupon });
             }
             if (cart.Coupons != null)
             {
-                Coupons = new ObservableCollection<CouponEntity>(cart.Coupons.Select(x => new CouponEntity { Code = x }));
+                couponsToAdd = cart.Coupons.Select(x => new CouponEntity { Code = x }).Concat(couponsToAdd).Distinct().ToList();
             }
+            Coupons = new ObservableCollection<CouponEntity>(couponsToAdd);
 
             return this;
         }

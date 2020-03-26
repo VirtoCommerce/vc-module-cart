@@ -19,6 +19,7 @@ using VirtoCommerce.ShippingModule.Core.Model;
 namespace VirtoCommerce.CartModule.Web.Controllers.Api
 {
     [Route("api/carts")]
+    [Authorize]
     public class CartModuleController : Controller
     {
         private readonly IShoppingCartService _shoppingCartService;

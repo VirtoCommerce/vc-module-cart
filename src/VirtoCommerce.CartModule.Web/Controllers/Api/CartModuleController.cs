@@ -134,7 +134,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{cartId}/availshippingrates")]
         public async Task<ActionResult<ICollection<ShippingRate>>> GetAvailableShippingRates(string cartId)
         {
-            var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.WithShipments.ToString());
+            var cart = await _shoppingCartService.GetByIdAsync(cartId, (CartResponseGroup.WithShipments | CartResponseGroup.WithLineItems).ToString());
             var builder = _cartBuilder.TakeCart(cart);
             var shippingRates = await builder.GetAvailableShippingRatesAsync();
             return Ok(shippingRates);

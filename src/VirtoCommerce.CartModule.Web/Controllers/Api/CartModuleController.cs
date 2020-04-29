@@ -231,7 +231,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [HttpPost]
         [Route("search")]
         [Authorize(ModuleConstants.Security.Permissions.Read)]
-        public async Task<ActionResult<GenericSearchResult<ShoppingCart>>> SearchShoppingCart([FromBody] ShoppingCartSearchCriteria criteria)
+        public async Task<ActionResult<ShoppingCartSearchResult>> SearchShoppingCart([FromBody] ShoppingCartSearchCriteria criteria)
         {
             var result = await _searchService.SearchCartAsync(criteria);
             return Ok(result);

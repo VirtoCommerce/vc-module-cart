@@ -9,6 +9,6 @@ namespace VirtoCommerce.CartModule.Core.Services
 		Task<IEnumerable<ShoppingCart>> GetByIdsAsync(string[] cartIds, string responseGroup = null);
 	    Task<ShoppingCart> GetByIdAsync(string cartId, string responseGroup = null);
         Task SaveChangesAsync(ShoppingCart[] carts);
-		Task DeleteAsync(string[] cartIds);
+		Task DeleteAsync(string[] cartIds, bool softDelete = false);
 	}
 }

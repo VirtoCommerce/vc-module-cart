@@ -136,7 +136,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             foreach (var entity in entities)
             {
-                CartCacheRegion.ExpireInventory(entity);
+                CartCacheRegion.ExpireCart(entity);
             }
         }
 

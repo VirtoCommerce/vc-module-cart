@@ -110,17 +110,25 @@ namespace VirtoCommerce.CartModule.Data.Services
             ClearCache(carts);
         }
 
-        public virtual async Task DeleteAsync(string[] cartIds)
+        public virtual async Task DeleteAsync(string[] cartIds, bool softDelete = false)
         {
             var carts = (await GetByIdsAsync(cartIds)).ToArray();
 
             using (var repository = _repositoryFactory())
             {
                 //Raise domain events before deletion
-                var changedEntries = carts.Select(x => new GenericChangedEntry<ShoppingCart>(x, EntryState.Deleted)).ToArray();
+                var entityState = softDelete ? EntryState.Modified : EntryState.Deleted;
+                var changedEntries = carts.Select(x => new GenericChangedEntry<ShoppingCart>(x, entityState)).ToArray();
                 await _eventPublisher.Publish(new CartChangeEvent(changedEntries));
 
-                await repository.RemoveCartsAsync(cartIds);
+                if (softDelete)
+                {
+                    await repository.SoftRemoveCartsAsync(cartIds);                   
+                }
+                else
+                {                    
+                    await repository.RemoveCartsAsync(cartIds);                    
+                }
 
                 await repository.UnitOfWork.CommitAsync();
                 //Raise domain events after deletion

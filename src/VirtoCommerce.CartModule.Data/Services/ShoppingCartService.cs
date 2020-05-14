@@ -36,16 +36,17 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         #region IShoppingCartService Members
 
-        public virtual async Task<IEnumerable<ShoppingCart>> GetByIdsAsync(string[] cartIds, string responseGroup = null)
+        public virtual async Task<ShoppingCart[]> GetByIdsAsync(string[] cartIds, string responseGroup = null)
         {
             var retVal = new List<ShoppingCart>();
             var cacheKey = CacheKey.With(GetType(), "GetByIdsAsync", string.Join("-", cartIds), responseGroup);
-            return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+            var result = await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
             {
                 using (var repository = _repositoryFactory())
                 {
                     //Disable DBContext change tracking for better performance 
                     repository.DisableChangesTracking();
+                    cacheEntry.AddExpirationToken(CartCacheRegion.CreateChangeToken(cartIds));
 
                     var cartEntities = await repository.GetShoppingCartsByIdsAsync(cartIds, responseGroup);
                     foreach (var cartEntity in cartEntities)
@@ -59,11 +60,13 @@ namespace VirtoCommerce.CartModule.Data.Services
                         cart.ReduceDetails(responseGroup);
 
                         retVal.Add(cart);
-                        cacheEntry.AddExpirationToken(CartCacheRegion.CreateChangeToken(cart));
+                        
                     }
                 }
                 return retVal;
             });
+
+            return result.Select(x => x.Clone() as ShoppingCart).ToArray();
         }
 
         public virtual async Task<ShoppingCart> GetByIdAsync(string id, string responseGroup = null)

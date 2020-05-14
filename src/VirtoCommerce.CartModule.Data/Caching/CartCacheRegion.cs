@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.Primitives;
 using VirtoCommerce.CartModule.Core.Model;
@@ -9,21 +11,34 @@ namespace VirtoCommerce.CartModule.Data.Caching
 {
     public class CartCacheRegion : CancellableCacheRegion<CartCacheRegion>
     {
-        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _cartRegionTokenLookup = new ConcurrentDictionary<string, CancellationTokenSource>();
+        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _entityRegionTokenLookup = new ConcurrentDictionary<string, CancellationTokenSource>();
 
-        public static IChangeToken CreateChangeToken(ShoppingCart cart)
+        public static IChangeToken CreateChangeToken(ShoppingCart[] carts)
         {
-            if (cart == null)
+            if (carts == null)
             {
-                throw new ArgumentNullException(nameof(cart));
+                throw new ArgumentNullException(nameof(carts));
             }
-            var cancellationTokenSource = _cartRegionTokenLookup.GetOrAdd(cart.Id, new CancellationTokenSource());
-            return new CompositeChangeToken(new[] { CreateChangeToken(), new CancellationChangeToken(cancellationTokenSource.Token) });
+            return CreateChangeToken(carts.Select(x => x.Id).ToArray());
+        }
+
+        public static IChangeToken CreateChangeToken(string[] cartIds)
+        {
+            if (cartIds == null)
+            {
+                throw new ArgumentNullException(nameof(cartIds));
+            }
+            var changeTokens = new List<IChangeToken>() { CreateChangeToken() };
+            foreach (var cartId in cartIds)
+            {
+                changeTokens.Add(new CancellationChangeToken(_entityRegionTokenLookup.GetOrAdd(cartId, new CancellationTokenSource()).Token));
+            }
+            return new CompositeChangeToken(changeTokens);
         }
 
         public static void ExpireInventory(ShoppingCart cart)
         {
-            if (_cartRegionTokenLookup.TryRemove(cart.Id, out CancellationTokenSource token))
+            if (_entityRegionTokenLookup.TryRemove(cart.Id, out CancellationTokenSource token))
             {
                 token.Cancel();
             }

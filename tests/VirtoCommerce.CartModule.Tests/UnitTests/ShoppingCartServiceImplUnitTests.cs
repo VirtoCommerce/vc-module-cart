@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
@@ -13,11 +14,9 @@ using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.Platform.Caching;
-using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
-using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
 using Xunit;
 
@@ -30,7 +29,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         private readonly Mock<ICartRepository> _cartRepositoryMock;
         private readonly Func<ICartRepository> _repositoryFactory;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
-        private readonly ShoppingCartService _shoppingCartService;
+        private readonly Mock<ICacheEntry> _cacheEntryMock;
 
         public ShoppingCartServiceImplUnitTests()
         {
@@ -40,11 +39,9 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _cartRepositoryMock.Setup(ss => ss.UnitOfWork).Returns(_mockUnitOfWork.Object);
             _eventPublisherMock = new Mock<IEventPublisher>();
-            var memoryCache = GetPlatformMemoryCache();
+            _cacheEntryMock = new Mock<ICacheEntry>();
+            _cacheEntryMock.SetupGet(c => c.ExpirationTokens).Returns(new List<IChangeToken>());
 
-            _shoppingCartService = new ShoppingCartService(
-                _repositoryFactory, _calculatorMock.Object,
-                _eventPublisherMock.Object, memoryCache);
         }
 
         [Fact]
@@ -56,9 +53,13 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var list = new List<ShoppingCartEntity> { new ShoppingCartEntity { Id = cartId } };
             _cartRepositoryMock.Setup(x => x.GetShoppingCartsByIdsAsync(cartIds, null))
                 .ReturnsAsync(list.ToArray());
+            var platfromMemoryCacheMock = new Mock<IPlatformMemoryCache>();
+            var service = GetShoppingCartService(platfromMemoryCacheMock.Object);
+            var cacheKey = CacheKey.With(service.GetType(), nameof(service.GetByIdsAsync), string.Join("-", cartIds), null);
+            platfromMemoryCacheMock.Setup(pmc => pmc.CreateEntry(cacheKey)).Returns(_cacheEntryMock.Object);
 
             //Act
-            var result = await _shoppingCartService.GetByIdsAsync(new[] { cartId });
+            var result = await service.GetByIdsAsync(new[] { cartId });
 
             //Assert
             Assert.True(result.Any());
@@ -72,9 +73,10 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var cartId = Guid.NewGuid().ToString();
             var entity = new ShoppingCartEntity { Id = cartId };
             var carts = new List<ShoppingCart> { entity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()) };
+            var service = GetShoppingCartService();
 
             //Act
-            await _shoppingCartService.SaveChangesAsync(carts.ToArray());
+            await service.SaveChangesAsync(carts.ToArray());
 
             //Assert
         }
@@ -90,20 +92,58 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             _cartRepositoryMock.Setup(n => n.GetShoppingCartsByIdsAsync(cartIds, null))
                 .ReturnsAsync(list.ToArray());
             var carts = new List<ShoppingCart> { entity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()) };
+            var service = GetShoppingCartService();
 
             //Act
-            await _shoppingCartService.SaveChangesAsync(carts.ToArray());
+            await service.SaveChangesAsync(carts.ToArray());
 
             //Assert
         }
 
-        private IPlatformMemoryCache GetPlatformMemoryCache()
+        [Fact]
+        public async Task GetByIdsAsync_GetThenSaveCart_ReturnCachedCart()
         {
-            var provider = new ServiceCollection().AddMemoryCache().BuildServiceProvider();
-            var memoryCache = provider.GetService<IMemoryCache>();
-            var mockLog = new Mock<ILogger<PlatformMemoryCache>>();
+            //Arrange
+            var id = Guid.NewGuid().ToString();
+            var newCart = new ShoppingCart { Id = id };
+            var newCartEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance().FromModel(newCart, new PrimaryKeyResolvingMap());
+            var service = GetCustomerOrderServiceWithPlatformMemoryCache();
+            _cartRepositoryMock.Setup(x => x.Add(newCartEntity))
+                .Callback(() =>
+                {
+                    _cartRepositoryMock.Setup(o => o.GetShoppingCartsByIdsAsync(new[] { id }, null))
+                        .ReturnsAsync(new[] { newCartEntity });
+                });
 
-            return new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), mockLog.Object);
+            //Act
+            var nullCart = await service.GetByIdAsync(id);
+            await service.SaveChangesAsync(new[] { newCart });
+            var Cart = await service.GetByIdAsync(id);
+
+            //Assert
+            Assert.NotEqual(nullCart, Cart);
+        }
+        
+        private ShoppingCartService GetCustomerOrderServiceWithPlatformMemoryCache()
+        {
+            var memoryCache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
+            var platformMemoryCache = new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), new Mock<ILogger<PlatformMemoryCache>>().Object);
+            _cartRepositoryMock.Setup(ss => ss.UnitOfWork).Returns(_mockUnitOfWork.Object);
+
+            return GetShoppingCartService(platformMemoryCache);
+        }
+
+        private ShoppingCartService GetShoppingCartService()
+        {
+            var platformMemoryCacheMock = new Mock<IPlatformMemoryCache>();
+            return GetShoppingCartService(platformMemoryCacheMock.Object);
+        }
+
+        private ShoppingCartService GetShoppingCartService(IPlatformMemoryCache platformMemoryCache)
+        {
+            return new ShoppingCartService(
+                _repositoryFactory, _calculatorMock.Object,
+                _eventPublisherMock.Object, platformMemoryCache);
         }
     }
 }

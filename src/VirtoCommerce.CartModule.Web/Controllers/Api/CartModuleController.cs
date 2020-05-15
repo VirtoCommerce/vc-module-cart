@@ -231,7 +231,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [HttpPost]
         [Route("search")]
         [Authorize(ModuleConstants.Security.Permissions.Read)]
-        public async Task<ActionResult<GenericSearchResult<ShoppingCart>>> SearchShoppingCart([FromBody] ShoppingCartSearchCriteria criteria)
+        public async Task<ActionResult<ShoppingCartSearchResult>> SearchShoppingCart([FromBody] ShoppingCartSearchCriteria criteria)
         {
             var result = await _searchService.SearchCartAsync(criteria);
             return Ok(result);
@@ -277,11 +277,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         public async Task<ActionResult> DeleteCarts([FromQuery] string[] ids)
         {
             //For performance reasons use soft shoping cart deletion synchronously first
-            using (var repository = _repositoryFactory())
-            {
-                await repository.SoftRemoveCartsAsync(ids);
-                repository.UnitOfWork.Commit();
-            }
+            await _shoppingCartService.DeleteAsync(ids, softDelete: true);
             //Complete the hard shopping cart deletion in the asynchronous background task
             BackgroundJob.Enqueue(() => HardCartDeleteBackgroundJob(ids));
 

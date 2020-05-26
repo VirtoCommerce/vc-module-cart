@@ -21,9 +21,9 @@ namespace VirtoCommerce.CartModule.Data.Caching
             return new CompositeChangeToken(new[] { CreateChangeToken(), new CancellationChangeToken(cancellationTokenSource.Token) });
         }
 
-        public static void ExpireInventory(ShoppingCart cart)
+        public static void ExpireCart(ShoppingCart cart)
         {
-            if (_cartRegionTokenLookup.TryRemove(cart.Id, out CancellationTokenSource token))
+            if (_cartRegionTokenLookup.TryRemove(cart.Id, out var token))
             {
                 token.Cancel();
             }

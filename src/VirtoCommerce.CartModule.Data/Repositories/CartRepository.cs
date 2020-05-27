@@ -66,8 +66,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                         if (lineItemIds.Any())
                         {
+                            var lineItemTypeFullName = typeof(LineItem).FullName;
                             await TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();
                             await Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();
+                            await DynamicPropertyObjectValues.Where(x => x.ObjectType == lineItemTypeFullName && lineItemIds.Contains(x.LineItemId)).LoadAsync();
                         }
                     }
 

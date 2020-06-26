@@ -29,7 +29,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         }
 
         [Fact]
-        public void Clear_All_Items_Totals_Must_Be_Zeroed()
+        public void CalculateTotals_ClearAllItems_TotalsMustBeZero()
         {
             var item1 = new LineItem { ListPrice = 10.99m, SalePrice = 9.66m, DiscountAmount = 1.33m, TaxPercentRate = 0.12m, Fee = 0.33m, Quantity = 2 };
             var item2 = new LineItem { ListPrice = 55.22m, SalePrice = 49.33m, DiscountAmount = 5.89m, TaxPercentRate = 0.12m, Fee = 0.12m, Quantity = 5 };

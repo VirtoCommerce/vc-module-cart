@@ -54,7 +54,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.FeeTotal = cart.Fee;
             cart.TaxTotal = 0m;
 
-            if (!cart.Items.IsNullOrEmpty())
+            if (cart.Items != null)
             {
                 cart.SubTotal = cart.Items.Sum(x => x.ListPrice * x.Quantity);
                 cart.SubTotalWithTax = cart.Items.Sum(x => x.ListPriceWithTax * x.Quantity);
@@ -67,7 +67,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 cart.TaxTotal += cart.Items.Sum(x => x.TaxTotal);
             }
 
-            if (!cart.Shipments.IsNullOrEmpty())
+            if (cart.Shipments != null)
             {
                 cart.ShippingTotal = cart.Shipments.Sum(x => x.Total);
                 cart.ShippingTotalWithTax = cart.Shipments.Sum(x => x.TotalWithTax);
@@ -82,7 +82,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 cart.TaxTotal += cart.Shipments.Sum(x => x.TaxTotal);
             }
 
-            if (!cart.Payments.IsNullOrEmpty())
+            if (cart.Payments != null)
             {
                 cart.PaymentTotal = cart.Payments.Sum(x => x.Total);
                 cart.PaymentTotalWithTax = cart.Payments.Sum(x => x.TotalWithTax);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module>
   <id>VirtoCommerce.Cart</id>
-  <version>3.3.0</version>
+  <version>3.4.0</version>
   <platformVersion>3.0.0</platformVersion>
   <version-tag>
   </version-tag>

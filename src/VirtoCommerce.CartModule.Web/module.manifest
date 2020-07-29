@@ -2,7 +2,7 @@
 <module>
   <id>VirtoCommerce.Cart</id>
   <version>3.4.0</version>
-  <platformVersion>3.0.0</platformVersion>
+  <platformVersion>3.5.0</platformVersion>
   <version-tag>
   </version-tag>
   <dependencies>

@@ -28,6 +28,36 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             Assert.Equal(44.95m, cart.Total);
         }
 
+        [Fact]
+        public void CalculateTotals_ClearAllItems_TotalsMustBeZero()
+        {
+            var item1 = new LineItem { ListPrice = 10.99m, SalePrice = 9.66m, DiscountAmount = 1.33m, TaxPercentRate = 0.12m, Fee = 0.33m, Quantity = 2 };
+            var item2 = new LineItem { ListPrice = 55.22m, SalePrice = 49.33m, DiscountAmount = 5.89m, TaxPercentRate = 0.12m, Fee = 0.12m, Quantity = 5 };
+            var item3 = new LineItem { ListPrice = 88.45m, SalePrice = 77.67m, DiscountAmount = 10.78m, TaxPercentRate = 0.12m, Fee = 0.08m, Quantity = 12 };
+            var payment = new Payment { Price = 44.52m, DiscountAmount = 10, TaxPercentRate = 0.12m };
+            var shipment = new Shipment { Price = 22.0m, DiscountAmount = 5m, TaxPercentRate = 0.12m };
+
+            var cart = new ShoppingCart
+            {
+                TaxPercentRate = 0.12m,
+                Items = new List<LineItem> { item1, item2, item3 },
+                Payments = new List<Payment> { payment },
+                Shipments = new List<Shipment> { shipment }
+            };
+            var totalsCalculator = new DefaultShoppingCartTotalsCalculator();
+            totalsCalculator.CalculateTotals(cart);
+
+            Assert.Equal(1400.07m, cart.Total);
+
+            cart.Items.Clear();
+            cart.Shipments.Clear();
+            cart.Payments.Clear();
+            totalsCalculator.CalculateTotals(cart);
+
+            Assert.Equal(0m, cart.Total);
+
+        }
+
 
         [Fact]
         public void CalculateTotals_Should_Be_RightTotals()

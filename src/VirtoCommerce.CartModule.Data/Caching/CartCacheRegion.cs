@@ -11,8 +11,6 @@ namespace VirtoCommerce.CartModule.Data.Caching
 {
     public class CartCacheRegion : CancellableCacheRegion<CartCacheRegion>
     {
-        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _entityRegionTokenLookup = new ConcurrentDictionary<string, CancellationTokenSource>();
-
         public static IChangeToken CreateChangeToken(ShoppingCart[] carts)
         {
             if (carts == null)
@@ -31,16 +29,16 @@ namespace VirtoCommerce.CartModule.Data.Caching
             var changeTokens = new List<IChangeToken>() { CreateChangeToken() };
             foreach (var cartId in cartIds)
             {
-                changeTokens.Add(new CancellationChangeToken(_entityRegionTokenLookup.GetOrAdd(cartId, new CancellationTokenSource()).Token));
+                changeTokens.Add(CreateChangeTokenForKey(cartId));
             }
-            return new CompositeChangeToken(changeTokens);
+            return new CompositeChangeToken(changeTokens);            
         }
 
-        public static void ExpireInventory(ShoppingCart cart)
+        public static void ExpireCart(ShoppingCart cart)
         {
-            if (_entityRegionTokenLookup.TryRemove(cart.Id, out CancellationTokenSource token))
+            if (cart != null)
             {
-                token.Cancel();
+                ExpireTokenForKey(cart.Id);
             }
         }
     }

@@ -53,10 +53,11 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var list = new List<ShoppingCartEntity> { new ShoppingCartEntity { Id = cartId } };
             _cartRepositoryMock.Setup(x => x.GetShoppingCartsByIdsAsync(cartIds, null))
                 .ReturnsAsync(list.ToArray());
-            var platfromMemoryCacheMock = new Mock<IPlatformMemoryCache>();
-            var service = GetShoppingCartService(platfromMemoryCacheMock.Object);
+            var platformMemoryCacheMock = new Mock<IPlatformMemoryCache>();
+            platformMemoryCacheMock.Setup(x => x.GetDefaultCacheEntryOptions()).Returns(() => new MemoryCacheEntryOptions());
+            var service = GetShoppingCartService(platformMemoryCacheMock.Object);
             var cacheKey = CacheKey.With(service.GetType(), nameof(service.GetByIdsAsync), string.Join("-", cartIds), null);
-            platfromMemoryCacheMock.Setup(pmc => pmc.CreateEntry(cacheKey)).Returns(_cacheEntryMock.Object);
+            platformMemoryCacheMock.Setup(pmc => pmc.CreateEntry(cacheKey)).Returns(_cacheEntryMock.Object);
 
             //Act
             var result = await service.GetByIdsAsync(new[] { cartId });

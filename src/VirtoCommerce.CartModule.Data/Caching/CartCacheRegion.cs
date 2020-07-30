@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Microsoft.Extensions.Primitives;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.Platform.Core.Caching;
@@ -31,7 +29,7 @@ namespace VirtoCommerce.CartModule.Data.Caching
             {
                 changeTokens.Add(CreateChangeTokenForKey(cartId));
             }
-            return new CompositeChangeToken(changeTokens);            
+            return new CompositeChangeToken(changeTokens);
         }
 
         public static void ExpireCart(ShoppingCart cart)

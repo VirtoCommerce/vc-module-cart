@@ -103,14 +103,14 @@ namespace VirtoCommerce.CartModule.Data.Services
                 query = query.Where(x => criteria.CustomerIds.Contains(x.CustomerId));
             }
 
-            if (criteria.StartDate != null)
+            if (criteria.CreatedStartDate != null)
             {
-                query = query.Where(x => x.CreatedDate >= criteria.StartDate.Value);
+                query = query.Where(x => x.CreatedDate >= criteria.CreatedStartDate.Value);
             }
 
-            if (criteria.EndDate != null)
+            if (criteria.CreatedEndDate != null)
             {
-                query = query.Where(x => x.CreatedDate <= criteria.EndDate.Value);
+                query = query.Where(x => x.CreatedDate <= criteria.CreatedEndDate.Value);
             }
 
             if (criteria.ModifiedStartDate != null)

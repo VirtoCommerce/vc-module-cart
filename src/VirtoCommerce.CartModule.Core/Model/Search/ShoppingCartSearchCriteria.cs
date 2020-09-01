@@ -14,8 +14,8 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public string[] CustomerIds { get; set; }
         public string OrganizationId { get; set; }
 
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime? CreatedStartDate { get; set; }
+        public DateTime? CreatedEndDate { get; set; }
 
         public DateTime? ModifiedStartDate { get; set; }
         public DateTime? ModifiedEndDate { get; set; }

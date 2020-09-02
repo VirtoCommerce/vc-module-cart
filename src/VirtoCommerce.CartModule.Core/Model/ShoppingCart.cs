@@ -27,6 +27,8 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public string Status { get; set; }
 
+        public string PurchaseOrderNumber { get; set; }
+
         public string WeightUnit { get; set; }
         public decimal? Weight { get; set; }
 

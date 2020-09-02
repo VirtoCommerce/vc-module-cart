@@ -103,9 +103,29 @@ namespace VirtoCommerce.CartModule.Data.Services
                 query = query.Where(x => criteria.CustomerIds.Contains(x.CustomerId));
             }
 
+            if (criteria.CreatedStartDate != null)
+            {
+                query = query.Where(x => x.CreatedDate >= criteria.CreatedStartDate.Value);
+            }
+
+            if (criteria.CreatedEndDate != null)
+            {
+                query = query.Where(x => x.CreatedDate <= criteria.CreatedEndDate.Value);
+            }
+
+            if (criteria.ModifiedStartDate != null)
+            {
+                query = query.Where(x => x.ModifiedDate >= criteria.ModifiedStartDate.Value);
+            }
+
+            if (criteria.ModifiedEndDate != null)
+            {
+                query = query.Where(x => x.ModifiedDate <= criteria.ModifiedEndDate.Value);
+            }
+
             return query;
         }
-    
+
         protected virtual IList<SortInfo> BuildSortExpression(ShoppingCartSearchCriteria criteria)
         {
             var sortInfos = criteria.SortInfos;

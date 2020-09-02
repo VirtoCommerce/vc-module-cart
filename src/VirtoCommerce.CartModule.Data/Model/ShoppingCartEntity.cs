@@ -95,6 +95,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string Status { get; set; }
 
+        [StringLength(128)]
+        public string PurchaseOrderNumber { get; set; }
+
         [Column(TypeName = "Money")]
         public decimal Fee { get; set; }
 
@@ -138,6 +141,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             cart.Fee = Fee;
             cart.FeeWithTax = FeeWithTax;
             cart.Status = Status;
+            cart.PurchaseOrderNumber = PurchaseOrderNumber;
             cart.Currency = Currency;
             cart.ValidationType = ValidationType;
             cart.CustomerId = CustomerId;
@@ -203,6 +207,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             Fee = cart.Fee;
             FeeWithTax = cart.FeeWithTax;
             Status = cart.Status;
+            PurchaseOrderNumber = cart.PurchaseOrderNumber;
             Currency = cart.Currency;
             ValidationType = cart.ValidationType;
             CustomerId = cart.CustomerId;
@@ -293,6 +298,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Fee = Fee;
             target.FeeWithTax = FeeWithTax;
             target.Status = Status;
+            target.PurchaseOrderNumber = PurchaseOrderNumber;
             target.Currency = Currency;
             target.ValidationType = ValidationType;
             target.CustomerId = CustomerId;

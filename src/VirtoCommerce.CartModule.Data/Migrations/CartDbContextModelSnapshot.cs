@@ -15,7 +15,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
+                .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -23,62 +23,81 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("AddressType")
+                        .HasColumnType("nvarchar(32)")
                         .HasMaxLength(32);
 
                     b.Property<string>("City")
                         .IsRequired()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("CountryCode")
+                        .HasColumnType("nvarchar(3)")
                         .HasMaxLength(3);
 
                     b.Property<string>("CountryName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(254)")
                         .HasMaxLength(254);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("Line1")
+                        .HasColumnType("nvarchar(2048)")
                         .HasMaxLength(2048);
 
                     b.Property<string>("Line2")
+                        .HasColumnType("nvarchar(2048)")
                         .HasMaxLength(2048);
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(2048)")
                         .HasMaxLength(2048);
 
                     b.Property<string>("Organization")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<string>("PaymentId");
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("PostalCode")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("RegionId")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("RegionName")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
-                    b.Property<string>("ShipmentId");
+                    b.Property<string>("ShipmentId")
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("ShoppingCartId");
+                    b.Property<string>("ShoppingCartId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -95,60 +114,81 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
-                    b.Property<bool?>("BooleanValue");
+                    b.Property<bool?>("BooleanValue")
+                        .HasColumnType("bit");
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateTimeValue");
+                    b.Property<DateTime?>("DateTimeValue")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal?>("DecimalValue")
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<string>("DictionaryItemId")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
-                    b.Property<int?>("IntegerValue");
+                    b.Property<int?>("IntegerValue")
+                        .HasColumnType("int");
 
-                    b.Property<string>("LineItemId");
+                    b.Property<string>("LineItemId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Locale")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<string>("LongTextValue");
+                    b.Property<string>("LongTextValue")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ObjectId")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("ObjectType")
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
-                    b.Property<string>("PaymentId");
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("PropertyId")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("PropertyName")
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
-                    b.Property<string>("ShipmentId");
+                    b.Property<string>("ShipmentId")
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("ShoppingCartId");
+                    b.Property<string>("ShoppingCartId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ShortTextValue")
+                        .HasColumnType("nvarchar(512)")
                         .HasMaxLength(512);
 
                     b.Property<string>("ValueType")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.HasKey("Id");
@@ -183,13 +223,16 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("Code")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("ShoppingCartId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -202,13 +245,16 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("CouponCode")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("Currency")
                         .IsRequired()
+                        .HasColumnType("nvarchar(3)")
                         .HasMaxLength(3);
 
                     b.Property<decimal>("DiscountAmount")
@@ -217,19 +263,25 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.Property<decimal>("DiscountAmountWithTax")
                         .HasColumnType("Money");
 
-                    b.Property<string>("LineItemId");
+                    b.Property<string>("LineItemId")
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("PaymentId");
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("PromotionDescription")
+                        .HasColumnType("nvarchar(1024)")
                         .HasMaxLength(1024);
 
                     b.Property<string>("PromotionId")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<string>("ShipmentId");
+                    b.Property<string>("ShipmentId")
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("ShoppingCartId");
+                    b.Property<string>("ShoppingCartId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -248,25 +300,32 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("CatalogId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("CategoryId")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(2048)")
                         .HasMaxLength(2048);
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Currency")
                         .IsRequired()
+                        .HasColumnType("nvarchar(3)")
                         .HasMaxLength(3);
 
                     b.Property<decimal>("DiscountAmount")
@@ -282,29 +341,39 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("FulfillmentCenterId")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("FulfillmentCenterName")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("FulfillmentLocationCode")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<decimal?>("Height");
+                    b.Property<decimal?>("Height")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(1028)")
                         .HasMaxLength(1028);
 
-                    b.Property<bool>("IsGift");
+                    b.Property<bool>("IsGift")
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("IsReadOnly");
+                    b.Property<bool>("IsReadOnly")
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("IsReccuring");
+                    b.Property<bool>("IsReccuring")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LanguageCode")
+                        .HasColumnType("nvarchar(16)")
                         .HasMaxLength(16);
 
-                    b.Property<decimal?>("Length");
+                    b.Property<decimal?>("Length")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("ListPrice")
                         .HasColumnType("Money");
@@ -313,30 +382,39 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("MeasureUnit")
+                        .HasColumnType("nvarchar(32)")
                         .HasMaxLength(32);
 
                     b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
                     b.Property<string>("PriceId")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("ProductId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("ProductType")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<int>("Quantity");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("RequiredShipping");
+                    b.Property<bool>("RequiredShipping")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("SalePrice")
                         .HasColumnType("Money");
@@ -345,16 +423,20 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("ShipmentMethodCode")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("ShoppingCartId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Sku")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<bool>("TaxIncluded");
+                    b.Property<bool>("TaxIncluded")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("TaxPercentRate")
                         .HasColumnType("decimal(18,4)");
@@ -363,19 +445,25 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("TaxType")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("ValidationType")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<decimal?>("VolumetricWeight");
+                    b.Property<decimal?>("VolumetricWeight")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("Weight");
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("WeightUnit")
+                        .HasColumnType("nvarchar(32)")
                         .HasMaxLength(32);
 
-                    b.Property<decimal?>("Width");
+                    b.Property<decimal?>("Width")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -388,18 +476,22 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("Money");
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Currency")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<decimal>("DiscountAmount")
@@ -409,14 +501,18 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("OuterId")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("PaymentGatewayCode")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<decimal>("Price")
@@ -426,10 +522,12 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("Purpose")
+                        .HasColumnType("nvarchar(1024)")
                         .HasMaxLength(1024);
 
                     b.Property<string>("ShoppingCartId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<decimal>("TaxPercentRate")
                         .HasColumnType("decimal(18,4)");
@@ -438,6 +536,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("TaxType")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<decimal>("Total")
@@ -457,25 +556,33 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Currency")
                         .IsRequired()
+                        .HasColumnType("nvarchar(3)")
                         .HasMaxLength(3);
 
-                    b.Property<decimal?>("DimensionHeight");
+                    b.Property<decimal?>("DimensionHeight")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("DimensionLength");
+                    b.Property<decimal?>("DimensionLength")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("DimensionUnit")
+                        .HasColumnType("nvarchar(16)")
                         .HasMaxLength(16);
 
-                    b.Property<decimal?>("DimensionWidth");
+                    b.Property<decimal?>("DimensionWidth")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("DiscountAmount")
                         .HasColumnType("Money");
@@ -490,15 +597,19 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("FulfillmentCenterId")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("FulfillmentCenterName")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("Money");
@@ -507,15 +618,19 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("ShipmentMethodCode")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("ShipmentMethodOption")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("ShoppingCartId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<bool>("TaxIncluded");
+                    b.Property<bool>("TaxIncluded")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("TaxPercentRate")
                         .HasColumnType("decimal(18,4)");
@@ -524,6 +639,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("TaxType")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<decimal>("Total")
@@ -532,12 +648,15 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.Property<decimal>("TotalWithTax")
                         .HasColumnType("Money");
 
-                    b.Property<decimal?>("VolumetricWeight");
+                    b.Property<decimal?>("VolumetricWeight")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("WeightUnit")
+                        .HasColumnType("nvarchar(16)")
                         .HasMaxLength(16);
 
-                    b.Property<decimal?>("WeightValue");
+                    b.Property<decimal?>("WeightValue")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -550,28 +669,37 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("BarCode")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LineItemId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("Quantity");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("ShipmentId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -586,28 +714,36 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("ChannelId")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(2048)")
                         .HasMaxLength(2048);
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Currency")
                         .IsRequired()
+                        .HasColumnType("nvarchar(3)")
                         .HasMaxLength(3);
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<decimal>("DiscountAmount")
@@ -631,24 +767,32 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.Property<decimal>("HandlingTotalWithTax")
                         .HasColumnType("Money");
 
-                    b.Property<bool>("IsAnonymous");
+                    b.Property<bool>("IsAnonymous")
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("IsRecuring");
+                    b.Property<bool>("IsRecuring")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LanguageCode")
+                        .HasColumnType("nvarchar(16)")
                         .HasMaxLength(16);
 
                     b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("OrganizationId")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<decimal>("PaymentTotal")
@@ -657,6 +801,10 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.Property<decimal>("PaymentTotalWithTax")
                         .HasColumnType("Money");
 
+                    b.Property<string>("PurchaseOrderNumber")
+                        .HasColumnType("nvarchar(128)")
+                        .HasMaxLength(128);
+
                     b.Property<decimal>("ShippingTotal")
                         .HasColumnType("Money");
 
@@ -664,10 +812,12 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("Status")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("StoreId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<decimal>("SubTotal")
@@ -676,7 +826,8 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.Property<decimal>("SubTotalWithTax")
                         .HasColumnType("Money");
 
-                    b.Property<bool>("TaxIncluded");
+                    b.Property<bool>("TaxIncluded")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("TaxPercentRate")
                         .HasColumnType("decimal(18,4)");
@@ -688,9 +839,11 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("Type")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("ValidationType")
+                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.HasKey("Id");
@@ -702,23 +855,30 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("Money");
 
-                    b.Property<string>("LineItemId");
+                    b.Property<string>("LineItemId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(1024)")
                         .HasMaxLength(1024);
 
-                    b.Property<string>("PaymentId");
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<decimal>("Rate");
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("ShipmentId");
+                    b.Property<string>("ShipmentId")
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("ShoppingCartId");
+                    b.Property<string>("ShoppingCartId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -779,7 +939,8 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.ShoppingCartEntity", "ShoppingCart")
                         .WithMany("Coupons")
                         .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.DiscountEntity", b =>
@@ -810,7 +971,8 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.ShoppingCartEntity", "ShoppingCart")
                         .WithMany("Items")
                         .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.PaymentEntity", b =>
@@ -818,7 +980,8 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.ShoppingCartEntity", "ShoppingCart")
                         .WithMany("Payments")
                         .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ShipmentEntity", b =>
@@ -826,7 +989,8 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.ShoppingCartEntity", "ShoppingCart")
                         .WithMany("Shipments")
                         .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ShipmentItemEntity", b =>
@@ -834,12 +998,14 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.LineItemEntity", "LineItem")
                         .WithMany("ShipmentItems")
                         .HasForeignKey("LineItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.ShipmentEntity", "Shipment")
                         .WithMany("Items")
                         .HasForeignKey("ShipmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.TaxDetailEntity", b =>

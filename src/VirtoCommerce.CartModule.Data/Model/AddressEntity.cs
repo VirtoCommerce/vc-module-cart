@@ -70,8 +70,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (address == null)
                 throw new ArgumentNullException(nameof(address));
 
-            //TODO
-            //address.Key = Id;
+            address.Key = Id;
             address.Name = Name;
             address.AddressType = EnumUtility.SafeParseFlags(AddressType, CoreModule.Core.Common.AddressType.BillingAndShipping);
             address.City = City;
@@ -82,13 +81,12 @@ namespace VirtoCommerce.CartModule.Data.Model
             address.LastName = LastName;
             address.Line1 = Line1;
             address.Line2 = Line2;
-            //address.MiddleName = Middle
             address.Organization = Organization;
             address.Phone = Phone;
             address.PostalCode = PostalCode;
             address.RegionId = RegionId;
             address.RegionName = RegionName;
-            //address.Zip =
+            address.Zip = address.PostalCode;
 
             return address;
         }
@@ -98,8 +96,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (address == null)
                 throw new ArgumentNullException(nameof(address));
 
-            //TODO
-            //Key = address.Id;
+            Id = address.Key;
             Name = address.Name;
             AddressType = address.AddressType.ToString();
             City = address.City;
@@ -110,13 +107,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             LastName = address.LastName;
             Line1 = address.Line1;
             Line2 = address.Line2;
-            //MiddleName = 
             Organization = address.Organization;
             Phone = address.Phone;
-            PostalCode = address.PostalCode;
+            PostalCode = address.PostalCode ?? address.Zip;
             RegionId = address.RegionId;
             RegionName = address.RegionName;
-            //Zip =
 
             return this;
         }

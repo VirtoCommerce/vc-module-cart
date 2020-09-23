@@ -86,6 +86,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             address.PostalCode = PostalCode;
             address.RegionId = RegionId;
             address.RegionName = RegionName;
+            address.Organization = Organization;
             //address.Zip =
 
             return address;
@@ -112,6 +113,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             PostalCode = address.PostalCode;
             RegionId = address.RegionId;
             RegionName = address.RegionName;
+            Organization = address.Organization;
             //Zip =
 
             return this;
@@ -134,6 +136,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.LastName = LastName;
             target.Line1 = Line1;
             target.Line2 = Line2;
+            target.Organization = Organization;
         }
 
         public override bool Equals(object obj)

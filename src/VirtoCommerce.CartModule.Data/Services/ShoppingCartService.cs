@@ -112,10 +112,11 @@ namespace VirtoCommerce.CartModule.Data.Services
                 await _eventPublisher.Publish(new CartChangeEvent(changedEntries));
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
+
+                ClearCache(carts);
+
                 await _eventPublisher.Publish(new CartChangedEvent(changedEntries));
             }
-
-            ClearCache(carts);
         }
 
         public virtual async Task DeleteAsync(string[] cartIds, bool softDelete = false)
@@ -139,11 +140,12 @@ namespace VirtoCommerce.CartModule.Data.Services
                 }
 
                 await repository.UnitOfWork.CommitAsync();
+
+                ClearCache(carts);
+
                 //Raise domain events after deletion
                 await _eventPublisher.Publish(new CartChangedEvent(changedEntries));
             }
-
-            ClearCache(carts);
         }
 
         protected virtual void ClearCache(IEnumerable<ShoppingCart> entities)

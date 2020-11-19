@@ -137,8 +137,8 @@ namespace VirtoCommerce.CartModule.Core.Model
         #endregion
 
         #region IHasDynamicProperties Members
-        public string ObjectType => GetType().FullName;
-        public ICollection<DynamicObjectProperty> DynamicProperties { get; set; }
+        public virtual string ObjectType => typeof(LineItem).FullName;
+        public virtual ICollection<DynamicObjectProperty> DynamicProperties { get; set; }
 
         #endregion
 

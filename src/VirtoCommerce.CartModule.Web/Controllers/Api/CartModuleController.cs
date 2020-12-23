@@ -56,7 +56,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{cartId}/itemscount")]
         public async Task<ActionResult<int>> GetCartItemsCount(string cartId)
         {
-            var carts = await _shoppingCartService.GetByIdsAsync(new[] { cartId }, CartResponseGroup.Default.ToString());
+            var carts = await _shoppingCartService.GetByIdsAsync(new[] { cartId }, CartResponseGroup.WithLineItems.ToString());
             var cart = carts.FirstOrDefault();
             return Ok(cart?.Items?.Count ?? 0);
         }

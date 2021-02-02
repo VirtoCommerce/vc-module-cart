@@ -6,6 +6,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Add index thru scripting because of no way to make indexing field DESC
             migrationBuilder.Sql(@"CREATE INDEX [IX_CustomerId_StoreId_Date] ON [Cart]([CustomerId] ASC, [StoreId] ASC, [CreatedDate] DESC)");
         }
 

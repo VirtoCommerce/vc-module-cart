@@ -100,6 +100,10 @@ namespace VirtoCommerce.CartModule.Data.Services
 
                         changedEntries.Add(new GenericChangedEntry<ShoppingCart>(cart, originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()), EntryState.Modified));
                         modifiedEntity.Patch(originalEntity);
+                        if (repository is RedisCartRepository)
+                        {
+                            repository.Attach(originalEntity);
+                        }
                     }
                     else
                     {

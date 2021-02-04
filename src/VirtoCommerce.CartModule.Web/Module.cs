@@ -29,7 +29,8 @@ namespace VirtoCommerce.CartModule.Web
         public void Initialize(IServiceCollection serviceCollection)
         {
             var configuration = serviceCollection.BuildServiceProvider().GetRequiredService<IConfiguration>();
-            serviceCollection.AddTransient<ICartRepository, CartRepository>();
+            //serviceCollection.AddTransient<ICartRepository, CartRepository>();
+            serviceCollection.AddTransient<ICartRepository, RedisCartRepository>();
             var connectionString = configuration.GetConnectionString("VirtoCommerce.Cart") ?? configuration.GetConnectionString("VirtoCommerce");
             serviceCollection.AddDbContext<CartDbContext>(options => options.UseSqlServer(connectionString));
             serviceCollection.AddTransient<Func<ICartRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICartRepository>());

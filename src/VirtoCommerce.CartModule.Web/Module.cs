@@ -33,8 +33,11 @@ namespace VirtoCommerce.CartModule.Web
             var connectionString = configuration.GetConnectionString("VirtoCommerce.Cart") ?? configuration.GetConnectionString("VirtoCommerce");
             serviceCollection.AddDbContext<CartDbContext>(options => options.UseSqlServer(connectionString));
             serviceCollection.AddTransient<Func<ICartRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICartRepository>());
-            serviceCollection.AddTransient<IShoppingCartService, ShoppingCartService>();
-            serviceCollection.AddTransient<IShoppingCartSearchService, ShoppingCartSearchService>();
+
+            serviceCollection.AddSingleton<InMemoryCartRepository>();
+            serviceCollection.AddTransient<IShoppingCartService, InMemoryShoppingCartService>();
+            serviceCollection.AddTransient<IShoppingCartSearchService, InMemoryShoppingCartSearchService>();
+
             serviceCollection.AddTransient<IShoppingCartTotalsCalculator, DefaultShoppingCartTotalsCalculator>();
             serviceCollection.AddTransient<IShoppingCartBuilder, ShoppingCartBuilder>();
 

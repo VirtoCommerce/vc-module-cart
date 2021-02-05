@@ -88,12 +88,18 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public void Remove<T>(T item) where T : class
         {
-            throw new NotImplementedException();
+            if (item is IEntity entity && entity.Id != null)
+            {
+                var key = CacheKey.With(typeof(T).FullName, entity.Id);
+                _database.KeyDeleteAsync(key).GetAwaiter().GetResult();
+            }
+                
         }
 
         public Task RemoveCartsAsync(string[] ids)
         {
-            throw new NotImplementedException();
+            var keys = ids.Select(x => new RedisKey(CacheKey.With(typeof(ShoppingCartEntity).FullName, x))).ToArray();
+            return _database.KeyDeleteAsync(keys);
         }
 
         public Task SoftRemoveCartsAsync(string[] ids)

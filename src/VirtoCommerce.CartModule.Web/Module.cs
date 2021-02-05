@@ -28,8 +28,8 @@ namespace VirtoCommerce.CartModule.Web
         public ManifestModuleInfo ModuleInfo { get; set; }
         public void Initialize(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<ICartRepository, CartRepository>();
-            //serviceCollection.AddTransient<ICartRepository, RedisCartRepository>();
+            //serviceCollection.AddTransient<ICartRepository, CartRepository>();
+            serviceCollection.AddTransient<ICartRepository, RedisCartRepository>();
             
             serviceCollection.AddDbContext<CartDbContext>((sp, options) => {
                 var configuration = sp.GetRequiredService<IConfiguration>();

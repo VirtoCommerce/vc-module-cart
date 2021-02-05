@@ -43,13 +43,33 @@ namespace VirtoCommerce.CartModule.Data.Services
                     var sortInfos = BuildSortExpression(criteria);
                     var query = BuildQuery(repository, criteria);
 
-                    result.TotalCount = await query.CountAsync();
+                    if (repository is RedisCartRepository)
+                    {
+                        result.TotalCount = query.Count();
+                    }
+                    else
+                    {
+                        result.TotalCount = await query.CountAsync();
+                    }
+                    
                     if (criteria.Take > 0)
                     {
-                        var ids = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
+                        string[] ids;
+                        if (repository is RedisCartRepository)
+                        {
+                            ids = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
+                                         .Select(x => x.Id)
+                                         .Skip(criteria.Skip).Take(criteria.Take)
+                                         .ToArray();
+                        }
+                        else
+                        {
+                            ids = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
                                          .Select(x => x.Id)
                                          .Skip(criteria.Skip).Take(criteria.Take)
                                          .ToArrayAsync();
+                        }
+                        
 
                         result.Results = (await _cartService.GetByIdsAsync(ids, criteria.ResponseGroup)).OrderBy(x => Array.IndexOf(ids, x.Id)).ToList();
                     }

@@ -28,11 +28,14 @@ namespace VirtoCommerce.CartModule.Web
         public ManifestModuleInfo ModuleInfo { get; set; }
         public void Initialize(IServiceCollection serviceCollection)
         {
-            var configuration = serviceCollection.BuildServiceProvider().GetRequiredService<IConfiguration>();
-            //serviceCollection.AddTransient<ICartRepository, CartRepository>();
-            serviceCollection.AddTransient<ICartRepository, RedisCartRepository>();
-            var connectionString = configuration.GetConnectionString("VirtoCommerce.Cart") ?? configuration.GetConnectionString("VirtoCommerce");
-            serviceCollection.AddDbContext<CartDbContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddTransient<ICartRepository, CartRepository>();
+            //serviceCollection.AddTransient<ICartRepository, RedisCartRepository>();
+            
+            serviceCollection.AddDbContext<CartDbContext>((sp, options) => {
+                var configuration = sp.GetRequiredService<IConfiguration>();
+                var connectionString = configuration.GetConnectionString("VirtoCommerce.Cart") ?? configuration.GetConnectionString("VirtoCommerce");
+                options.UseSqlServer(connectionString);
+                });
             serviceCollection.AddTransient<Func<ICartRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICartRepository>());
             serviceCollection.AddTransient<IShoppingCartService, ShoppingCartService>();
             serviceCollection.AddTransient<IShoppingCartSearchService, ShoppingCartSearchService>();
@@ -40,14 +43,15 @@ namespace VirtoCommerce.CartModule.Web
             serviceCollection.AddTransient<IShoppingCartBuilder, ShoppingCartBuilder>();
 
             serviceCollection.AddTransient<CartChangedEventHandler>();
-            var providerSnapshot = serviceCollection.BuildServiceProvider();
-            var inProcessBus = providerSnapshot.GetService<IHandlerRegistrar>();
-            inProcessBus.RegisterHandler<CartChangedEvent>(async (message, token) => await providerSnapshot.GetService<CartChangedEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<CartChangeEvent>(async (message, token) => await providerSnapshot.GetService<CartChangedEventHandler>().Handle(message));
+            //var providerSnapshot = serviceCollection.BuildServiceProvider();
+            
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
         {
+            var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
+            inProcessBus.RegisterHandler<CartChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<CartChangedEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<CartChangeEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<CartChangedEventHandler>().Handle(message));
             var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x =>
                 new Permission()

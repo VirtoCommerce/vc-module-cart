@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using VirtoCommerce.CartModule.Data.Model;
@@ -19,12 +20,13 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         private readonly IDatabaseAsync _database;
         private readonly IServer _server;
 
-        public RedisCartRepository()
+        public RedisCartRepository(IConfiguration configuration)
         {
-            _redis = ConnectionMultiplexer.Connect("localhost:6379,name=Cart,ssl=False");
+            var connection = configuration.GetConnectionString("RedisConnectionString");
+            _redis = ConnectionMultiplexer.Connect(connection);
             _database = _redis.GetDatabase();
             UnitOfWork = new RedisUnitOfWork();
-            _server = _redis.GetServer("localhost:6379");
+            _server = _redis.GetServer(_redis.GetEndPoints().First());
         }
 
         public IQueryable<ShoppingCartEntity> ShoppingCarts
@@ -32,9 +34,9 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             get
             {
                 var keys = _server.Keys(pattern: $"*{typeof(ShoppingCartEntity).FullName}*").ToArray();
-                //TODO get values
-                var values = keys.Select(x => JsonConvert.DeserializeObject<ShoppingCartEntity>(x)).ToArray();
-                return values.AsQueryable();
+                var values = _database.StringGetAsync(keys).GetAwaiter().GetResult();
+                var carts = values.Select(x => JsonConvert.DeserializeObject<ShoppingCartEntity>(x)).ToArray();
+                return carts.AsQueryable();
             }
         }
 

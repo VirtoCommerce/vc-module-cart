@@ -117,7 +117,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                     DELETE FROM Cart WHERE Id IN ({0})
                 ";
 
-
                 var cartsRemoveCmd = CreateCommand(commandTemplate, ids);
                 await DbContext.ExecuteArrayAsync<string>(cartsRemoveCmd.Text, cartsRemoveCmd.Parameters.ToArray());
             }
@@ -130,7 +129,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 const string commandTemplate = @"
                     UPDATE Cart SET IsDeleted = 1 WHERE Id IN ({0})
                 ";
-
 
                 var cartsRemoveCmd = CreateCommand(commandTemplate, ids);
                 await DbContext.ExecuteArrayAsync<string>(cartsRemoveCmd.Text, cartsRemoveCmd.Parameters.ToArray());

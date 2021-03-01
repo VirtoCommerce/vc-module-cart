@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CartModule.Data.Repositories
@@ -102,17 +105,20 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual async Task RemoveCartsAsync(string[] ids)
         {
-            var carts = await GetShoppingCartsByIdsAsync(ids);
-            if (!carts.IsNullOrEmpty())
+            if (!ids.IsNullOrEmpty())
             {
-                foreach (var cart in carts)
-                {
-                    // This extension is allow to get around breaking changes is introduced in EF Core 3.0 that leads to throw
-                    // Database operation expected to affect 1 row(s) but actually affected 0 row(s) exception when trying to add the new children entities with manually set keys
-                    // https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#detectchanges-honors-store-generated-key-values
-                    this.TrackModifiedAsAddedForNewChildEntities(cart);
-                    Remove(cart);
-                }
+                // Forcibly remove CartDiscount, CartAddress through plain query
+                // Then remove carts
+                // All other cart details will be removed using CASCADE DELETE db structure
+                const string commandTemplate = @"
+                    DELETE FROM CartDiscount WHERE ShoppingCartId IN ({0})                    
+                    DELETE CartAddress FROM CartAddress CartAddress INNER JOIN CartPayment ON CartAddress.PaymentId=CartPayment.id WHERE CartPayment.ShoppingCartId IN ({0})
+                    DELETE CartAddress FROM CartAddress CartAddress INNER JOIN CartShipment ON CartAddress.ShipmentId=CartShipment.id WHERE CartShipment.ShoppingCartId IN ({0})
+                    DELETE FROM Cart WHERE Id IN ({0})
+                ";
+
+                var cartsRemoveCmd = CreateCommand(commandTemplate, ids);
+                await DbContext.ExecuteArrayAsync<string>(cartsRemoveCmd.Text, cartsRemoveCmd.Parameters.ToArray());
             }
         }
 
@@ -120,14 +126,34 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             if (!ids.IsNullOrEmpty())
             {
-                var carts = await ShoppingCarts.Where(x => ids.Contains(x.Id)).ToListAsync();
-                foreach (var cart in carts)
-                {
-                    cart.IsDeleted = true;
-                }
+                const string commandTemplate = @"
+                    UPDATE Cart SET IsDeleted = 1 WHERE Id IN ({0})
+                ";
+
+                var cartsRemoveCmd = CreateCommand(commandTemplate, ids);
+                await DbContext.ExecuteArrayAsync<string>(cartsRemoveCmd.Text, cartsRemoveCmd.Parameters.ToArray());
             }
         }
 
+
         #endregion
+
+        protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
+        {
+            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v)).ToArray();
+            var parameterNames = string.Join(",", parameters.Select(p => p.ParameterName));
+
+            return new Command
+            {
+                Text = string.Format(commandTemplate, parameterNames),
+                Parameters = parameters.OfType<object>().ToList(),
+            };
+        }
+
+        protected class Command
+        {
+            public string Text { get; set; }
+            public IList<object> Parameters { get; set; } = new List<object>();
+        }
     }
 }

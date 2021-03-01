@@ -150,28 +150,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             };
         }
 
-        protected SqlParameter[] AddArrayParameters<T>(Command cmd, string paramNameRoot, IEnumerable<T> values)
-        {
-            /* An array cannot be simply added as a parameter to a SqlCommand so we need to loop through things and add it manually.
-             * Each item in the array will end up being it's own SqlParameter so the return value for this must be used as part of the
-             * IN statement in the CommandText.
-             */
-            var parameters = new List<SqlParameter>();
-            var parameterNames = new List<string>();
-            var paramNbr = 1;
-            foreach (var value in values)
-            {
-                var paramName = $"{paramNameRoot}{paramNbr++}";
-                parameterNames.Add(paramName);
-                var p = new SqlParameter(paramName, value);
-                cmd.Parameters.Add(p);
-                parameters.Add(p);
-            }
-            cmd.Text = cmd.Text.Replace(paramNameRoot, string.Join(",", parameterNames));
-
-            return parameters.ToArray();
-        }
-
         protected class Command
         {
             public string Text { get; set; }

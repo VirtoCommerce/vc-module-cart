@@ -56,14 +56,14 @@ namespace VirtoCommerce.CartModule.Data.Services
             return result.Select(x => x.Clone() as ShoppingCart).ToArray();
         }
 
-        private List<ShoppingCart> ToCartModels(string responseGroup, ShoppingCartEntity[] cartEntities, bool bSkipTotals = false)
+        private List<ShoppingCart> ToCartModels(string responseGroup, ShoppingCartEntity[] cartEntities)
         {
             var retVal = new List<ShoppingCart>();
             foreach (var cartEntity in cartEntities)
             {
                 var cart = cartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
                 //Calculate totals only for full responseGroup
-                if (responseGroup == null && !bSkipTotals)
+                if (responseGroup == null )
                 {
                     _totalsCalculator.CalculateTotals(cart);
                 }
@@ -134,11 +134,11 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 if (softDelete)
                 {
-                    carts = ToCartModels(null, (await repository.SoftRemoveCartsAsync(cartIds)), true);
+                    carts = ToCartModels(null, (await repository.SoftRemoveCartsAsync(cartIds)));
                 }
                 else
                 {
-                    carts = ToCartModels(null, (await repository.RemoveCartsAsync(cartIds)), true);
+                    carts = ToCartModels(null, (await repository.RemoveCartsAsync(cartIds)));
                 }
 
                 //Raise domain events before deletion

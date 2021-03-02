@@ -107,13 +107,33 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             if (!ids.IsNullOrEmpty())
             {
-                // Forcibly remove CartDiscount, CartAddress through plain query
+                // Forcibly remove CartDynamicPropertyObjectValue, CartDiscount, CartAddress, CartTaxDetail, CartShipmentItem
+                // through plain query
                 // Then remove carts
                 // All other cart details will be removed using CASCADE DELETE db structure
                 const string commandTemplate = @"
-                    DELETE FROM CartDiscount WHERE ShoppingCartId IN ({0})                    
+                    DELETE FROM CartDynamicPropertyObjectValue WHERE ShoppingCartId IN ({0})
+                    DELETE CartDynamicPropertyObjectValue FROM CartDynamicPropertyObjectValue CartDynamicPropertyObjectValue INNER JOIN CartLineItem ON CartDynamicPropertyObjectValue.LineItemId=CartLineItem.id WHERE CartLineItem.ShoppingCartId IN ({0})
+                    DELETE CartDynamicPropertyObjectValue FROM CartDynamicPropertyObjectValue CartDynamicPropertyObjectValue INNER JOIN CartShipment ON CartDynamicPropertyObjectValue.ShipmentId=CartShipment.id WHERE CartShipment.ShoppingCartId IN ({0})
+                    DELETE CartDynamicPropertyObjectValue FROM CartDynamicPropertyObjectValue CartDynamicPropertyObjectValue INNER JOIN CartPayment ON CartDynamicPropertyObjectValue.PaymentId=CartPayment.id WHERE CartPayment.ShoppingCartId IN ({0})
+
+                    DELETE FROM CartDiscount WHERE ShoppingCartId IN ({0})
+                    DELETE CartDiscount FROM CartDiscount CartDiscount INNER JOIN CartLineItem ON CartDiscount.LineItemId=CartLineItem.id WHERE CartLineItem.ShoppingCartId IN ({0})
+                    DELETE CartDiscount FROM CartDiscount CartDiscount INNER JOIN CartShipment ON CartDiscount.ShipmentId=CartShipment.id WHERE CartShipment.ShoppingCartId IN ({0})
+                    DELETE CartDiscount FROM CartDiscount CartDiscount INNER JOIN CartPayment ON CartDiscount.PaymentId=CartPayment.id WHERE CartPayment.ShoppingCartId IN ({0})
+
+                    DELETE FROM CartTaxDetail WHERE ShoppingCartId IN ({0})
+                    DELETE CartTaxDetail FROM CartTaxDetail CartTaxDetail INNER JOIN CartLineItem ON CartTaxDetail.LineItemId=CartLineItem.id WHERE CartLineItem.ShoppingCartId IN ({0})
+                    DELETE CartTaxDetail FROM CartTaxDetail CartTaxDetail INNER JOIN CartShipment ON CartTaxDetail.ShipmentId=CartShipment.id WHERE CartShipment.ShoppingCartId IN ({0})
+                    DELETE CartTaxDetail FROM CartTaxDetail CartTaxDetail INNER JOIN CartPayment ON CartTaxDetail.PaymentId=CartPayment.id WHERE CartPayment.ShoppingCartId IN ({0})
+
+                    DELETE CartShipmentItem FROM CartShipmentItem CartShipmentItem INNER JOIN CartLineItem ON CartShipmentItem.LineItemId=CartLineItem.id WHERE CartLineItem.ShoppingCartId IN ({0})
+                    DELETE CartShipmentItem FROM CartShipmentItem CartShipmentItem INNER JOIN CartShipment ON CartShipmentItem.ShipmentId=CartShipment.id WHERE CartShipment.ShoppingCartId IN ({0})
+
+                    DELETE FROM CartAddress WHERE ShoppingCartId IN ({0})
                     DELETE CartAddress FROM CartAddress CartAddress INNER JOIN CartPayment ON CartAddress.PaymentId=CartPayment.id WHERE CartPayment.ShoppingCartId IN ({0})
                     DELETE CartAddress FROM CartAddress CartAddress INNER JOIN CartShipment ON CartAddress.ShipmentId=CartShipment.id WHERE CartShipment.ShoppingCartId IN ({0})
+
                     DELETE FROM Cart WHERE Id IN ({0})
                 ";
 

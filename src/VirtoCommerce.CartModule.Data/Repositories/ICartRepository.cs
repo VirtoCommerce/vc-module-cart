@@ -9,7 +9,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
     {
         IQueryable<ShoppingCartEntity> ShoppingCarts { get; }
         Task<ShoppingCartEntity[]> GetShoppingCartsByIdsAsync(string[] ids, string responseGroup = null);
-        Task RemoveCartsAsync(string[] ids);
-        Task SoftRemoveCartsAsync(string[] ids);
+        Task<ShoppingCartEntity[]> RemoveCartsAsync(string[] ids);
+        Task<ShoppingCartEntity[]> SoftRemoveCartsAsync(string[] ids);
     }
 }

@@ -48,24 +48,30 @@ namespace VirtoCommerce.CartModule.Data.Services
                     cacheEntry.AddExpirationToken(CartCacheRegion.CreateChangeToken(cartIds));
 
                     var cartEntities = await repository.GetShoppingCartsByIdsAsync(cartIds, responseGroup);
-                    foreach (var cartEntity in cartEntities)
-                    {
-                        var cart = cartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
-                        //Calculate totals only for full responseGroup
-                        if (responseGroup == null)
-                        {
-                            _totalsCalculator.CalculateTotals(cart);
-                        }
-                        cart.ReduceDetails(responseGroup);
-
-                        retVal.Add(cart);
-                        
-                    }
+                    retVal = ToCartModels(responseGroup, cartEntities);
                 }
                 return retVal;
             });
 
             return result.Select(x => x.Clone() as ShoppingCart).ToArray();
+        }
+
+        private List<ShoppingCart> ToCartModels(string responseGroup, ShoppingCartEntity[] cartEntities, bool bSkipTotals = false)
+        {
+            var retVal = new List<ShoppingCart>();
+            foreach (var cartEntity in cartEntities)
+            {
+                var cart = cartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
+                //Calculate totals only for full responseGroup
+                if (responseGroup == null && !bSkipTotals)
+                {
+                    _totalsCalculator.CalculateTotals(cart);
+                }
+                cart.ReduceDetails(responseGroup);
+
+                retVal.Add(cart);
+            }
+            return retVal;
         }
 
         public virtual async Task<ShoppingCart> GetByIdAsync(string id, string responseGroup = null)
@@ -121,23 +127,25 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual async Task DeleteAsync(string[] cartIds, bool softDelete = false)
         {
-            var carts = (await GetByIdsAsync(cartIds)).ToArray();
+
+            var carts = new List<ShoppingCart>();
 
             using (var repository = _repositoryFactory())
             {
+                if (softDelete)
+                {
+                    carts = ToCartModels(null, (await repository.SoftRemoveCartsAsync(cartIds)), true);
+                }
+                else
+                {
+                    carts = ToCartModels(null, (await repository.RemoveCartsAsync(cartIds)), true);
+                }
+
                 //Raise domain events before deletion
                 var entityState = softDelete ? EntryState.Modified : EntryState.Deleted;
                 var changedEntries = carts.Select(x => new GenericChangedEntry<ShoppingCart>(x, entityState)).ToArray();
                 await _eventPublisher.Publish(new CartChangeEvent(changedEntries));
 
-                if (softDelete)
-                {
-                    await repository.SoftRemoveCartsAsync(cartIds);                   
-                }
-                else
-                {                    
-                    await repository.RemoveCartsAsync(cartIds);                    
-                }
 
                 await repository.UnitOfWork.CommitAsync();
 

@@ -100,9 +100,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             return result;
         }
 
-        public virtual async Task RemoveCartsAsync(string[] ids)
+        public virtual async Task<ShoppingCartEntity[]> RemoveCartsAsync(string[] ids)
         {
             var carts = await GetShoppingCartsByIdsAsync(ids);
+            
             if (!carts.IsNullOrEmpty())
             {
                 foreach (var cart in carts)
@@ -114,18 +115,21 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                     Remove(cart);
                 }
             }
+            return carts;
         }
 
-        public virtual async Task SoftRemoveCartsAsync(string[] ids)
+        public virtual async Task<ShoppingCartEntity[]> SoftRemoveCartsAsync(string[] ids)
         {
+            var carts = Array.Empty<ShoppingCartEntity>();
             if (!ids.IsNullOrEmpty())
             {
-                var carts = await ShoppingCarts.Where(x => ids.Contains(x.Id)).ToListAsync();
+                carts = await ShoppingCarts.Where(x => ids.Contains(x.Id)).ToArrayAsync();
                 foreach (var cart in carts)
                 {
                     cart.IsDeleted = true;
                 }
             }
+            return carts;
         }
 
         #endregion

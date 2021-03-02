@@ -26,12 +26,16 @@ namespace VirtoCommerce.CartModule.Web
     public class Module : IModule
     {
         public ManifestModuleInfo ModuleInfo { get; set; }
+
         public void Initialize(IServiceCollection serviceCollection)
         {
-            var configuration = serviceCollection.BuildServiceProvider().GetRequiredService<IConfiguration>();
+            serviceCollection.AddDbContext<CartDbContext>((provider, options) =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
+            });
+
             serviceCollection.AddTransient<ICartRepository, CartRepository>();
-            var connectionString = configuration.GetConnectionString("VirtoCommerce.Cart") ?? configuration.GetConnectionString("VirtoCommerce");
-            serviceCollection.AddDbContext<CartDbContext>(options => options.UseSqlServer(connectionString));
             serviceCollection.AddTransient<Func<ICartRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICartRepository>());
             serviceCollection.AddTransient<IShoppingCartService, ShoppingCartService>();
             serviceCollection.AddTransient<IShoppingCartSearchService, ShoppingCartSearchService>();

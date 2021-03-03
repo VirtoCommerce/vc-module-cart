@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CartModule.Data.Repositories
@@ -120,12 +123,31 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             if (!ids.IsNullOrEmpty())
             {
-                var carts = await ShoppingCarts.Where(x => ids.Contains(x.Id)).ToListAsync();
-                foreach (var cart in carts)
-                {
-                    cart.IsDeleted = true;
-                }
+                const string commandTemplate = @"
+                    UPDATE Cart SET IsDeleted = 1 WHERE Id IN ({0})
+                ";
+
+                var cartsRemoveCmd = CreateCommand(commandTemplate, ids);
+                await DbContext.ExecuteArrayAsync<string>(cartsRemoveCmd.Text, cartsRemoveCmd.Parameters.ToArray());
             }
+        }
+
+        protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
+        {
+            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v)).ToArray();
+            var parameterNames = string.Join(",", parameters.Select(p => p.ParameterName));
+
+            return new Command
+            {
+                Text = string.Format(commandTemplate, parameterNames),
+                Parameters = parameters.OfType<object>().ToList(),
+            };
+        }
+
+        protected class Command
+        {
+            public string Text { get; set; }
+            public IList<object> Parameters { get; set; } = new List<object>();
         }
 
         #endregion

@@ -132,14 +132,18 @@ namespace VirtoCommerce.CartModule.Data.Services
 
                 if (softDelete)
                 {
-                    await repository.SoftRemoveCartsAsync(cartIds);                   
+                    await repository.SoftRemoveCartsAsync(cartIds);
                 }
                 else
-                {                    
-                    await repository.RemoveCartsAsync(cartIds);                    
+                {
+                    var keyMap = new PrimaryKeyResolvingMap();
+                    foreach (var cart in carts)
+                    {
+                        var cartEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance().FromModel(cart, keyMap);
+                        repository.Remove(cartEntity);
+                    }
+                    await repository.UnitOfWork.CommitAsync();
                 }
-
-                await repository.UnitOfWork.CommitAsync();
 
                 ClearCache(carts);
 

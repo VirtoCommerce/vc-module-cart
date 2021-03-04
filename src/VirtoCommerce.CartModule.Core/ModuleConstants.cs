@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using VirtoCommerce.Platform.Core.Settings;
+
 namespace VirtoCommerce.CartModule.Core
 {
     public static class ModuleConstants
@@ -13,6 +16,46 @@ namespace VirtoCommerce.CartModule.Core
                 public const string Delete = "cart:delete";
 
                 public static string[] AllPermissions = new[] { Read, Create, Access, Update, Delete };
+            }
+        }
+
+        public static class Settings
+        {
+            public static class General
+            {
+                public static readonly SettingDescriptor EnableDeleteObsoleteCarts = new SettingDescriptor
+                {
+                    Name = "Cart.EnableDeleteObsoleteCarts",
+                    GroupName = "Cart|General",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = true
+                };
+
+                public static readonly SettingDescriptor PortionDeleteObsoleteCarts = new SettingDescriptor
+                {
+                    Name = "Cart.PortionDeleteObsoleteCarts",
+                    GroupName = "Cart|General",
+                    ValueType = SettingValueType.Integer,
+                    DefaultValue = 20
+                };
+
+                public static readonly SettingDescriptor CronDeleteObsoleteCarts = new SettingDescriptor
+                {
+                    Name = "Cart.CronDeleteObsoleteCarts",
+                    GroupName = "Cart|General",
+                    ValueType = SettingValueType.ShortText,
+                    DefaultValue = "0 2 */1 * *"
+                };
+
+                public static IEnumerable<SettingDescriptor> AllSettings
+                {
+                    get
+                    {
+                        yield return EnableDeleteObsoleteCarts;
+                        yield return PortionDeleteObsoleteCarts;
+                        yield return CronDeleteObsoleteCarts;
+                    }
+                }
             }
         }
     }

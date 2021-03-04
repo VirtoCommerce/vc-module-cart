@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,13 +14,17 @@ using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Handlers;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
+using VirtoCommerce.CartModule.Web.BackgroundJobs;
 using VirtoCommerce.CartModule.Web.JsonConverters;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Extensions;
+using VirtoCommerce.Platform.Hangfire;
+using VirtoCommerce.Platform.Hangfire.Extensions;
 
 namespace VirtoCommerce.CartModule.Web
 {
@@ -69,6 +74,22 @@ namespace VirtoCommerce.CartModule.Web
             dynamicPropertyRegistrar.RegisterType<Shipment>();
             dynamicPropertyRegistrar.RegisterType<ShoppingCart>();
 
+            var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
+            settingsRegistrar.RegisterSettings(ModuleConstants.Settings.General.AllSettings, ModuleInfo.Id);
+
+
+            var recurringJobManager = appBuilder.ApplicationServices.GetService<IRecurringJobManager>();
+            var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
+
+            recurringJobManager.WatchJobSetting(
+                settingsManager,
+                new SettingCronJobBuilder()
+                    .SetEnablerSetting(ModuleConstants.Settings.General.EnableDeleteObsoleteCarts)
+                    .SetCronSetting(ModuleConstants.Settings.General.CronDeleteObsoleteCarts)
+                    .ToJob<DeleteObsoleteCartsJob>(x => x.Process())
+                    .Build());
+
+
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {
                 using (var dbContext = serviceScope.ServiceProvider.GetRequiredService<CartDbContext>())
@@ -82,6 +103,7 @@ namespace VirtoCommerce.CartModule.Web
 
         public void Uninstall()
         {
+            // Method intentionally left empty.
         }
     }
 }

@@ -1,46 +1,61 @@
 {
-    "cart": {
-        "main-menu-title": "Shopping carts",
-        "blades": {
-            "carts-list": {
-                "title": "Shopping carts",
-                "labels": {
-                    "customer": "Customer",
-                    "items-count": "Items count",
-                    "created": "Created",
-                    "modified": "Modified",
-                    "total": "Total"
-                }
-            },
-            "cart-detail": {
-                "title": "{{name}} 's Shopping cart",
-                "labels": {
-                    "name": "Name",
-                    "price": "Price",
-                    "quantity": "Qty.",
-                    "total": "Total"
-                }
-            }
-        },
-        "dialogs": {
-            "carts-delete": {
-                "title": "Delete confirmation",
-                "message": "Are you sure you want to delete selected Carts?"
-            },
-            "cart-save": {
-                "title": "Save changes",
-                "message": "The cart has been modified. Do you want to save changes?"
-            }
-        },
-        "commands": {
-            "open-in-store": "Open in Store"
+  "cart": {
+    "main-menu-title": "Shopping carts",
+    "blades": {
+      "carts-list": {
+        "title": "Shopping carts",
+        "labels": {
+          "customer": "Customer",
+          "items-count": "Items count",
+          "created": "Created",
+          "modified": "Modified",
+          "total": "Total"
         }
+      },
+      "cart-detail": {
+        "title": "{{name}} 's Shopping cart",
+        "labels": {
+          "name": "Name",
+          "price": "Price",
+          "quantity": "Qty.",
+          "total": "Total"
+        }
+      }
     },
-    "permissions": {
-        "cart:read": "Read cart related data",
-        "cart:create": "Create cart related data",
-        "cart:update": "Update cart related data",
-        "cart:delete": "Delete cart related data",
-        "cart:access": "Access cart related data"
+    "dialogs": {
+      "carts-delete": {
+        "title": "Delete confirmation",
+        "message": "Are you sure you want to delete selected Carts?"
+      },
+      "cart-save": {
+        "title": "Save changes",
+        "message": "The cart has been modified. Do you want to save changes?"
+      }
+    },
+    "commands": {
+      "open-in-store": "Open in Store"
     }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "Enable hard delete for previously soft deleted carts",
+        "description": "Periodically delete obsolete carts from the database"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "How many cards should be deleted per one transaction",
+        "description": "The delete carts job do removal by portions, this is the size of one. Big values cause database to slow."
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "Cron expression for cart hard delete job",
+        "description": "When carts removal job should start"
+      }
+  },
+  "permissions": {
+    "cart:read": "Read cart related data",
+    "cart:create": "Create cart related data",
+    "cart:update": "Update cart related data",
+    "cart:delete": "Delete cart related data",
+    "cart:access": "Access cart related data"
+  }
 }

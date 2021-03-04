@@ -30,19 +30,22 @@ namespace VirtoCommerce.CartModule.Web.BackgroundJobs
         {
             _log.LogTrace($"Start process DeleteObsoleteCartsJob job");
 
-            var takeCount = (int) _settingsManager.GetValue(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.Name, ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.DefaultValue);
+            var takeCount = (int)_settingsManager.GetValue(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.Name, ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.DefaultValue);
+
 
             using (var repository = _repositoryFactory())
             {
-                string[] cartIds;
-                do
+                var totalSoftDeleted = repository.ShoppingCarts.Count(x => x.IsDeleted);
+                _log.LogTrace($"Total soft deleted {totalSoftDeleted}");
+
+                for (var i = 0; i < totalSoftDeleted; i += takeCount)
                 {
-                    cartIds = repository.ShoppingCarts.Where(x => x.IsDeleted).Select(x => x.Id).Take(takeCount).ToArray();
-                    _log.LogTrace($"Do remove portion {takeCount}");
+                    var cartIds = repository.ShoppingCarts.Where(x => x.IsDeleted).Select(x => x.Id).Take(takeCount).ToArray();
+                    _log.LogTrace($"Do remove portion starting from {i} to {i + takeCount}");
                     await repository.RemoveCartsAsync(cartIds);
                     await repository.UnitOfWork.CommitAsync();
                     _log.LogTrace($"Complete remove portion");
-                } while (cartIds.Length > 0);
+                }
             }
         }
     }

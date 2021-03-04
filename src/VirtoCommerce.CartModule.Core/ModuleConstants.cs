@@ -28,7 +28,7 @@ namespace VirtoCommerce.CartModule.Core
                     Name = "Cart.EnableDeleteObsoleteCarts",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.Boolean,
-                    DefaultValue = true
+                    DefaultValue = false
                 };
 
                 public static readonly SettingDescriptor PortionDeleteObsoleteCarts = new SettingDescriptor

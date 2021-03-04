@@ -35,7 +35,7 @@ namespace VirtoCommerce.CartModule.Core
                 {
                     Name = "Cart.PortionDeleteObsoleteCarts",
                     GroupName = "Cart|General",
-                    ValueType = SettingValueType.Integer,
+                    ValueType = SettingValueType.PositiveInteger,
                     DefaultValue = 20
                 };
 

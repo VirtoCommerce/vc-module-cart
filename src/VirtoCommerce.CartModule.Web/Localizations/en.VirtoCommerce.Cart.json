@@ -50,6 +50,7 @@
         "title": "Cron expression for cart hard delete job",
         "description": "When carts removal job should start"
       }
+    }
   },
   "permissions": {
     "cart:read": "Read cart related data",

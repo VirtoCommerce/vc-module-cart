@@ -28,7 +28,7 @@ namespace VirtoCommerce.CartModule.Web.BackgroundJobs
         [DisableConcurrentExecution(10)]
         public async Task Process()
         {
-            _log.LogTrace($"Start process DeleteObsoleteCartsJob job");
+            _log.LogTrace($"Start processing DeleteObsoleteCartsJob job");
 
             var takeCount = (int)_settingsManager.GetValue(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.Name, ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.DefaultValue);
 
@@ -47,6 +47,7 @@ namespace VirtoCommerce.CartModule.Web.BackgroundJobs
                     _log.LogTrace($"Complete remove portion");
                 }
             }
+            _log.LogTrace($"Complete processing DeleteObsoleteCartsJob job");
         }
     }
 }

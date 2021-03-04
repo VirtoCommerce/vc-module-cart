@@ -7,7 +7,7 @@ using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Settings;
 
-namespace VirtoCommerce.CartModule.Web.BackgroundJobs
+namespace VirtoCommerce.CartModule.Data.BackgroundJobs
 {
     /// <summary>
     /// This background job hardly removes previously softly removed carts

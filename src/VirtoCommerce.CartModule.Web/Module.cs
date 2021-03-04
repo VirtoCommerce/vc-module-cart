@@ -14,7 +14,7 @@ using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Handlers;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
-using VirtoCommerce.CartModule.Web.BackgroundJobs;
+using VirtoCommerce.CartModule.Data.BackgroundJobs;
 using VirtoCommerce.CartModule.Web.JsonConverters;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;

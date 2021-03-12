@@ -53,11 +53,9 @@ namespace VirtoCommerce.CartModule.Data.Services
                                          .ToArrayAsync();
 
                         result.TotalCount = ids.Count();
-#pragma warning disable S125 // Slint mis-thought it is a code
                         // This reduces a load of a relational database by skipping cart count query in case of:
-                        // * First page of the carts is reading (Skip is 0);
-                        // * Count of carts in reading result less than Take value.
-#pragma warning restore S125 // Slint mis-thought it is a code
+                        // - First page of the carts is reading (Skip is 0)
+                        // - Count of carts in reading result less than Take value.
                         if (criteria.Skip > 0 || result.TotalCount == criteria.Take)
 
                         {
@@ -82,7 +80,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected virtual IQueryable<ShoppingCartEntity> BuildQuery(ICartRepository repository, ShoppingCartSearchCriteria criteria)
         {
-            var query = repository.ShoppingCarts.Where(x => x.IsDeleted == false);
+            var query = repository.ShoppingCarts.Where(x => !x.IsDeleted);
 
             if (!string.IsNullOrEmpty(criteria.Status))
             {

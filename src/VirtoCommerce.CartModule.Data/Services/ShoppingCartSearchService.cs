@@ -52,8 +52,11 @@ namespace VirtoCommerce.CartModule.Data.Services
                                          .Skip(criteria.Skip).Take(criteria.Take)
                                          .ToArrayAsync();
                         result.TotalCount = ids.Count();
-                        if (criteria.Skip != 0 || result.TotalCount == criteria.Take)
-                        {                            
+                        // This reduces a load of a relational database by skipping cart count query in case of:
+                        // * First page of the carts is reading (Skip = 0);
+                        // * Count of carts in reading result less than Take value.
+                        if (criteria.Skip > 0 || result.TotalCount == criteria.Take)
+                        {
                             forceCountQuery = true;
                         }
                         result.Results = (await _cartService.GetByIdsAsync(ids, criteria.ResponseGroup)).OrderBy(x => Array.IndexOf(ids, x.Id)).ToList();

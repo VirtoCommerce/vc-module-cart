@@ -51,6 +51,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                                          .Select(x => x.Id)
                                          .Skip(criteria.Skip).Take(criteria.Take)
                                          .ToArrayAsync();
+
                         result.TotalCount = ids.Count();
                         // This reduces a load of a relational database by skipping cart count query in case of:
                         // * First page of the carts is reading (Skip = 0);

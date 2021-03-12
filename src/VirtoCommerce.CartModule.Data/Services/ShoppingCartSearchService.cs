@@ -43,7 +43,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                     var sortInfos = BuildSortExpression(criteria);
                     var query = BuildQuery(repository, criteria);
 
-                    var forceCountQuery = false;
+                    var needExecuteCount = criteria.Take == 0;
 
                     if (criteria.Take > 0)
                     {
@@ -59,16 +59,12 @@ namespace VirtoCommerce.CartModule.Data.Services
                         if (criteria.Skip > 0 || result.TotalCount == criteria.Take)
 
                         {
-                            forceCountQuery = true;
+                            needExecuteCount = true;
                         }
                         result.Results = (await _cartService.GetByIdsAsync(ids, criteria.ResponseGroup)).OrderBy(x => Array.IndexOf(ids, x.Id)).ToList();
                     }
-                    else
-                    {
-                        forceCountQuery = true;
-                    }
 
-                    if (forceCountQuery)
+                    if (needExecuteCount)
                     {
                         result.TotalCount = await query.CountAsync();
                     }

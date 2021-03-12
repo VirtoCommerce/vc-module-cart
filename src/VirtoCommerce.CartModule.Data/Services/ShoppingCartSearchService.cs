@@ -43,15 +43,29 @@ namespace VirtoCommerce.CartModule.Data.Services
                     var sortInfos = BuildSortExpression(criteria);
                     var query = BuildQuery(repository, criteria);
 
-                    result.TotalCount = await query.CountAsync();
+                    var forceCountQuery = false;
+
                     if (criteria.Take > 0)
                     {
                         var ids = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
                                          .Select(x => x.Id)
                                          .Skip(criteria.Skip).Take(criteria.Take)
                                          .ToArrayAsync();
-
+                        result.TotalCount = ids.Count();
+                        if (criteria.Skip != 0 || result.TotalCount == criteria.Take)
+                        {                            
+                            forceCountQuery = true;
+                        }
                         result.Results = (await _cartService.GetByIdsAsync(ids, criteria.ResponseGroup)).OrderBy(x => Array.IndexOf(ids, x.Id)).ToList();
+                    }
+                    else
+                    {
+                        forceCountQuery = true;
+                    }
+
+                    if (forceCountQuery)
+                    {
+                        result.TotalCount = await query.CountAsync();
                     }
 
                     return result;

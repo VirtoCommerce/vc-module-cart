@@ -43,7 +43,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                     var sortInfos = BuildSortExpression(criteria);
                     var query = BuildQuery(repository, criteria);
 
-                    result.TotalCount = await query.CountAsync();
+                    var needExecuteCount = criteria.Take == 0;
+
                     if (criteria.Take > 0)
                     {
                         var ids = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
@@ -51,7 +52,21 @@ namespace VirtoCommerce.CartModule.Data.Services
                                          .Skip(criteria.Skip).Take(criteria.Take)
                                          .ToArrayAsync();
 
+                        result.TotalCount = ids.Count();
+                        // This reduces a load of a relational database by skipping cart count query in case of:
+                        // - First page of the carts is reading (Skip is 0)
+                        // - Count of carts in reading result less than Take value.
+                        if (criteria.Skip > 0 || result.TotalCount == criteria.Take)
+
+                        {
+                            needExecuteCount = true;
+                        }
                         result.Results = (await _cartService.GetByIdsAsync(ids, criteria.ResponseGroup)).OrderBy(x => Array.IndexOf(ids, x.Id)).ToList();
+                    }
+
+                    if (needExecuteCount)
+                    {
+                        result.TotalCount = await query.CountAsync();
                     }
 
                     return result;
@@ -61,7 +76,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected virtual IQueryable<ShoppingCartEntity> BuildQuery(ICartRepository repository, ShoppingCartSearchCriteria criteria)
         {
-            var query = repository.ShoppingCarts.Where(x => x.IsDeleted == false);
+            var query = repository.ShoppingCarts.Where(x => !x.IsDeleted);
 
             if (!string.IsNullOrEmpty(criteria.Status))
             {

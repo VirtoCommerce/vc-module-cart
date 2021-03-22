@@ -61,7 +61,6 @@ namespace VirtoCommerce.CartModule.Data.Services
                         cart.ReduceDetails(responseGroup);
 
                         retVal.Add(cart);
-
                     }
                 }
                 return retVal;

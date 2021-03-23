@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.Extensions.Caching.Memory;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
@@ -9,6 +10,7 @@ using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Caching;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
+using VirtoCommerce.CartModule.Data.Validation;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
@@ -59,7 +61,6 @@ namespace VirtoCommerce.CartModule.Data.Services
                         cart.ReduceDetails(responseGroup);
 
                         retVal.Add(cart);
-                        
                     }
                 }
                 return retVal;
@@ -78,6 +79,8 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             var pkMap = new PrimaryKeyResolvingMap();
             var changedEntries = new List<GenericChangedEntry<ShoppingCart>>();
+
+            ValidateCartsAndThrow(carts);
 
             using (var repository = _repositoryFactory())
             {
@@ -160,6 +163,11 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 CartCacheRegion.ExpireCart(entity);
             }
+        }
+
+        protected virtual void ValidateCartsAndThrow(ShoppingCart[] carts)
+        {
+            new ShoppingCartsValidator().ValidateAndThrow(carts);
         }
 
         #endregion

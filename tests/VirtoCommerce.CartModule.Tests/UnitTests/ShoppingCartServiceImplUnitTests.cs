@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -13,6 +12,7 @@ using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
+using VirtoCommerce.CartModule.Data.Validation;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
@@ -72,7 +72,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         {
             //Arrange
             var cartId = Guid.NewGuid().ToString();
-            var entity = new ShoppingCartEntity { Id = cartId };
+            var entity = new ShoppingCartEntity { Id = cartId, StoreId = "StoreId", CustomerId = "CustomerId", Currency = "USD" };
             var carts = new List<ShoppingCart> { entity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()) };
             var service = GetShoppingCartService();
 
@@ -88,7 +88,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             //Arrange
             var cartId = Guid.NewGuid().ToString();
             var cartIds = new[] { cartId };
-            var entity = new ShoppingCartEntity { Id = cartId };
+            var entity = new ShoppingCartEntity { Id = cartId, StoreId = "StoreId", CustomerId = "CustomerId", Currency = "USD" };
             var list = new List<ShoppingCartEntity> { entity };
             _cartRepositoryMock.Setup(n => n.GetShoppingCartsByIdsAsync(cartIds, null))
                 .ReturnsAsync(list.ToArray());
@@ -106,7 +106,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         {
             //Arrange
             var id = Guid.NewGuid().ToString();
-            var newCart = new ShoppingCart { Id = id };
+            var newCart = new ShoppingCart { Id = id, StoreId = "StoreId", CustomerId = "CustomerId", Currency = "USD" };
             var newCartEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance().FromModel(newCart, new PrimaryKeyResolvingMap());
             var service = GetCustomerOrderServiceWithPlatformMemoryCache();
             _cartRepositoryMock.Setup(x => x.Add(newCartEntity))
@@ -124,7 +124,51 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             //Assert
             Assert.NotEqual(nullCart, Cart);
         }
-        
+
+        [Fact]
+        public async Task SaveChangesAsync_ValidateNull()
+        {
+            //Arrange
+            var service = GetShoppingCartService();
+
+            //Act
+            var ex = await Assert.ThrowsAsync<FluentValidation.ValidationException>(() => service.SaveChangesAsync(null));
+
+            //Assert
+            Assert.EndsWith(ShoppingCartsValidator.CartsNotSuppliedMessage, ex.Message);
+        }
+
+        [Fact]
+        public async Task SaveChangesAsync_ValidateCurrency()
+        {
+            //Arrange
+            var entity = new ShoppingCart { Id = "id", StoreId = "StoreId", CustomerId = "CustomerId", Currency = null };
+            var carts = new[] { entity };
+            var service = GetShoppingCartService();
+
+            //Act
+            var ex = await Assert.ThrowsAsync<FluentValidation.ValidationException>(() => service.SaveChangesAsync(carts));
+
+            //Assert
+            Assert.EndsWith("'Currency' must not be empty.", ex.Message);
+        }
+
+        [Fact]
+        public async Task SaveChangesAsync_ValidateBillingAddress()
+        {
+            //Arrange
+            var entity = new ShoppingCart { Id = "id", StoreId = "StoreId", CustomerId = "CustomerId", Currency = "USD" };
+            entity.Payments = new[] { new Payment { Currency = "USD", BillingAddress = new Address { LastName = null } } };
+            var carts = new[] { entity };
+            var service = GetShoppingCartService();
+
+            //Act
+            var ex = await Assert.ThrowsAsync<FluentValidation.ValidationException>(() => service.SaveChangesAsync(carts));
+
+            //Assert
+            Assert.EndsWith("'Last Name' must not be empty.", ex.Message);
+        }
+
         private ShoppingCartService GetCustomerOrderServiceWithPlatformMemoryCache()
         {
             var memoryCache = new MemoryCache(Options.Create(new MemoryCacheOptions()));

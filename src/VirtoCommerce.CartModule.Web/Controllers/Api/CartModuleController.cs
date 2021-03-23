@@ -120,7 +120,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [HttpPatch]
         [Route("{cartId}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> MergeWithCart(string cartId, [FromBody]ShoppingCart otherCart)
+        public async Task<ActionResult> MergeWithCart(string cartId, [FromBody] ShoppingCart otherCart)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
@@ -246,7 +246,15 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Create)]
         public async Task<ActionResult<ShoppingCart>> Create([FromBody] ShoppingCart cart)
         {
-            await _shoppingCartService.SaveChangesAsync(new[] { cart });
+            try
+            {
+                await _shoppingCartService.SaveChangesAsync(new[] { cart });
+            }
+            catch (FluentValidation.ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
             return Ok(cart);
         }
 
@@ -261,7 +269,14 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(cart.GetType(), cart.Id)).LockAsync())
             {
-                await _shoppingCartService.SaveChangesAsync(new[] { cart });
+                try
+                {
+                    await _shoppingCartService.SaveChangesAsync(new[] { cart });
+                }
+                catch (FluentValidation.ValidationException ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
             return Ok(cart);
         }
@@ -300,11 +315,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [DisableConcurrentExecution(10)]
         // "DisableConcurrentExecutionAttribute" prevents to start simultaneous job payloads.
-	// Should have short timeout, because this attribute implemented by following manner: newly started job falls into "processing" state immediately.
+        // Should have short timeout, because this attribute implemented by following manner: newly started job falls into "processing" state immediately.
         // Then it tries to receive job lock during timeout. If the lock received, the job starts payload.
         // When the job is awaiting desired timeout for lock release, it stucks in "processing" anyway. (Therefore, you should not to set long timeouts (like 24*60*60), this will cause a lot of stucked jobs and performance degradation.)
         // Then, if timeout is over and the lock NOT acquired, the job falls into "scheduled" state (this is default fail-retry scenario).
-	// Failed job goes to "Failed" state (by default) after retries exhausted.
+        // Failed job goes to "Failed" state (by default) after retries exhausted.
         public async Task HardCartDeleteBackgroundJob(string[] ids)
         {
             await _shoppingCartService.DeleteAsync(ids);

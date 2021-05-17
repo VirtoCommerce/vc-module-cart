@@ -196,6 +196,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             lineItem.Currency = Currency;
             lineItem.Name = Name;
             lineItem.Sku = Sku;
+            lineItem.FulfillmentCenterId = FulfillmentCenterId;
+            lineItem.FulfillmentCenterName = FulfillmentCenterName;
 
             if (!Discounts.IsNullOrEmpty())
             {
@@ -271,6 +273,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             Sku = lineItem.Sku;
             //Preserve link of the  original model LineItem for future references binding LineItems with  ShipmentLineItems 
             ModelLineItem = lineItem;
+            FulfillmentCenterId = lineItem.FulfillmentCenterId;
+            FulfillmentCenterName = lineItem.FulfillmentCenterName;
 
             if (lineItem.Discounts != null)
             {

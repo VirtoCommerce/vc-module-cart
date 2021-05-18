@@ -59,6 +59,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                         {
                             await TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).LoadAsync();
                             await Discounts.Where(x => paymentIds.Contains(x.PaymentId)).LoadAsync();
+                            if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
+                            {
+                                var paymentTypeFullName = typeof(Payment).FullName;
+                                await DynamicPropertyObjectValues.Where(x => x.ObjectType == paymentTypeFullName && paymentIds.Contains(x.PaymentId)).LoadAsync();
+                            }
                         }
                     }
 
@@ -89,6 +94,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                             await TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
                             await Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
                             await Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
+                            if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
+                            {
+                                var shipmentTypeFullName = typeof(Shipment).FullName;
+                                await DynamicPropertyObjectValues.Where(x => x.ObjectType == shipmentTypeFullName && shipmentIds.Contains(x.ShipmentId)).LoadAsync();
+                            }
                         }
                     }
 

@@ -129,8 +129,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             using (var repository = _repositoryFactory())
             {
                 //Raise domain events before deletion
-                var entityState = softDelete ? EntryState.Modified : EntryState.Deleted;
-                var changedEntries = carts.Select(x => new GenericChangedEntry<ShoppingCart>(x, entityState)).ToArray();
+                var changedEntries = carts.Select(x => new GenericChangedEntry<ShoppingCart>(x, EntryState.Deleted)).ToArray();
                 await _eventPublisher.Publish(new CartChangeEvent(changedEntries));
 
                 if (softDelete)

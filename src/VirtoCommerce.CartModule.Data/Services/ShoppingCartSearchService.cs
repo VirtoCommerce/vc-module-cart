@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Services;
-using VirtoCommerce.CartModule.Data.Caching;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
+using VirtoCommerce.Platform.Caching.GenericCrud;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
@@ -34,7 +35,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             var cacheKey = CacheKey.With(GetType(), nameof(SearchCartAsync), criteria.GetCacheKey());
             return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
             {
-                cacheEntry.AddExpirationToken(CartSearchCacheRegion.CreateChangeToken());
+                cacheEntry.AddExpirationToken(GenericSearchCacheRegion<ShoppingCart>.CreateChangeToken());
                 using (var repository = _repositoryFactory())
                 {
                     //Optimize performance and CPU usage

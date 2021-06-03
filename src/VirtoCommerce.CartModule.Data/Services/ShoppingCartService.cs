@@ -14,7 +14,7 @@ using VirtoCommerce.Platform.Data.GenericCrud;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
-    public class ShoppingCartService : CrudService<ShoppingCart, CartResponseGroup, ShoppingCartEntity, CartChangeEvent, CartChangedEvent>, IShoppingCartService, IShoppingCartCrudService
+    public class ShoppingCartService : CrudService<ShoppingCart, ShoppingCartEntity, CartChangeEvent, CartChangedEvent>, IShoppingCartService, IShoppingCartCrudService
     {
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
 

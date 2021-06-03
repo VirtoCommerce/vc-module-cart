@@ -10,11 +10,12 @@ using VirtoCommerce.CartModule.Data.Validation;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Data.GenericCrud;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
-    public class ShoppingCartService : CrudService<ShoppingCart, ShoppingCartEntity, CartChangeEvent, CartChangedEvent>, IShoppingCartService, IShoppingCartCrudService
+    public class ShoppingCartService : CrudService<ShoppingCart, ShoppingCartEntity, CartChangeEvent, CartChangedEvent>, IShoppingCartService
     {
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
 

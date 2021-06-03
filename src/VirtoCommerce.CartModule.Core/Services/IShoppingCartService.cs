@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirtoCommerce.CartModule.Core.Model;
@@ -5,16 +6,7 @@ using VirtoCommerce.Platform.Core.GenericCrud;
 
 namespace VirtoCommerce.CartModule.Core.Services
 {
-    /// <summary>
-    /// Future implementations (example)
-    /// </summary>
-	public interface IShoppingCartCrudService: ICrudService<ShoppingCart>
-    {
-    }
-
-    /// <summary>
-    /// Compatibility implementation
-    /// </summary>
+    [Obsolete(@"This interface left for compatibility purposes. Use ICrudService<ShoppingCart> instead.")]
     public interface IShoppingCartService
     {
         Task<ShoppingCart[]> GetByIdsAsync(string[] cartIds, string responseGroup = null);

@@ -26,26 +26,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             _totalsCalculator = totalsCalculator;
         }
 
-        protected override ShoppingCartEntity FromModel(ShoppingCartEntity entity, ShoppingCart model, PrimaryKeyResolvingMap pkMap)
-        {
-            return entity.FromModel(model, pkMap);
-        }
-
-        protected override ShoppingCart ToModel(ShoppingCartEntity entity, ShoppingCart model)
-        {
-            return entity.ToModel(model);
-        }
-
-        protected override void Patch(ShoppingCartEntity sourceEntity, ShoppingCartEntity targetEntity)
-        {
-            sourceEntity.Patch(targetEntity);
-        }
-
-        protected override ShoppingCart Clone(ShoppingCart model)
-        {
-            return (ShoppingCart)model.Clone();
-        }
-
         protected override ShoppingCart PopulateModel(string responseGroup, ShoppingCartEntity entity, ShoppingCart model)
         {
             //Calculate totals only for full responseGroup

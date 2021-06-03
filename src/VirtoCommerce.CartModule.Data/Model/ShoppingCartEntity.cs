@@ -7,12 +7,13 @@ using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Tax;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using Address = VirtoCommerce.CartModule.Core.Model.Address;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
-    public class ShoppingCartEntity : AuditableEntity
+    public class ShoppingCartEntity : AuditableEntity, IDataEntity<ShoppingCartEntity, ShoppingCart>
     {
         [StringLength(64)]
         public string Name { get; set; }

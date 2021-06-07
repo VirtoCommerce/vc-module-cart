@@ -127,60 +127,60 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         #endregion
 
-        public virtual ShoppingCart ToModel(ShoppingCart cart)
+        public virtual ShoppingCart ToModel(ShoppingCart model)
         {
-            if (cart == null)
-                throw new ArgumentNullException(nameof(cart));
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
 
-            cart.Id = Id;
-            cart.CreatedBy = CreatedBy;
-            cart.CreatedDate = CreatedDate;
-            cart.ModifiedBy = ModifiedBy;
-            cart.ModifiedDate = ModifiedDate;
+            model.Id = Id;
+            model.CreatedBy = CreatedBy;
+            model.CreatedDate = CreatedDate;
+            model.ModifiedBy = ModifiedBy;
+            model.ModifiedDate = ModifiedDate;
 
-            cart.StoreId = StoreId;
-            cart.Fee = Fee;
-            cart.FeeWithTax = FeeWithTax;
-            cart.Status = Status;
-            cart.PurchaseOrderNumber = PurchaseOrderNumber;
-            cart.Currency = Currency;
-            cart.ValidationType = ValidationType;
-            cart.CustomerId = CustomerId;
-            cart.CustomerName = CustomerName;
-            cart.IsAnonymous = IsAnonymous;
-            cart.IsRecuring = IsRecuring;
-            cart.LanguageCode = LanguageCode;
-            cart.Comment = Comment;
-            cart.OrganizationId = OrganizationId;
-            cart.Total = Total;
-            cart.SubTotal = SubTotal;
-            cart.SubTotalWithTax = SubTotalWithTax;
-            cart.ShippingTotal = ShippingTotal;
-            cart.ShippingTotalWithTax = ShippingTotalWithTax;
-            cart.PaymentTotal = PaymentTotal;
-            cart.PaymentTotalWithTax = PaymentTotalWithTax;
-            cart.HandlingTotal = HandlingTotal;
-            cart.HandlingTotalWithTax = HandlingTotalWithTax;
-            cart.DiscountTotal = DiscountTotal;
-            cart.DiscountTotalWithTax = DiscountTotalWithTax;
-            cart.DiscountAmount = DiscountAmount;
-            cart.TaxTotal = TaxTotal;
-            cart.TaxPercentRate = TaxPercentRate;
-            cart.Type = Type;
-            cart.Name = Name;
+            model.StoreId = StoreId;
+            model.Fee = Fee;
+            model.FeeWithTax = FeeWithTax;
+            model.Status = Status;
+            model.PurchaseOrderNumber = PurchaseOrderNumber;
+            model.Currency = Currency;
+            model.ValidationType = ValidationType;
+            model.CustomerId = CustomerId;
+            model.CustomerName = CustomerName;
+            model.IsAnonymous = IsAnonymous;
+            model.IsRecuring = IsRecuring;
+            model.LanguageCode = LanguageCode;
+            model.Comment = Comment;
+            model.OrganizationId = OrganizationId;
+            model.Total = Total;
+            model.SubTotal = SubTotal;
+            model.SubTotalWithTax = SubTotalWithTax;
+            model.ShippingTotal = ShippingTotal;
+            model.ShippingTotalWithTax = ShippingTotalWithTax;
+            model.PaymentTotal = PaymentTotal;
+            model.PaymentTotalWithTax = PaymentTotalWithTax;
+            model.HandlingTotal = HandlingTotal;
+            model.HandlingTotalWithTax = HandlingTotalWithTax;
+            model.DiscountTotal = DiscountTotal;
+            model.DiscountTotalWithTax = DiscountTotalWithTax;
+            model.DiscountAmount = DiscountAmount;
+            model.TaxTotal = TaxTotal;
+            model.TaxPercentRate = TaxPercentRate;
+            model.Type = Type;
+            model.Name = Name;
 
-            cart.Discounts = Discounts.Select(x => x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
-            cart.Items = Items.Select(x => x.ToModel(AbstractTypeFactory<LineItem>.TryCreateInstance())).ToList();
-            cart.Addresses = Addresses.Select(x => x.ToModel(AbstractTypeFactory<Address>.TryCreateInstance())).ToList();
-            cart.Shipments = Shipments.Select(x => x.ToModel(AbstractTypeFactory<Shipment>.TryCreateInstance())).ToList();
-            cart.Payments = Payments.Select(x => x.ToModel(AbstractTypeFactory<Payment>.TryCreateInstance())).ToList();
-            cart.TaxDetails = TaxDetails.Select(x => x.ToModel(AbstractTypeFactory<TaxDetail>.TryCreateInstance())).ToList();
-            cart.Coupons = Coupons.Select(x => x.Code).ToList();
+            model.Discounts = Discounts.Select(x => x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
+            model.Items = Items.Select(x => x.ToModel(AbstractTypeFactory<LineItem>.TryCreateInstance())).ToList();
+            model.Addresses = Addresses.Select(x => x.ToModel(AbstractTypeFactory<Address>.TryCreateInstance())).ToList();
+            model.Shipments = Shipments.Select(x => x.ToModel(AbstractTypeFactory<Shipment>.TryCreateInstance())).ToList();
+            model.Payments = Payments.Select(x => x.ToModel(AbstractTypeFactory<Payment>.TryCreateInstance())).ToList();
+            model.TaxDetails = TaxDetails.Select(x => x.ToModel(AbstractTypeFactory<TaxDetail>.TryCreateInstance())).ToList();
+            model.Coupons = Coupons.Select(x => x.Code).ToList();
 
             // Assigning single coupon to preserve backwards compatibility with previous versions of CartModule
-            cart.Coupon = cart.Coupons.FirstOrDefault();
+            model.Coupon = model.Coupons.FirstOrDefault();
 
-            cart.DynamicProperties = DynamicPropertyObjectValues.GroupBy(g => g.PropertyId).Select(x =>
+            model.DynamicProperties = DynamicPropertyObjectValues.GroupBy(g => g.PropertyId).Select(x =>
             {
                 var property = AbstractTypeFactory<DynamicObjectProperty>.TryCreateInstance();
                 property.Id = x.Key;
@@ -189,66 +189,66 @@ namespace VirtoCommerce.CartModule.Data.Model
                 return property;
             }).ToArray();
 
-            return cart;
+            return model;
         }
 
-        public virtual ShoppingCartEntity FromModel(ShoppingCart cart, PrimaryKeyResolvingMap pkMap)
+        public virtual ShoppingCartEntity FromModel(ShoppingCart model, PrimaryKeyResolvingMap pkMap)
         {
-            if (cart == null)
-                throw new ArgumentNullException(nameof(cart));
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
 
-            pkMap.AddPair(cart, this);
+            pkMap.AddPair(model, this);
 
-            Id = cart.Id;
-            CreatedBy = cart.CreatedBy;
-            CreatedDate = cart.CreatedDate;
-            ModifiedBy = cart.ModifiedBy;
-            ModifiedDate = cart.ModifiedDate;
+            Id = model.Id;
+            CreatedBy = model.CreatedBy;
+            CreatedDate = model.CreatedDate;
+            ModifiedBy = model.ModifiedBy;
+            ModifiedDate = model.ModifiedDate;
 
-            Fee = cart.Fee;
-            FeeWithTax = cart.FeeWithTax;
-            Status = cart.Status;
-            PurchaseOrderNumber = cart.PurchaseOrderNumber;
-            Currency = cart.Currency;
-            ValidationType = cart.ValidationType;
-            CustomerId = cart.CustomerId;
-            CustomerName = cart.CustomerName;
-            IsAnonymous = cart.IsAnonymous;
-            IsRecuring = cart.IsRecuring.GetValueOrDefault();
-            LanguageCode = cart.LanguageCode;
-            Comment = cart.Comment;
-            OrganizationId = cart.OrganizationId;
-            Total = cart.Total;
-            SubTotal = cart.SubTotal;
-            SubTotalWithTax = cart.SubTotalWithTax;
-            ShippingTotal = cart.ShippingTotal;
-            ShippingTotalWithTax = cart.ShippingTotalWithTax;
-            PaymentTotal = cart.PaymentTotal;
-            PaymentTotalWithTax = cart.PaymentTotalWithTax;
-            HandlingTotal = cart.HandlingTotal;
-            HandlingTotalWithTax = cart.HandlingTotalWithTax;
-            DiscountTotal = cart.DiscountTotal;
-            DiscountTotalWithTax = cart.DiscountTotalWithTax;
-            DiscountAmount = cart.DiscountAmount;
-            TaxTotal = cart.TaxTotal;
-            TaxPercentRate = cart.TaxPercentRate;
-            Type = cart.Type;
-            Name = cart.Name;
-            StoreId = cart.StoreId;
+            Fee = model.Fee;
+            FeeWithTax = model.FeeWithTax;
+            Status = model.Status;
+            PurchaseOrderNumber = model.PurchaseOrderNumber;
+            Currency = model.Currency;
+            ValidationType = model.ValidationType;
+            CustomerId = model.CustomerId;
+            CustomerName = model.CustomerName;
+            IsAnonymous = model.IsAnonymous;
+            IsRecuring = model.IsRecuring.GetValueOrDefault();
+            LanguageCode = model.LanguageCode;
+            Comment = model.Comment;
+            OrganizationId = model.OrganizationId;
+            Total = model.Total;
+            SubTotal = model.SubTotal;
+            SubTotalWithTax = model.SubTotalWithTax;
+            ShippingTotal = model.ShippingTotal;
+            ShippingTotalWithTax = model.ShippingTotalWithTax;
+            PaymentTotal = model.PaymentTotal;
+            PaymentTotalWithTax = model.PaymentTotalWithTax;
+            HandlingTotal = model.HandlingTotal;
+            HandlingTotalWithTax = model.HandlingTotalWithTax;
+            DiscountTotal = model.DiscountTotal;
+            DiscountTotalWithTax = model.DiscountTotalWithTax;
+            DiscountAmount = model.DiscountAmount;
+            TaxTotal = model.TaxTotal;
+            TaxPercentRate = model.TaxPercentRate;
+            Type = model.Type;
+            Name = model.Name;
+            StoreId = model.StoreId;
 
-            if (cart.Addresses != null)
+            if (model.Addresses != null)
             {
-                Addresses = new ObservableCollection<AddressEntity>(cart.Addresses.Select(x => AbstractTypeFactory<AddressEntity>.TryCreateInstance().FromModel(x)));
+                Addresses = new ObservableCollection<AddressEntity>(model.Addresses.Select(x => AbstractTypeFactory<AddressEntity>.TryCreateInstance().FromModel(x)));
             }
 
-            if (cart.Items != null)
+            if (model.Items != null)
             {
-                Items = new ObservableCollection<LineItemEntity>(cart.Items.Select(x => AbstractTypeFactory<LineItemEntity>.TryCreateInstance().FromModel(x, pkMap)));
+                Items = new ObservableCollection<LineItemEntity>(model.Items.Select(x => AbstractTypeFactory<LineItemEntity>.TryCreateInstance().FromModel(x, pkMap)));
             }
 
-            if (cart.Shipments != null)
+            if (model.Shipments != null)
             {
-                Shipments = new ObservableCollection<ShipmentEntity>(cart.Shipments.Select(x => AbstractTypeFactory<ShipmentEntity>.TryCreateInstance().FromModel(x, pkMap)));
+                Shipments = new ObservableCollection<ShipmentEntity>(model.Shipments.Select(x => AbstractTypeFactory<ShipmentEntity>.TryCreateInstance().FromModel(x, pkMap)));
                 //Trying to bind shipment items with the  lineItems by model object reference equality
                 foreach (var shipmentItemEntity in Shipments.SelectMany(x => x.Items))
                 {
@@ -256,36 +256,36 @@ namespace VirtoCommerce.CartModule.Data.Model
                 }
             }
 
-            if (cart.Payments != null)
+            if (model.Payments != null)
             {
-                Payments = new ObservableCollection<PaymentEntity>(cart.Payments.Select(x => AbstractTypeFactory<PaymentEntity>.TryCreateInstance().FromModel(x, pkMap)));
+                Payments = new ObservableCollection<PaymentEntity>(model.Payments.Select(x => AbstractTypeFactory<PaymentEntity>.TryCreateInstance().FromModel(x, pkMap)));
             }
 
-            if (cart.Discounts != null)
+            if (model.Discounts != null)
             {
-                Discounts = new ObservableCollection<DiscountEntity>(cart.Discounts.Select(x => AbstractTypeFactory<DiscountEntity>.TryCreateInstance().FromModel(x)));
+                Discounts = new ObservableCollection<DiscountEntity>(model.Discounts.Select(x => AbstractTypeFactory<DiscountEntity>.TryCreateInstance().FromModel(x)));
             }
 
-            if (cart.TaxDetails != null)
+            if (model.TaxDetails != null)
             {
-                TaxDetails = new ObservableCollection<TaxDetailEntity>(cart.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
+                TaxDetails = new ObservableCollection<TaxDetailEntity>(model.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
             }
 
             // Extracting single coupon value to preserve backwards compatibility with previous versions of CartModule
-            if (cart.Coupon != null)
+            if (model.Coupon != null)
             {
-                Coupons = new ObservableCollection<CouponEntity>(new[] { new CouponEntity { Code = cart.Coupon } });
+                Coupons = new ObservableCollection<CouponEntity>(new[] { new CouponEntity { Code = model.Coupon } });
             }
 
-            if (cart.Coupons != null)
+            if (model.Coupons != null)
             {
-                Coupons = new ObservableCollection<CouponEntity>(cart.Coupons.Select(x => new CouponEntity { Code = x }));
+                Coupons = new ObservableCollection<CouponEntity>(model.Coupons.Select(x => new CouponEntity { Code = x }));
             }
 
-            if (cart.DynamicProperties != null)
+            if (model.DynamicProperties != null)
             {
-                DynamicPropertyObjectValues = new ObservableCollection<CartDynamicPropertyObjectValueEntity>(cart.DynamicProperties.SelectMany(p => p.Values
-                    .Select(v => AbstractTypeFactory<CartDynamicPropertyObjectValueEntity>.TryCreateInstance().FromModel(v, cart, p))).OfType<CartDynamicPropertyObjectValueEntity>());
+                DynamicPropertyObjectValues = new ObservableCollection<CartDynamicPropertyObjectValueEntity>(model.DynamicProperties.SelectMany(p => p.Values
+                    .Select(v => AbstractTypeFactory<CartDynamicPropertyObjectValueEntity>.TryCreateInstance().FromModel(v, model, p))).OfType<CartDynamicPropertyObjectValueEntity>());
             }
 
             return this;

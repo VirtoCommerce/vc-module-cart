@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using VirtoCommerce.CartModule.Core.Events;
@@ -26,7 +28,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             _totalsCalculator = totalsCalculator;
         }
 
-        protected override ShoppingCart PopulateModel(string responseGroup, ShoppingCartEntity entity, ShoppingCart model)
+        protected override ShoppingCart ProcessModel(string responseGroup, ShoppingCartEntity entity, ShoppingCart model)
         {
             //Calculate totals only for full responseGroup
             if (responseGroup == null)
@@ -37,26 +39,45 @@ namespace VirtoCommerce.CartModule.Data.Services
             return model;
         }
 
-        protected override Task<ShoppingCartEntity[]> LoadEntities(IRepository repository, string[] ids, string responseGroup)
+        protected override Task BeforeSaveChanges(IEnumerable<ShoppingCart> models)
         {
-            return ((ICartRepository)repository).GetShoppingCartsByIdsAsync(ids, responseGroup);
-        }
+            new ShoppingCartsValidator().ValidateAndThrow(models);
 
-        protected override void ValidateOnSave(ShoppingCart[] entitites)
-        {
-            new ShoppingCartsValidator().ValidateAndThrow(entitites);
-
-            foreach (var cart in entitites)
+            foreach (var cart in models)
             {
                 //Calculate cart totals before save
                 _totalsCalculator.CalculateTotals(cart);
             }
+
+            return Task.CompletedTask;
         }
 
-        protected override Task SoftDelete(IRepository repository, string[] ids)
+        protected override Task SoftDelete(IRepository repository, IEnumerable<string> ids)
         {
-            return ((ICartRepository)repository).SoftRemoveCartsAsync(ids);
+            return ((ICartRepository)repository).SoftRemoveCartsAsync(ids.ToArray());
         }
 
+
+        protected async override Task<IEnumerable<ShoppingCartEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
+        {
+            return await ((ICartRepository)repository).GetShoppingCartsByIdsAsync(ids.ToArray(), responseGroup);
+        }
+
+        #region IShoppingCartService compatibility
+        public async Task<ShoppingCart[]> GetByIdsAsync(string[] cartIds, string responseGroup = null)
+        {
+            return (await GetByIdsAsync((IEnumerable<string>) cartIds, responseGroup)).ToArray();
+        }
+
+        public Task SaveChangesAsync(ShoppingCart[] carts)
+        {
+            return SaveChangesAsync((IEnumerable<ShoppingCart>)carts);
+        }
+
+        public Task DeleteAsync(string[] cartIds, bool softDelete = false)
+        {
+            return DeleteAsync((IEnumerable<string>)cartIds);
+        }
+        #endregion
     }
 }

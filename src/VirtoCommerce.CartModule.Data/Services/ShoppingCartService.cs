@@ -23,7 +23,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public ShoppingCartService(Func<ICartRepository> repositoryFactory,
                                       IShoppingCartTotalsCalculator totalsCalculator, IEventPublisher eventPublisher,
-                                      IPlatformMemoryCache platformMemoryCache) : base(eventPublisher, platformMemoryCache, repositoryFactory)
+                                      IPlatformMemoryCache platformMemoryCache) : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
             _totalsCalculator = totalsCalculator;
         }

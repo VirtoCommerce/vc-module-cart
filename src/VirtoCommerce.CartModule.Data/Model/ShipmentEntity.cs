@@ -108,6 +108,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             shipment.Fee = Fee;
             shipment.FeeWithTax = FeeWithTax;
             shipment.FulfillmentCenterId = FulfillmentCenterId;
+            shipment.FulfillmentCenterName = FulfillmentCenterName;
             shipment.ShipmentMethodCode = ShipmentMethodCode;
             shipment.Total = Total;
             shipment.TotalWithTax = TotalWithTax;
@@ -178,6 +179,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             Fee = shipment.Fee;
             FeeWithTax = shipment.FeeWithTax;
             FulfillmentCenterId = shipment.FulfillmentCenterId;
+            FulfillmentCenterName = shipment.FulfillmentCenterName;
             ShipmentMethodCode = shipment.ShipmentMethodCode;
             Total = shipment.Total;
             TotalWithTax = shipment.TotalWithTax;

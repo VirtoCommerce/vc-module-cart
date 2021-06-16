@@ -3,172 +3,80 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
-using Microsoft.Extensions.Caching.Memory;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
-using VirtoCommerce.CartModule.Data.Caching;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Validation;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
-using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.Platform.Data.GenericCrud;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
-    public class ShoppingCartService : IShoppingCartService
+    public class ShoppingCartService : CrudService<ShoppingCart, ShoppingCartEntity, CartChangeEvent, CartChangedEvent>, IShoppingCartService
     {
-        private readonly Func<ICartRepository> _repositoryFactory;
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
-        private readonly IEventPublisher _eventPublisher;
-        private readonly IPlatformMemoryCache _platformMemoryCache;
 
         public ShoppingCartService(Func<ICartRepository> repositoryFactory,
                                       IShoppingCartTotalsCalculator totalsCalculator, IEventPublisher eventPublisher,
-                                      IPlatformMemoryCache platformMemoryCache)
+                                      IPlatformMemoryCache platformMemoryCache) : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
-            _repositoryFactory = repositoryFactory;
             _totalsCalculator = totalsCalculator;
-            _eventPublisher = eventPublisher;
-            _platformMemoryCache = platformMemoryCache;
         }
 
-        #region IShoppingCartService Members
-
-        public virtual async Task<ShoppingCart[]> GetByIdsAsync(string[] cartIds, string responseGroup = null)
+        protected override ShoppingCart ProcessModel(string responseGroup, ShoppingCartEntity entity, ShoppingCart model)
         {
-            var retVal = new List<ShoppingCart>();
-            var cacheKey = CacheKey.With(GetType(), "GetByIdsAsync", string.Join("-", cartIds), responseGroup);
-            var result = await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+            //Calculate totals only for full responseGroup
+            if (responseGroup == null)
             {
-                using (var repository = _repositoryFactory())
-                {
-                    //Disable DBContext change tracking for better performance 
-                    repository.DisableChangesTracking();
-                    cacheEntry.AddExpirationToken(CartCacheRegion.CreateChangeToken(cartIds));
-
-                    var cartEntities = await repository.GetShoppingCartsByIdsAsync(cartIds, responseGroup);
-                    foreach (var cartEntity in cartEntities)
-                    {
-                        var cart = cartEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance());
-                        //Calculate totals only for full responseGroup
-                        if (responseGroup == null)
-                        {
-                            _totalsCalculator.CalculateTotals(cart);
-                        }
-                        cart.ReduceDetails(responseGroup);
-
-                        retVal.Add(cart);
-                    }
-                }
-                return retVal;
-            });
-
-            return result.Select(x => x.Clone() as ShoppingCart).ToArray();
-        }
-
-        public virtual async Task<ShoppingCart> GetByIdAsync(string id, string responseGroup = null)
-        {
-            var carts = await GetByIdsAsync(new[] { id }, responseGroup);
-            return carts.FirstOrDefault();
-        }
-
-        public virtual async Task SaveChangesAsync(ShoppingCart[] carts)
-        {
-            var pkMap = new PrimaryKeyResolvingMap();
-            var changedEntries = new List<GenericChangedEntry<ShoppingCart>>();
-
-            ValidateCartsAndThrow(carts);
-
-            using (var repository = _repositoryFactory())
-            {
-                var dataExistCarts = await repository.GetShoppingCartsByIdsAsync(carts.Where(x => !x.IsTransient()).Select(x => x.Id).ToArray());
-                foreach (var cart in carts)
-                {
-                    //Calculate cart totals before save
-                    _totalsCalculator.CalculateTotals(cart);
-
-                    var originalEntity = dataExistCarts.FirstOrDefault(x => x.Id == cart.Id);
-                    var modifiedEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance()
-                                                                                .FromModel(cart, pkMap);
-
-                    if (originalEntity != null)
-                    {
-                        // This extension is allow to get around breaking changes is introduced in EF Core 3.0 that leads to throw
-                        // Database operation expected to affect 1 row(s) but actually affected 0 row(s) exception when trying to add the new children entities with manually set keys
-                        // https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#detectchanges-honors-store-generated-key-values
-                        repository.TrackModifiedAsAddedForNewChildEntities(originalEntity);
-
-                        changedEntries.Add(new GenericChangedEntry<ShoppingCart>(cart, originalEntity.ToModel(AbstractTypeFactory<ShoppingCart>.TryCreateInstance()), EntryState.Modified));
-                        modifiedEntity.Patch(originalEntity);
-                    }
-                    else
-                    {
-                        repository.Add(modifiedEntity);
-                        changedEntries.Add(new GenericChangedEntry<ShoppingCart>(cart, EntryState.Added));
-                    }
-                }
-
-                //Raise domain events
-                await _eventPublisher.Publish(new CartChangeEvent(changedEntries));
-                await repository.UnitOfWork.CommitAsync();
-                pkMap.ResolvePrimaryKeys();
-
-                ClearCache(carts);
-
-                await _eventPublisher.Publish(new CartChangedEvent(changedEntries));
+                _totalsCalculator.CalculateTotals(model);
             }
+            model.ReduceDetails(responseGroup);
+            return model;
         }
 
-        public virtual async Task DeleteAsync(string[] cartIds, bool softDelete = false)
+        protected override Task BeforeSaveChanges(IEnumerable<ShoppingCart> models)
         {
-            var carts = (await GetByIdsAsync(cartIds)).ToArray();
+            new ShoppingCartsValidator().ValidateAndThrow(models);
 
-            using (var repository = _repositoryFactory())
+            foreach (var cart in models)
             {
-                //Raise domain events before deletion
-                var changedEntries = carts.Select(x => new GenericChangedEntry<ShoppingCart>(x, EntryState.Deleted)).ToArray();
-                await _eventPublisher.Publish(new CartChangeEvent(changedEntries));
-
-                if (softDelete)
-                {
-                    await repository.SoftRemoveCartsAsync(cartIds);
-                }
-                else
-                {
-                    var keyMap = new PrimaryKeyResolvingMap();
-                    foreach (var cart in carts)
-                    {
-                        var cartEntity = AbstractTypeFactory<ShoppingCartEntity>.TryCreateInstance().FromModel(cart, keyMap);
-                        repository.Remove(cartEntity);
-                    }
-                    await repository.UnitOfWork.CommitAsync();
-                }
-
-                ClearCache(carts);
-
-                //Raise domain events after deletion
-                await _eventPublisher.Publish(new CartChangedEvent(changedEntries));
+                //Calculate cart totals before save
+                _totalsCalculator.CalculateTotals(cart);
             }
+
+            return Task.CompletedTask;
         }
 
-        protected virtual void ClearCache(IEnumerable<ShoppingCart> entities)
+        protected override Task SoftDelete(IRepository repository, IEnumerable<string> ids)
         {
-            CartSearchCacheRegion.ExpireRegion();
-
-            foreach (var entity in entities)
-            {
-                CartCacheRegion.ExpireCart(entity);
-            }
+            return ((ICartRepository)repository).SoftRemoveCartsAsync(ids.ToArray());
         }
 
-        protected virtual void ValidateCartsAndThrow(ShoppingCart[] carts)
+
+        protected async override Task<IEnumerable<ShoppingCartEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
         {
-            new ShoppingCartsValidator().ValidateAndThrow(carts);
+            return await ((ICartRepository)repository).GetShoppingCartsByIdsAsync(ids.ToArray(), responseGroup);
         }
 
+        #region IShoppingCartService compatibility
+        public async Task<ShoppingCart[]> GetByIdsAsync(string[] cartIds, string responseGroup = null)
+        {
+            return (await GetByIdsAsync((IEnumerable<string>)cartIds, responseGroup)).ToArray();
+        }
+
+        public Task SaveChangesAsync(ShoppingCart[] carts)
+        {
+            return SaveChangesAsync((IEnumerable<ShoppingCart>)carts);
+        }
+
+        public Task DeleteAsync(string[] cartIds, bool softDelete = false)
+        {
+            return DeleteAsync((IEnumerable<string>)cartIds);
+        }
         #endregion
     }
 }

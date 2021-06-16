@@ -12,7 +12,6 @@ using VirtoCommerce.CartModule.Data.Validation;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
-using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Data.GenericCrud;
 
 namespace VirtoCommerce.CartModule.Data.Services
@@ -66,7 +65,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         #region IShoppingCartService compatibility
         public async Task<ShoppingCart[]> GetByIdsAsync(string[] cartIds, string responseGroup = null)
         {
-            return (await GetByIdsAsync((IEnumerable<string>) cartIds, responseGroup)).ToArray();
+            return (await GetByIdsAsync((IEnumerable<string>)cartIds, responseGroup)).ToArray();
         }
 
         public Task SaveChangesAsync(ShoppingCart[] carts)

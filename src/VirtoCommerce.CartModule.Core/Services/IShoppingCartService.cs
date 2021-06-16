@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirtoCommerce.CartModule.Core.Model;
-using VirtoCommerce.Platform.Core.GenericCrud;
 
 namespace VirtoCommerce.CartModule.Core.Services
 {

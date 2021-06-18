@@ -2,81 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Services;
-using VirtoCommerce.CartModule.Data.Caching;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.Platform.Core.GenericCrud;
+using VirtoCommerce.Platform.Data.GenericCrud;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
-    public class ShoppingCartSearchService : IShoppingCartSearchService
+    public class ShoppingCartSearchService : SearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart, ShoppingCartEntity>, IShoppingCartSearchService
     {
-        private readonly Func<ICartRepository> _repositoryFactory;
-        private readonly IPlatformMemoryCache _platformMemoryCache;
-        private readonly IShoppingCartService _cartService;
-
-        public ShoppingCartSearchService(Func<ICartRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IShoppingCartService cartService)
+        public ShoppingCartSearchService(Func<ICartRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IShoppingCartService cartService) :
+            base(repositoryFactory, platformMemoryCache, (ICrudService<ShoppingCart>)cartService)
         {
-            _repositoryFactory = repositoryFactory;
-            _platformMemoryCache = platformMemoryCache;
-            _cartService = cartService;
         }
 
         public async Task<ShoppingCartSearchResult> SearchCartAsync(ShoppingCartSearchCriteria criteria)
         {
-            var result = AbstractTypeFactory<ShoppingCartSearchResult>.TryCreateInstance();
-            var cacheKey = CacheKey.With(GetType(), nameof(SearchCartAsync), criteria.GetCacheKey());
-            return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
-            {
-                cacheEntry.AddExpirationToken(CartSearchCacheRegion.CreateChangeToken());
-                using (var repository = _repositoryFactory())
-                {
-                    //Optimize performance and CPU usage
-                    repository.DisableChangesTracking();
-
-                    var sortInfos = BuildSortExpression(criteria);
-                    var query = BuildQuery(repository, criteria);
-
-                    var needExecuteCount = criteria.Take == 0;
-
-                    if (criteria.Take > 0)
-                    {
-                        var ids = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
-                                         .Select(x => x.Id)
-                                         .Skip(criteria.Skip).Take(criteria.Take)
-                                         .ToArrayAsync();
-
-                        result.TotalCount = ids.Count();
-                        // This reduces a load of a relational database by skipping cart count query in case of:
-                        // - First page of the carts is reading (Skip is 0)
-                        // - Count of carts in reading result less than Take value.
-                        if (criteria.Skip > 0 || result.TotalCount == criteria.Take)
-
-                        {
-                            needExecuteCount = true;
-                        }
-                        result.Results = (await _cartService.GetByIdsAsync(ids, criteria.ResponseGroup)).OrderBy(x => Array.IndexOf(ids, x.Id)).ToList();
-                    }
-
-                    if (needExecuteCount)
-                    {
-                        result.TotalCount = await query.CountAsync();
-                    }
-
-                    return result;
-                }
-            });
+            return await SearchAsync(criteria);
         }
 
-        protected virtual IQueryable<ShoppingCartEntity> BuildQuery(ICartRepository repository, ShoppingCartSearchCriteria criteria)
+        protected override IQueryable<ShoppingCartEntity> BuildQuery(IRepository repository, ShoppingCartSearchCriteria criteria)
         {
-            var query = repository.ShoppingCarts.Where(x => !x.IsDeleted);
+
+            var query = ((ICartRepository)repository).ShoppingCarts.Where(x => !x.IsDeleted);
 
             if (!string.IsNullOrEmpty(criteria.Status))
             {
@@ -141,7 +94,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             return query;
         }
 
-        protected virtual IList<SortInfo> BuildSortExpression(ShoppingCartSearchCriteria criteria)
+        protected override IList<SortInfo> BuildSortExpression(ShoppingCartSearchCriteria criteria)
         {
             var sortInfos = criteria.SortInfos;
             if (sortInfos.IsNullOrEmpty())

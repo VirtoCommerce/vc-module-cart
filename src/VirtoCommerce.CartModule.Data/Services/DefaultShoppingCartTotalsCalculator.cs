@@ -14,7 +14,7 @@ namespace VirtoCommerce.CartModule.Data.Services
     public class DefaultShoppingCartTotalsCalculator : IShoppingCartTotalsCalculator
     {
         private readonly ICurrencyService _currencyService;
-        private ISettingsManager _settingsManager;
+        private readonly ISettingsManager _settingsManager;
 
         public DefaultShoppingCartTotalsCalculator(ICurrencyService currencyService, ISettingsManager settingsManager)
         {

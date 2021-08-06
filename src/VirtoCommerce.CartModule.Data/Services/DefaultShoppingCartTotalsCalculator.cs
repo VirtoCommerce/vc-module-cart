@@ -116,7 +116,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             if (_settingsManager.GetValue<bool>(StoreModule.Core.ModuleConstants.Settings.General.EnablePriceRoundingForTotalsCalculation.Name, true))
             {
                 //Need to round all cart totals
-                var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Name == cart.Currency);
+                var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Code == cart.Currency);
                 cart.SubTotal = currency.RoundingPolicy.RoundMoney(cart.SubTotal, currency);
                 cart.SubTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.SubTotalWithTax, currency);
                 cart.SubTotalDiscount = currency.RoundingPolicy.RoundMoney(cart.SubTotalDiscount, currency);

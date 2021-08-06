@@ -28,7 +28,7 @@ The VirtoCommerce.Cart module is connected with the shopping cart API requests:
 
 For more details about the available cart-module API, please follow the link bellow:
 
-https://admin-demo.virtocommerce.com/docs/ui/index#/Shopping%2520cart%2520module
+https://admin-demo.virtocommerce.com/docs/index.html?urls.primaryName=VirtoCommerce.Cart
 
 The VirtoCommerce.Cart module functionality can be extended and customized based on the specific business needs. In order to extend the cart module functionality, use "Virto Commerce 2.x Cart and Order Module extension" template that can be accessed by following the link below:
 
@@ -42,4 +42,4 @@ Installing the module:
 ## Available resources
 * Module related service implementations as a <a href="https://www.nuget.org/packages/VirtoCommerce.CartModule.Data" target="_blank">NuGet package</a>
 
-* API client documentation  https://admin-demo.virtocommerce.com/docs/ui/index#/Shopping%2520cart%2520module
+* API client documentation  https://admin-demo.virtocommerce.com/docs/index.html?urls.primaryName=VirtoCommerce.Cart

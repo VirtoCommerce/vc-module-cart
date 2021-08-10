@@ -21,6 +21,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             _currencyService = currencyService;
             _settingsManager = settingsManager;
         }
+
         /// <summary>
         /// Cart subtotal discount
         /// When a discount is applied to the cart subtotal, the tax calculation has already been applied, and is reflected in the tax subtotal.
@@ -138,9 +139,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                 cart.PaymentSubTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentSubTotalWithTax, currency);
                 cart.PaymentDiscountTotal = currency.RoundingPolicy.RoundMoney(cart.PaymentDiscountTotal, currency);
                 cart.PaymentDiscountTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentDiscountTotalWithTax, currency);
-
-                cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
             }
+            cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
         }
 
         protected virtual void CalculatePaymentTotals(Payment payment)

@@ -50,20 +50,20 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<ShipmentItemEntity>().ToTable("CartShipmentItem").HasKey(x => x.Id);
             modelBuilder.Entity<ShipmentItemEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<ShipmentItemEntity>().HasOne(x => x.LineItem).WithMany(x => x.ShipmentItems)
-                        .HasForeignKey(x => x.LineItemId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.LineItemId).IsRequired().OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<ShipmentItemEntity>().HasOne(x => x.Shipment).WithMany(x => x.Items)
-                        .HasForeignKey(x => x.ShipmentId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.ShipmentId).IsRequired().OnDelete(DeleteBehavior.ClientCascade);
             #endregion
 
             #region Address
             modelBuilder.Entity<AddressEntity>().ToTable("CartAddress").HasKey(x => x.Id);
             modelBuilder.Entity<AddressEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<AddressEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Addresses)
-                        .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<AddressEntity>().HasOne(x => x.Shipment).WithMany(x => x.Addresses)
-                        .HasForeignKey(x => x.ShipmentId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.ShipmentId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<AddressEntity>().HasOne(x => x.Payment).WithMany(x => x.Addresses)
-                        .HasForeignKey(x => x.PaymentId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.PaymentId).OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<AddressEntity>().ToTable("CartAddress");
             #endregion
@@ -83,26 +83,26 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<TaxDetailEntity>().ToTable("CartTaxDetail").HasKey(x => x.Id);
             modelBuilder.Entity<TaxDetailEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<TaxDetailEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.TaxDetails)
-                        .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<TaxDetailEntity>().HasOne(x => x.Shipment).WithMany(x => x.TaxDetails)
-                        .HasForeignKey(x => x.ShipmentId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.ShipmentId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<TaxDetailEntity>().HasOne(x => x.LineItem).WithMany(x => x.TaxDetails)
-                        .HasForeignKey(x => x.LineItemId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.LineItemId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<TaxDetailEntity>().HasOne(x => x.Payment).WithMany(x => x.TaxDetails)
-                        .HasForeignKey(x => x.PaymentId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.PaymentId).OnDelete(DeleteBehavior.ClientCascade);
             #endregion
 
             #region Discount
             modelBuilder.Entity<DiscountEntity>().ToTable("CartDiscount").HasKey(x => x.Id);
             modelBuilder.Entity<DiscountEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<DiscountEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Discounts)
-                        .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<DiscountEntity>().HasOne(x => x.Shipment).WithMany(x => x.Discounts)
-                        .HasForeignKey(x => x.ShipmentId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.ShipmentId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<DiscountEntity>().HasOne(x => x.LineItem).WithMany(x => x.Discounts)
-                        .HasForeignKey(x => x.LineItemId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.LineItemId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<DiscountEntity>().HasOne(x => x.Payment).WithMany(x => x.Discounts)
-                        .HasForeignKey(x => x.PaymentId).OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey(x => x.PaymentId).OnDelete(DeleteBehavior.ClientCascade);
             #endregion
 
             #region Coupons
@@ -125,22 +125,22 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             //need to set DeleteBehavior.Cascade manually
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasOne(p => p.ShoppingCart)
                 .WithMany(s => s.DynamicPropertyObjectValues).HasForeignKey(k => k.ShoppingCartId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             //need to set DeleteBehavior.Cascade manually
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasOne(p => p.Shipment)
                 .WithMany(s => s.DynamicPropertyObjectValues).HasForeignKey(k => k.ShipmentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             //need to set DeleteBehavior.Cascade manually
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasOne(p => p.Payment)
                 .WithMany(s => s.DynamicPropertyObjectValues).HasForeignKey(k => k.PaymentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             //need to set DeleteBehavior.Cascade manually
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasOne(p => p.LineItem)
                 .WithMany(s => s.DynamicPropertyObjectValues).HasForeignKey(k => k.LineItemId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.ShoppingCartId })
                 .IsUnique(false)

@@ -22,11 +22,6 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             {
                RoundingPolicy = new DefaultMoneyRoundingPolicy()
             };
-            var settingsManagerMock = new Mock<ISettingsManager>();
-            settingsManagerMock.Setup(s => s.GetObjectSettingAsync(StoreModule.Core.ModuleConstants.Settings.General.EnablePriceRoundingForTotalsCalculation.Name, null, null)).ReturnsAsync(new ObjectSettingEntry
-            {
-                Value = true
-            });
             var repositoryFactory = new Mock<System.Func<CoreModule.Data.Repositories.ICoreRepository>>().Object;
             var eventPublisher = new Mock<Platform.Core.Events.IEventPublisher>().Object;
             var memoryCacheOptions = new MemoryCacheOptions();
@@ -34,7 +29,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var platformMemoryCache = new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), null);
             var currencyServiceMock = new Mock<ICurrencyService>();
             currencyServiceMock.Setup(c => c.GetAllCurrenciesAsync()).ReturnsAsync(new List<Currency>() { currency });
-            return new DefaultShoppingCartTotalsCalculator(currencyServiceMock.Object, settingsManagerMock.Object);
+            return new DefaultShoppingCartTotalsCalculator(currencyServiceMock.Object);
         }
 
         [Fact]

@@ -41,7 +41,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             _eventPublisherMock = new Mock<IEventPublisher>();
             _cacheEntryMock = new Mock<ICacheEntry>();
             _cacheEntryMock.SetupGet(c => c.ExpirationTokens).Returns(new List<IChangeToken>());
-
+            FluentValidation.ValidatorOptions.LanguageManager.Enabled = false;
         }
 
         [Fact]

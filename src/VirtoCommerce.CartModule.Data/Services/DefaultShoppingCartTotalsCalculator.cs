@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
+using VirtoCommerce.CoreModule.Core.Currency;
 using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CartModule.Data.Services
@@ -11,6 +12,13 @@ namespace VirtoCommerce.CartModule.Data.Services
     /// </summary>
     public class DefaultShoppingCartTotalsCalculator : IShoppingCartTotalsCalculator
     {
+        private readonly ICurrencyService _currencyService;
+
+        public DefaultShoppingCartTotalsCalculator(ICurrencyService currencyService)
+        {
+            _currencyService = currencyService;
+        }
+
         /// <summary>
         /// Cart subtotal discount
         /// When a discount is applied to the cart subtotal, the tax calculation has already been applied, and is reflected in the tax subtotal.
@@ -104,27 +112,28 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.TaxTotal -= cart.DiscountAmount * cart.TaxPercentRate;
 
             //Need to round all cart totals
-            cart.SubTotal = Math.Round(cart.SubTotal, 2, MidpointRounding.AwayFromZero);
-            cart.SubTotalWithTax = Math.Round(cart.SubTotalWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.SubTotalDiscount = Math.Round(cart.SubTotalDiscount, 2, MidpointRounding.AwayFromZero);
-            cart.SubTotalDiscountWithTax = Math.Round(cart.SubTotalDiscountWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.TaxTotal = Math.Round(cart.TaxTotal, 2, MidpointRounding.AwayFromZero);
-            cart.DiscountTotal = Math.Round(cart.DiscountTotal, 2, MidpointRounding.AwayFromZero);
-            cart.DiscountTotalWithTax = Math.Round(cart.DiscountTotalWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.Fee = Math.Round(cart.Fee, 2, MidpointRounding.AwayFromZero);
-            cart.FeeWithTax = Math.Round(cart.FeeWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.FeeTotal = Math.Round(cart.FeeTotal, 2, MidpointRounding.AwayFromZero);
-            cart.FeeTotalWithTax = Math.Round(cart.FeeTotalWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.ShippingTotal = Math.Round(cart.ShippingTotal, 2, MidpointRounding.AwayFromZero);
-            cart.ShippingTotalWithTax = Math.Round(cart.ShippingTotalWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.ShippingSubTotal = Math.Round(cart.ShippingSubTotal, 2, MidpointRounding.AwayFromZero);
-            cart.ShippingSubTotalWithTax = Math.Round(cart.ShippingSubTotalWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.PaymentTotal = Math.Round(cart.PaymentTotal, 2, MidpointRounding.AwayFromZero);
-            cart.PaymentTotalWithTax = Math.Round(cart.PaymentTotalWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.PaymentSubTotal = Math.Round(cart.PaymentSubTotal, 2, MidpointRounding.AwayFromZero);
-            cart.PaymentSubTotalWithTax = Math.Round(cart.PaymentSubTotalWithTax, 2, MidpointRounding.AwayFromZero);
-            cart.PaymentDiscountTotal = Math.Round(cart.PaymentDiscountTotal, 2, MidpointRounding.AwayFromZero);
-            cart.PaymentDiscountTotalWithTax = Math.Round(cart.PaymentDiscountTotalWithTax, 2, MidpointRounding.AwayFromZero);
+            var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Code == cart.Currency);
+            cart.SubTotal = currency.RoundingPolicy.RoundMoney(cart.SubTotal, currency);
+            cart.SubTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.SubTotalWithTax, currency);
+            cart.SubTotalDiscount = currency.RoundingPolicy.RoundMoney(cart.SubTotalDiscount, currency);
+            cart.SubTotalDiscountWithTax = currency.RoundingPolicy.RoundMoney(cart.SubTotalDiscountWithTax, currency);
+            cart.TaxTotal = currency.RoundingPolicy.RoundMoney(cart.TaxTotal, currency);
+            cart.DiscountTotal = currency.RoundingPolicy.RoundMoney(cart.DiscountTotal, currency);
+            cart.DiscountTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.DiscountTotalWithTax, currency);
+            cart.Fee = currency.RoundingPolicy.RoundMoney(cart.Fee, currency);
+            cart.FeeWithTax = currency.RoundingPolicy.RoundMoney(cart.FeeWithTax, currency);
+            cart.FeeTotal = currency.RoundingPolicy.RoundMoney(cart.FeeTotal, currency);
+            cart.FeeTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.FeeTotalWithTax, currency);
+            cart.ShippingTotal = currency.RoundingPolicy.RoundMoney(cart.ShippingTotal, currency);
+            cart.ShippingTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.ShippingTotalWithTax, currency);
+            cart.ShippingSubTotal = currency.RoundingPolicy.RoundMoney(cart.ShippingSubTotal, currency);
+            cart.ShippingSubTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.ShippingSubTotalWithTax, currency);
+            cart.PaymentTotal = currency.RoundingPolicy.RoundMoney(cart.PaymentTotal, currency);
+            cart.PaymentTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentTotalWithTax, currency);
+            cart.PaymentSubTotal = currency.RoundingPolicy.RoundMoney(cart.PaymentSubTotal, currency);
+            cart.PaymentSubTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentSubTotalWithTax, currency);
+            cart.PaymentDiscountTotal = currency.RoundingPolicy.RoundMoney(cart.PaymentDiscountTotal, currency);
+            cart.PaymentDiscountTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentDiscountTotalWithTax, currency);
 
             cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
         }

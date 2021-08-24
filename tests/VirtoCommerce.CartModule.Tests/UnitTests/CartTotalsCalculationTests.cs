@@ -1,8 +1,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using Moq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Services;
+using VirtoCommerce.CoreModule.Core.Currency;
+using VirtoCommerce.Platform.Caching;
+using VirtoCommerce.Platform.Core.Settings;
 using Xunit;
 
 namespace VirtoCommerce.CartModule.Test.UnitTests
@@ -10,6 +16,21 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
     [Trait("Category", "CI")]
     public class OrderTotalsCalculationTest
     {
+        private DefaultShoppingCartTotalsCalculator GetTotalsCalculator()
+        {
+            var currency = new Currency
+            {
+               RoundingPolicy = new DefaultMoneyRoundingPolicy()
+            };
+            var repositoryFactory = new Mock<System.Func<CoreModule.Data.Repositories.ICoreRepository>>().Object;
+            var eventPublisher = new Mock<Platform.Core.Events.IEventPublisher>().Object;
+            var memoryCacheOptions = new MemoryCacheOptions();
+            var memoryCache = new MemoryCache(Options.Create(memoryCacheOptions));
+            var platformMemoryCache = new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), null);
+            var currencyServiceMock = new Mock<ICurrencyService>();
+            currencyServiceMock.Setup(c => c.GetAllCurrenciesAsync()).ReturnsAsync(new List<Currency>() { currency });
+            return new DefaultShoppingCartTotalsCalculator(currencyServiceMock.Object);
+        }
 
         [Fact]
         public void CalculateTotals_CartTotals_MustBe_Sum_Of_Parts_After_Round()
@@ -20,7 +41,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             {
                 Items = new List<LineItem> { item1 },
             };
-            var totalsCalculator = new DefaultShoppingCartTotalsCalculator();
+            var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
 
             Assert.Equal(49.95m, cart.SubTotal);
@@ -44,7 +65,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
                 Payments = new List<Payment> { payment },
                 Shipments = new List<Shipment> { shipment }
             };
-            var totalsCalculator = new DefaultShoppingCartTotalsCalculator();
+            var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
 
             Assert.Equal(1400.07m, cart.Total);
@@ -76,7 +97,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
                 Payments = new List<Payment> { payment },
                 Shipments = new List<Shipment> { shipment }
             };
-            var totalsCalculator = new DefaultShoppingCartTotalsCalculator();
+            var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
 
             Assert.Equal(12.3088m, item1.ListPriceWithTax);

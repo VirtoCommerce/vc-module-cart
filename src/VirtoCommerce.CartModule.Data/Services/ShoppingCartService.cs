@@ -75,7 +75,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public Task DeleteAsync(string[] cartIds, bool softDelete = false)
         {
-            return DeleteAsync((IEnumerable<string>)cartIds);
+            return DeleteAsync((IEnumerable<string>)cartIds, softDelete);
         }
         #endregion
     }

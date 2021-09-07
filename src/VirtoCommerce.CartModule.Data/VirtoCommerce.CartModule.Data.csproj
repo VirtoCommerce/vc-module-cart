@@ -9,12 +9,6 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
     <ItemGroup>
-      <Compile Remove="Migrations\20210906095031_IsRejectedLineitem.cs" />
-      <Compile Remove="Migrations\20210906095031_IsRejectedLineitem.Designer.cs" />
-      <Compile Remove="Migrations\20210906103315_empty.cs" />
-      <Compile Remove="Migrations\20210906103315_empty.Designer.cs" />
-    </ItemGroup>
-    <ItemGroup>
         <PackageReference Include="Hangfire" Version="1.7.9" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">

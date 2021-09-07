@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Tax;
@@ -33,6 +32,11 @@ namespace VirtoCommerce.CartModule.Core.Model
         public string ImageUrl { get; set; }
 
         public bool IsGift { get; set; }
+
+        /// <summary>
+        /// Flag indicating that this lineItem was not accepted. Eg., gift was rejected by customer.
+        /// </summary>
+        public bool IsRejected { get; set; }
         public string Currency { get; set; }
 
         public string LanguageCode { get; set; }

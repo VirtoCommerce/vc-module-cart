@@ -53,6 +53,7 @@ namespace VirtoCommerce.CartModule.Data.Model
         public string ImageUrl { get; set; }
 
         public bool IsGift { get; set; }
+        public bool IsRejected { get; set; }
 
         [StringLength(16)]
         public string LanguageCode { get; set; }
@@ -183,6 +184,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             lineItem.LanguageCode = LanguageCode;
             lineItem.IsReccuring = IsReccuring;
             lineItem.IsGift = IsGift;
+            lineItem.IsRejected = IsRejected;
             lineItem.ImageUrl = ImageUrl;
             lineItem.ProductId = ProductId;
             lineItem.ProductType = ProductType;
@@ -258,6 +260,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             LanguageCode = lineItem.LanguageCode;
             IsReccuring = lineItem.IsReccuring;
             IsGift = lineItem.IsGift;
+            IsRejected = lineItem.IsRejected;
             ImageUrl = lineItem.ImageUrl;
             ProductId = lineItem.ProductId;
             ProductType = lineItem.ProductType;
@@ -326,6 +329,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.LanguageCode = LanguageCode;
             target.IsReccuring = IsReccuring;
             target.IsGift = IsGift;
+            target.IsRejected = IsRejected;
             target.ImageUrl = ImageUrl;
             target.ProductId = ProductId;
             target.ProductType = ProductType;

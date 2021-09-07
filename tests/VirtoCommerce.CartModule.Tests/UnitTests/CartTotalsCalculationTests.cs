@@ -8,7 +8,6 @@ using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CoreModule.Core.Currency;
 using VirtoCommerce.Platform.Caching;
-using VirtoCommerce.Platform.Core.Settings;
 using Xunit;
 
 namespace VirtoCommerce.CartModule.Test.UnitTests
@@ -20,7 +19,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         {
             var currency = new Currency
             {
-               RoundingPolicy = new DefaultMoneyRoundingPolicy()
+                RoundingPolicy = new DefaultMoneyRoundingPolicy()
             };
             var repositoryFactory = new Mock<System.Func<CoreModule.Data.Repositories.ICoreRepository>>().Object;
             var eventPublisher = new Mock<Platform.Core.Events.IEventPublisher>().Object;
@@ -86,6 +85,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var item1 = new LineItem { ListPrice = 10.99m, SalePrice = 9.66m, DiscountAmount = 1.33m, TaxPercentRate = 0.12m, Fee = 0.33m, Quantity = 2 };
             var item2 = new LineItem { ListPrice = 55.22m, SalePrice = 49.33m, DiscountAmount = 5.89m, TaxPercentRate = 0.12m, Fee = 0.12m, Quantity = 5 };
             var item3 = new LineItem { ListPrice = 88.45m, SalePrice = 77.67m, DiscountAmount = 10.78m, TaxPercentRate = 0.12m, Fee = 0.08m, Quantity = 12 };
+            var gift1 = new LineItem { ListPrice = 12.32m, SalePrice = 1.23m, DiscountAmount = 0.78m, TaxPercentRate = 0.12m, Fee = 0.05m, Quantity = 16, IsGift = true };
             var payment = new Payment { Price = 44.52m, DiscountAmount = 10, TaxPercentRate = 0.12m };
             var shipment = new Shipment { Price = 22.0m, DiscountAmount = 5m, TaxPercentRate = 0.12m };
 
@@ -93,7 +93,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             {
                 TaxPercentRate = 0.12m,
                 Fee = 13.11m,
-                Items = new List<LineItem> { item1, item2, item3 },
+                Items = new List<LineItem> { item1, item2, item3, gift1 },
                 Payments = new List<Payment> { payment },
                 Shipments = new List<Shipment> { shipment }
             };

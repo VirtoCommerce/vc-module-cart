@@ -74,6 +74,10 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
+                    b.Property<string>("OuterId")
+                        .HasColumnType("nvarchar(128)")
+                        .HasMaxLength(128);
+
                     b.Property<string>("PaymentId")
                         .HasColumnType("nvarchar(128)");
 

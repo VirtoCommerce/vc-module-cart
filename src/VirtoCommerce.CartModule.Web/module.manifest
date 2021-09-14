@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Cart</id>
-  <version>3.23.0</version>
+  <version>3.24.0</version>
   <version-tag />
   <platformVersion>3.62.0</platformVersion>
   <title>Shopping cart module</title>
@@ -21,7 +21,7 @@
   <assemblyFile>VirtoCommerce.CartModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.CartModule.Web.Module, VirtoCommerce.CartModule.Web</moduleType>
   <dependencies>
-    <dependency id="VirtoCommerce.Core" version="3.20.0" />
+    <dependency id="VirtoCommerce.Core" version="3.22.0" />
     <dependency id="VirtoCommerce.Store" version="3.21.0" />
     <dependency id="VirtoCommerce.Payment" version="3.0.0" />
     <dependency id="VirtoCommerce.Shipping" version="3.0.0" />

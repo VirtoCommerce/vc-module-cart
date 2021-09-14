@@ -5,7 +5,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
-    public class AddressEntity : Entity
+    public class AddressEntity : Entity, IHasOuterId
     {
         [StringLength(2048)]
         public string Name { get; set; }
@@ -56,6 +56,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(254)]
         public string Email { get; set; }
 
+        [StringLength(128)]
+        public string OuterId { get; set; }
+
         public string ShoppingCartId { get; set; }
         public virtual ShoppingCartEntity ShoppingCart { get; set; }
 
@@ -87,6 +90,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             address.RegionId = RegionId;
             address.RegionName = RegionName;
             address.Organization = Organization;
+            address.OuterId = OuterId;
             //address.Zip =
 
             return address;
@@ -114,6 +118,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             RegionId = address.RegionId;
             RegionName = address.RegionName;
             Organization = address.Organization;
+            OuterId = address.OuterId;
             //Zip =
 
             return this;
@@ -137,6 +142,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Line1 = Line1;
             target.Line2 = Line2;
             target.Organization = Organization;
+            target.OuterId = OuterId;
         }
 
         public override bool Equals(object obj)

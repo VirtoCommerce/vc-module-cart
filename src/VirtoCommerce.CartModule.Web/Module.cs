@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
+using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.BackgroundJobs;
 using VirtoCommerce.CartModule.Data.Handlers;
@@ -16,6 +17,7 @@ using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -39,8 +41,10 @@ namespace VirtoCommerce.CartModule.Web
 
             serviceCollection.AddTransient<ICartRepository, CartRepository>();
             serviceCollection.AddTransient<Func<ICartRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICartRepository>());
-            serviceCollection.AddTransient<IShoppingCartService, ShoppingCartService>();
-            serviceCollection.AddTransient<IShoppingCartSearchService, ShoppingCartSearchService>();
+            serviceCollection.AddTransient<ICrudService<ShoppingCart>, ShoppingCartService>();
+            serviceCollection.AddTransient(x => (IShoppingCartService)x.GetRequiredService<ICrudService<ShoppingCart>>());            
+            serviceCollection.AddTransient<ISearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart>, ShoppingCartSearchService>();
+            serviceCollection.AddTransient(x => (IShoppingCartSearchService)x.GetRequiredService<ISearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart>>());
             serviceCollection.AddTransient<IShoppingCartTotalsCalculator, DefaultShoppingCartTotalsCalculator>();
             serviceCollection.AddTransient<IShoppingCartBuilder, ShoppingCartBuilder>();
 

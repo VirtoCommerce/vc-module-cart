@@ -38,7 +38,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             if (!ids.IsNullOrEmpty())
             {
-                result = ShoppingCarts.Where(x => ids.Contains(x.Id)).ToArray();
+                result = ShoppingCarts.Where(x => ids.Contains(x.Id) && !x.IsDeleted).ToArray();
 
                 if (result.Any())
                 {

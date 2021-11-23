@@ -56,7 +56,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var platformMemoryCacheMock = new Mock<IPlatformMemoryCache>();
             platformMemoryCacheMock.Setup(x => x.GetDefaultCacheEntryOptions()).Returns(() => new MemoryCacheEntryOptions());
             var service = GetShoppingCartService(platformMemoryCacheMock.Object);
-            var cacheKey = CacheKey.With(service.GetType(), nameof(service.GetByIdsAsync), string.Join("-", cartIds), null);
+            var cacheKey = CacheKey.With(service.GetType(), nameof(service.GetAsync), string.Join("-", cartIds), null);
             platformMemoryCacheMock.Setup(pmc => pmc.CreateEntry(cacheKey)).Returns(_cacheEntryMock.Object);
 
             //Act

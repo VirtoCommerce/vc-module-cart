@@ -41,7 +41,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             _eventPublisherMock = new Mock<IEventPublisher>();
             _cacheEntryMock = new Mock<ICacheEntry>();
             _cacheEntryMock.SetupGet(c => c.ExpirationTokens).Returns(new List<IChangeToken>());
-            FluentValidation.ValidatorOptions.LanguageManager.Enabled = false;
+            FluentValidation.ValidatorOptions.Global.LanguageManager.Enabled = false;
         }
 
         [Fact]
@@ -135,7 +135,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var ex = await Assert.ThrowsAsync<FluentValidation.ValidationException>(() => service.SaveChangesAsync(null));
 
             //Assert
-            Assert.EndsWith(ShoppingCartsValidator.CartsNotSuppliedMessage, ex.Message);
+            Assert.Contains(ShoppingCartsValidator.CartsNotSuppliedMessage, ex.Message);
         }
 
         [Fact]
@@ -150,7 +150,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var ex = await Assert.ThrowsAsync<FluentValidation.ValidationException>(() => service.SaveChangesAsync(carts));
 
             //Assert
-            Assert.EndsWith("'Currency' must not be empty.", ex.Message);
+            Assert.Contains("'Currency' must not be empty.", ex.Message);
         }
 
         [Fact]
@@ -166,7 +166,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var ex = await Assert.ThrowsAsync<FluentValidation.ValidationException>(() => service.SaveChangesAsync(carts));
 
             //Assert
-            Assert.EndsWith("'Last Name' must not be empty.", ex.Message);
+            Assert.Contains("'Last Name' must not be empty.", ex.Message);
         }
 
         private ShoppingCartService GetCustomerOrderServiceWithPlatformMemoryCache()

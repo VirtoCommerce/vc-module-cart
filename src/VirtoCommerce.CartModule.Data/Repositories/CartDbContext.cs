@@ -23,7 +23,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<ShoppingCartEntity>().ToTable("Cart").HasKey(x => x.Id);
             modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
-            modelBuilder.Entity<ShoppingCartEntity>().HasIndex(x => new { x.CustomerId, x.StoreId, x.ModifiedDate /* (! Important !) DESC */}).HasName("IX_CustomerId_StoreId_Date");
+            modelBuilder.Entity<ShoppingCartEntity>().HasIndex(x => new { x.CustomerId, x.StoreId, x.ModifiedDate /* (! Important !) DESC */}).HasDatabaseName("IX_CustomerId_StoreId_Date");
             #endregion
 
             #region LineItem
@@ -120,7 +120,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.ObjectId })
                 .IsUnique(false)
-                .HasName("IX_ObjectType_ObjectId");
+                .HasDatabaseName("IX_ObjectType_ObjectId");
 
             //need to set DeleteBehavior.Cascade manually
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasOne(p => p.ShoppingCart)
@@ -144,19 +144,19 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.ShoppingCartId })
                 .IsUnique(false)
-                .HasName("IX_ObjectType_ShoppingCartId");
+                .HasDatabaseName("IX_ObjectType_ShoppingCartId");
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.ShipmentId })
                 .IsUnique(false)
-                .HasName("IX_ObjectType_ShipmentId");
+                .HasDatabaseName("IX_ObjectType_ShipmentId");
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.PaymentId })
                 .IsUnique(false)
-                .HasName("IX_ObjectType_PaymentId");
+                .HasDatabaseName("IX_ObjectType_PaymentId");
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.LineItemId })
                 .IsUnique(false)
-                .HasName("IX_ObjectType_LineItemId");
+                .HasDatabaseName("IX_ObjectType_LineItemId");
 
             #endregion
 

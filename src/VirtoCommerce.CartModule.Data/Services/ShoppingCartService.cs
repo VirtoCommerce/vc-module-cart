@@ -65,7 +65,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         #region IShoppingCartService compatibility
         public async Task<ShoppingCart[]> GetByIdsAsync(string[] cartIds, string responseGroup = null)
         {
-            return (await GetByIdsAsync((IEnumerable<string>)cartIds, responseGroup)).ToArray();
+            return (await GetAsync(new List<string>(cartIds), responseGroup)).ToArray();
         }
 
         public Task SaveChangesAsync(ShoppingCart[] carts)

@@ -1,4 +1,4 @@
-# v1.1.9
+# v1.1.10
 name: Module CI
 
 on:
@@ -61,8 +61,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
       - name: Install VirtoCommerce.GlobalTool
-        uses: VirtoCommerce/vc-github-actions/setup-vcbuild@master
+        run: dotnet tool install --global VirtoCommerce.GlobalTool --version 2.1.0-alpha.17
 
       - name: Install dotnet-sonarscanner
         run: dotnet tool install --global dotnet-sonarscanner
@@ -118,6 +122,14 @@ jobs:
         uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
+          
+      - name: Add Jira link
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: VirtoCommerce/vc-github-actions/publish-jira-link@master
+        with:
+          branchName: ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add link to PR
         if: ${{ github.event_name == 'pull_request' }}

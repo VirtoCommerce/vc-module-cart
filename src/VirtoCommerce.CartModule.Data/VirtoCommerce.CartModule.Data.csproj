@@ -8,6 +8,10 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
+    <PropertyGroup>
+        <!-- Project is not a test project -->
+        <SonarQubeTestProject>false</SonarQubeTestProject>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Hangfire" Version="1.7.14" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />

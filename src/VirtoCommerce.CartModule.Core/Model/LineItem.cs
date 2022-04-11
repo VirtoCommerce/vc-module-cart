@@ -6,7 +6,6 @@ using VirtoCommerce.CoreModule.Core.Tax;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Swagger;
-using VirtoCommerce.PricingModule.Core.Model;
 
 namespace VirtoCommerce.CartModule.Core.Model
 {
@@ -69,8 +68,6 @@ namespace VirtoCommerce.CartModule.Core.Model
         public bool IsReadOnly { get; set; }
 
         public string PriceId { get; set; }
-
-        public Price Price { get; set; }
 
         public virtual decimal ListPrice { get; set; }
 
@@ -152,7 +149,6 @@ namespace VirtoCommerce.CartModule.Core.Model
         {
             var result = MemberwiseClone() as LineItem;
 
-            result.Price = Price?.Clone() as Price;
             result.TaxDetails = TaxDetails?.Select(x => x.Clone()).OfType<TaxDetail>().ToList();
             result.Discounts = Discounts?.Select(x => x.Clone()).OfType<Discount>().ToList();
             result.DynamicProperties = DynamicProperties?.Select(x => x.Clone()).OfType<DynamicObjectProperty>().ToList();

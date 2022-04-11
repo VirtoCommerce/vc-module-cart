@@ -8,6 +8,10 @@
     <noWarn>1591</noWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>
+  <PropertyGroup>
+      <!-- Project is not a test project -->
+      <SonarQubeTestProject>false</SonarQubeTestProject>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>

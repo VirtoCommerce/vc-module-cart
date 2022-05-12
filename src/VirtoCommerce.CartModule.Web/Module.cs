@@ -45,10 +45,7 @@ namespace VirtoCommerce.CartModule.Web
             serviceCollection.AddTransient<IShoppingCartBuilder, ShoppingCartBuilder>();
 
             serviceCollection.AddTransient<CartChangedEventHandler>();
-            var providerSnapshot = serviceCollection.BuildServiceProvider();
-            var inProcessBus = providerSnapshot.GetService<IHandlerRegistrar>();
-            inProcessBus.RegisterHandler<CartChangedEvent>(async (message, token) => await providerSnapshot.GetService<CartChangedEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<CartChangeEvent>(async (message, token) => await providerSnapshot.GetService<CartChangedEventHandler>().Handle(message));
+
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -83,6 +80,9 @@ namespace VirtoCommerce.CartModule.Web
                     .ToJob<DeleteObsoleteCartsJob>(x => x.Process())
                     .Build());
 
+            var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
+            inProcessBus.RegisterHandler<CartChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<CartChangedEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<CartChangeEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<CartChangedEventHandler>().Handle(message));
 
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {

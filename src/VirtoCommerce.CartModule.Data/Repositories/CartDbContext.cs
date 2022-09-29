@@ -29,6 +29,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region LineItem
             modelBuilder.Entity<LineItemEntity>().ToTable("CartLineItem").HasKey(x => x.Id);
             modelBuilder.Entity<LineItemEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
+            modelBuilder.Entity<LineItemEntity>().Property(x => x.VolumetricWeight).HasPrecision(18, 4);
+            modelBuilder.Entity<LineItemEntity>().Property(x => x.Weight).HasPrecision(18, 4);
+            modelBuilder.Entity<LineItemEntity>().Property(x => x.Height).HasPrecision(18, 4);
+            modelBuilder.Entity<LineItemEntity>().Property(x => x.Length).HasPrecision(18, 4);
+            modelBuilder.Entity<LineItemEntity>().Property(x => x.Width).HasPrecision(18, 4);            
             modelBuilder.Entity<LineItemEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
             modelBuilder.Entity<LineItemEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Items)
                         .HasForeignKey(x => x.ShoppingCartId).IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -39,6 +44,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<ShipmentEntity>().ToTable("CartShipment").HasKey(x => x.Id);
             modelBuilder.Entity<ShipmentEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.VolumetricWeight).HasPrecision(18, 4);
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.WeightValue).HasPrecision(18, 4);            
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.DimensionHeight).HasPrecision(18, 4);
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.DimensionLength).HasPrecision(18, 4);
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.DimensionWidth).HasPrecision(18, 4);            
             modelBuilder.Entity<ShipmentEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
             modelBuilder.Entity<ShipmentEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Shipments)
                         .HasForeignKey(x => x.ShoppingCartId).IsRequired().OnDelete(DeleteBehavior.Cascade);

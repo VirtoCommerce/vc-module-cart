@@ -101,6 +101,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                         .HasForeignKey(x => x.LineItemId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<TaxDetailEntity>().HasOne(x => x.Payment).WithMany(x => x.TaxDetails)
                         .HasForeignKey(x => x.PaymentId).OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<TaxDetailEntity>().Property(x => x.Rate).HasPrecision(18, 2);
             #endregion
 
             #region Discount

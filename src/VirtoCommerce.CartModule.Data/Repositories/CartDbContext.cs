@@ -4,7 +4,7 @@ using VirtoCommerce.CartModule.Data.Model;
 
 namespace VirtoCommerce.CartModule.Data.Repositories
 {
-#pragma warning disable S109
+#pragma warning disable S109 
     public class CartDbContext : DbContextWithTriggers
     {
         public CartDbContext(DbContextOptions<CartDbContext> options)

@@ -26,9 +26,7 @@ The VirtoCommerce.Cart module is connected with the shopping cart API requests:
 1. General API request that allows saving the entire shopping cart information on the database;
 1. Specific API requests that allow call specific operations, for example delete, edit, choose payment method, choose delivery type, etc.
 
-For more details about the available cart-module API, please follow the link bellow:
-
-https://admin-demo.virtocommerce.com/docs/index.html?urls.primaryName=VirtoCommerce.Cart
+For more details about the available cart module API, please refer to our [demo](https://virtocommerce.com/request-demo).
 
 The VirtoCommerce.Cart module functionality can be extended and customized based on the specific business needs. In order to extend the cart module functionality, use "Virto Commerce 2.x Cart and Order Module extension" template that can be accessed by following the link below:
 

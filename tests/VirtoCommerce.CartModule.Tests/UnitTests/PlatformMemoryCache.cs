@@ -8,13 +8,13 @@ using VirtoCommerce.Platform.Caching;
 
 namespace VirtoCommerce.CartModule.Tests.UnitTests
 {
-    public class TestPlatformMemoryCache
+    public class PlatformMemoryCacheTestBase
     {
         private readonly Mock<ILogger<PlatformMemoryCache>> _logMock;
 
-        public IOptions<CachingOptions> CachingOptions => new OptionsWrapper<CachingOptions>(new CachingOptions { CacheEnabled = true });
+        public static IOptions<CachingOptions> CachingOptions => new OptionsWrapper<CachingOptions>(new CachingOptions { CacheEnabled = true });
 
-        public TestPlatformMemoryCache()
+        public PlatformMemoryCacheTestBase()
         {
             _logMock = new Mock<ILogger<PlatformMemoryCache>>();
         }

@@ -23,7 +23,7 @@ using Xunit;
 
 namespace VirtoCommerce.CartModule.Test.UnitTests
 {
-    public class ShoppingCartServiceImplUnitTests : TestPlatformMemoryCache
+    public class ShoppingCartServiceImplUnitTests : PlatformMemoryCacheTestBase
     {
         private readonly Mock<IShoppingCartTotalsCalculator> _calculatorMock;
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;

@@ -9,6 +9,7 @@ using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
@@ -16,44 +17,50 @@ namespace VirtoCommerce.CartModule.Data.Services
     {
         private const string WishlistCartType = "Wishlist";
 
-        private readonly Func<ICartRepository> _repositoryFunc;
+        private readonly Func<ICartRepository> _repositoryFactory;
         private readonly IPlatformMemoryCache _platformMemoryCache;
 
-        public WishlistService(Func<ICartRepository> repositoryFunc, IPlatformMemoryCache platformMemoryCache)
+        public WishlistService(Func<ICartRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache)
         {
-            _repositoryFunc = repositoryFunc;
+            _repositoryFactory = repositoryFactory;
             _platformMemoryCache = platformMemoryCache;
         }
 
-        public virtual Task<List<string>> FindProductsInWishlistsAsync(string customerId, string storeId, IList<string> productIds)
+        public virtual async Task<IList<string>> FindProductsInWishlistsAsync(string customerId, string storeId, IList<string> productIds)
         {
-            var cacheKey = CacheKey.With(GetType(), nameof(FindProductsInWishlistsAsync), BuildCacheKey(customerId, storeId, productIds));
-            return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
-            {
-                cacheEntry.AddExpirationToken(GenericSearchCachingRegion<ShoppingCart>.CreateChangeToken());
+            var cacheKeyPrefix = CacheKey.With(GetType(), nameof(FindProductsInWishlistsAsync), customerId, storeId);
 
-                using var repository = _repositoryFunc();
-                var productIdsInWishLists = await repository
-                    .ShoppingCarts
-                    .Where(cart => cart.CustomerId == customerId &&
-                                   cart.StoreId == storeId &&
-                                   cart.Type == WishlistCartType)
-                    .SelectMany(cart => cart.Items)
-                    .Where(lineItem => productIds.Contains(lineItem.ProductId))
-                    .Select(lineItem => lineItem.ProductId)
-                    .Distinct()
-                    .ToListAsync();
+            var models = await _platformMemoryCache.GetOrLoadByIdsAsync(cacheKeyPrefix, productIds,
+                missingIds => GetByIdsNoCache(customerId, storeId, missingIds),
+                ConfigureCache);
 
-                return productIdsInWishLists;
-            });
+            return models.Select(x => x.Id).ToList();
         }
 
-        public virtual string BuildCacheKey(string customerId, string storeId, IList<string> productIds)
+        protected virtual async Task<IEnumerable<InternalEntity>> GetByIdsNoCache(string customerId, string storeId, IList<string> productIds)
         {
-            var keysValues = new List<string>() { customerId, storeId };
-            keysValues.AddRange(productIds);
+            using var repository = _repositoryFactory();
 
-            return string.Join("|", keysValues);
+            return await repository
+                .ShoppingCarts
+                .Where(cart => cart.CustomerId == customerId &&
+                               cart.StoreId == storeId &&
+                               cart.Type == WishlistCartType)
+                .SelectMany(cart => cart.Items)
+                .Where(lineItem => productIds.Contains(lineItem.ProductId))
+                .Select(lineItem => lineItem.ProductId)
+                .Distinct()
+                .Select(x => new InternalEntity { Id = x })
+                .ToListAsync();
+        }
+
+        protected virtual void ConfigureCache(MemoryCacheEntryOptions cacheOptions, string id, InternalEntity model)
+        {
+            cacheOptions.AddExpirationToken(GenericSearchCachingRegion<ShoppingCart>.CreateChangeToken());
+        }
+
+        protected class InternalEntity : Entity
+        {
         }
     }
 }

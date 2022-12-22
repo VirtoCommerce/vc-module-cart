@@ -42,11 +42,12 @@ namespace VirtoCommerce.CartModule.Web
             serviceCollection.AddTransient<ICartRepository, CartRepository>();
             serviceCollection.AddTransient<Func<ICartRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICartRepository>());
             serviceCollection.AddTransient<ICrudService<ShoppingCart>, ShoppingCartService>();
-            serviceCollection.AddTransient(x => (IShoppingCartService)x.GetRequiredService<ICrudService<ShoppingCart>>());            
+            serviceCollection.AddTransient(x => (IShoppingCartService)x.GetRequiredService<ICrudService<ShoppingCart>>());
             serviceCollection.AddTransient<ISearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart>, ShoppingCartSearchService>();
             serviceCollection.AddTransient(x => (IShoppingCartSearchService)x.GetRequiredService<ISearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart>>());
             serviceCollection.AddTransient<IShoppingCartTotalsCalculator, DefaultShoppingCartTotalsCalculator>();
             serviceCollection.AddTransient<IShoppingCartBuilder, ShoppingCartBuilder>();
+            serviceCollection.AddTransient<IWishlistService, WishlistService>();
 
             serviceCollection.AddTransient<CartChangedEventHandler>();
 

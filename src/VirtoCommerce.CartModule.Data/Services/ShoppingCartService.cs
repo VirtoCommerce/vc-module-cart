@@ -57,7 +57,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         }
 
 
-        protected async override Task<IEnumerable<ShoppingCartEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
+        protected override async Task<IEnumerable<ShoppingCartEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
         {
             return await ((ICartRepository)repository).GetShoppingCartsByIdsAsync(ids.ToArray(), responseGroup);
         }

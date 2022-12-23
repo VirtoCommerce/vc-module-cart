@@ -415,8 +415,8 @@ namespace VirtoCommerce.CartModule.Data.Migrations
 
                     b.Property<string>("ProductId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProductType")
                         .HasMaxLength(64)
@@ -895,6 +895,7 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<decimal>("Rate")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ShipmentId")

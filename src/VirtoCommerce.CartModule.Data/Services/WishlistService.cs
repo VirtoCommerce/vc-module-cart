@@ -45,7 +45,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                 .ShoppingCarts
                 .Where(cart => cart.CustomerId == customerId &&
                                cart.StoreId == storeId &&
-                               cart.Type == WishlistCartType)
+                               cart.Type == WishlistCartType &&
+                               cart.IsDeleted == false)
                 .SelectMany(cart => cart.Items)
                 .Where(lineItem => productIds.Contains(lineItem.ProductId))
                 .Select(lineItem => lineItem.ProductId)

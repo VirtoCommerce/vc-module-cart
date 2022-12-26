@@ -444,8 +444,8 @@ namespace VirtoCommerce.CartModule.Data.Migrations
 
                     b.Property<string>("Sku")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<bool>("TaxIncluded")
                         .HasColumnType("bit");

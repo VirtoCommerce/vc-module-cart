@@ -18,11 +18,11 @@ namespace VirtoCommerce.CartModule.Data.Model
         public string Currency { get; set; }
 
         [Required]
-        [StringLength(64)]
+        [StringLength(128)]
         public string ProductId { get; set; }
 
         [Required]
-        [StringLength(64)]
+        [StringLength(128)]
         public string Sku { get; set; }
 
         [Required]

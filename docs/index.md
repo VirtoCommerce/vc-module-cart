@@ -39,5 +39,3 @@ Installing the module:
 
 ## Available resources
 * Module related service implementations as a <a href="https://www.nuget.org/packages/VirtoCommerce.CartModule.Data" target="_blank">NuGet package</a>
-
-* API client documentation  https://admin-demo.virtocommerce.com/docs/index.html?urls.primaryName=VirtoCommerce.Cart

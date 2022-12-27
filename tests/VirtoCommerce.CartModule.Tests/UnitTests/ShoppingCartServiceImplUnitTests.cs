@@ -13,6 +13,7 @@ using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Data.Validation;
+using VirtoCommerce.CartModule.Tests.UnitTests;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
@@ -22,7 +23,7 @@ using Xunit;
 
 namespace VirtoCommerce.CartModule.Test.UnitTests
 {
-    public class ShoppingCartServiceImplUnitTests
+    public class ShoppingCartServiceImplUnitTests : PlatformMemoryCacheTestBase
     {
         private readonly Mock<IShoppingCartTotalsCalculator> _calculatorMock;
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
@@ -53,11 +54,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             var list = new List<ShoppingCartEntity> { new ShoppingCartEntity { Id = cartId } };
             _cartRepositoryMock.Setup(x => x.GetShoppingCartsByIdsAsync(cartIds, null))
                 .ReturnsAsync(list.ToArray());
-            var platformMemoryCacheMock = new Mock<IPlatformMemoryCache>();
-            platformMemoryCacheMock.Setup(x => x.GetDefaultCacheEntryOptions()).Returns(() => new MemoryCacheEntryOptions());
-            var service = GetShoppingCartService(platformMemoryCacheMock.Object);
-            var cacheKey = CacheKey.With(service.GetType(), nameof(service.GetAsync), string.Join("-", cartIds), null);
-            platformMemoryCacheMock.Setup(pmc => pmc.CreateEntry(cacheKey)).Returns(_cacheEntryMock.Object);
+            var service = GetShoppingCartService(GetPlatformMemoryCache());
 
             //Act
             var result = await service.GetByIdsAsync(new[] { cartId });

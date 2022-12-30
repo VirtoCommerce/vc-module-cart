@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Tax;
@@ -46,6 +45,7 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public virtual decimal FeeWithTax { get; set; }
 
+        public string VendorId { get; set; }
 
         #region ITaxable Members
 

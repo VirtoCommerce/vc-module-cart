@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.GenericCrud;
@@ -113,6 +115,13 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
 
             return sortInfos;
+        }
+
+        protected override IChangeToken CreateCacheToken(ShoppingCartSearchCriteria criteria)
+        {
+            var key = criteria.CustomerId ?? string.Empty;
+
+            return GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(key);
         }
     }
 }

@@ -16,8 +16,11 @@ namespace VirtoCommerce.CartModule.Data.Services
 {
     public class ShoppingCartSearchService : SearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart, ShoppingCartEntity>, IShoppingCartSearchService
     {
-        public ShoppingCartSearchService(Func<ICartRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IShoppingCartService cartService) :
-            base(repositoryFactory, platformMemoryCache, (ICrudService<ShoppingCart>)cartService)
+        public ShoppingCartSearchService(
+            Func<ICartRepository> repositoryFactory,
+            IPlatformMemoryCache platformMemoryCache,
+            IShoppingCartService cartService)
+            : base(repositoryFactory, platformMemoryCache, (ICrudService<ShoppingCart>)cartService)
         {
         }
 
@@ -28,7 +31,6 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected override IQueryable<ShoppingCartEntity> BuildQuery(IRepository repository, ShoppingCartSearchCriteria criteria)
         {
-
             var query = ((ICartRepository)repository).ShoppingCarts.Where(x => !x.IsDeleted);
 
             if (!string.IsNullOrEmpty(criteria.Status))
@@ -97,6 +99,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         protected override IList<SortInfo> BuildSortExpression(ShoppingCartSearchCriteria criteria)
         {
             var sortInfos = criteria.SortInfos;
+
             if (sortInfos.IsNullOrEmpty())
             {
                 sortInfos = new[]

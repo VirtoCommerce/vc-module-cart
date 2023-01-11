@@ -80,6 +80,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string TaxType { get; set; }
 
+        [StringLength(64)]
+        public string VendorId { get; set; }
+
         #region NavigationProperties
 
         public string ShoppingCartId { get; set; }
@@ -127,6 +130,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             shipment.Weight = DimensionWidth;
             shipment.TaxType = TaxType;
             shipment.ShipmentMethodOption = ShipmentMethodOption;
+            shipment.VendorId = VendorId;
             //TODO
             //shipment.TaxIncluded = TaxIncluded;
             //shipment.MeasureUnit =
@@ -198,6 +202,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             DimensionWidth = shipment.Width;
             TaxType = shipment.TaxType;
             ShipmentMethodOption = shipment.ShipmentMethodOption;
+            VendorId = shipment.VendorId;
             //TODO
             //TaxIncluded = shipment.TaxIncluded;
             //MeasureUnit =
@@ -265,6 +270,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.DimensionWidth = DimensionWidth;
             target.TaxType = TaxType;
             target.ShipmentMethodOption = ShipmentMethodOption;
+            target.VendorId = VendorId;
 
             if (!Addresses.IsNullCollection())
             {

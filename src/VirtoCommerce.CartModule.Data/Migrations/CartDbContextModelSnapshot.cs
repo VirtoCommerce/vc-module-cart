@@ -560,6 +560,10 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                     b.Property<decimal>("TotalWithTax")
                         .HasColumnType("Money");
 
+                    b.Property<string>("VendorId")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ShoppingCartId");
@@ -665,6 +669,10 @@ namespace VirtoCommerce.CartModule.Data.Migrations
 
                     b.Property<decimal>("TotalWithTax")
                         .HasColumnType("Money");
+
+                    b.Property<string>("VendorId")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<decimal?>("VolumetricWeight")
                         .HasPrecision(18, 4)

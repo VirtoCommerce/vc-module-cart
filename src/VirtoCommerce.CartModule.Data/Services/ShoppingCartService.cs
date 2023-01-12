@@ -9,6 +9,7 @@ using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Validation;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
@@ -20,9 +21,12 @@ namespace VirtoCommerce.CartModule.Data.Services
     {
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
 
-        public ShoppingCartService(Func<ICartRepository> repositoryFactory,
-                                      IShoppingCartTotalsCalculator totalsCalculator, IEventPublisher eventPublisher,
-                                      IPlatformMemoryCache platformMemoryCache) : base(repositoryFactory, platformMemoryCache, eventPublisher)
+        public ShoppingCartService(
+            Func<ICartRepository> repositoryFactory,
+            IShoppingCartTotalsCalculator totalsCalculator,
+            IEventPublisher eventPublisher,
+            IPlatformMemoryCache platformMemoryCache)
+            : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
             _totalsCalculator = totalsCalculator;
         }
@@ -56,10 +60,25 @@ namespace VirtoCommerce.CartModule.Data.Services
             return ((ICartRepository)repository).SoftRemoveCartsAsync(ids.ToArray());
         }
 
-
         protected override async Task<IEnumerable<ShoppingCartEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
         {
             return await ((ICartRepository)repository).GetShoppingCartsByIdsAsync(ids.ToArray(), responseGroup);
+        }
+
+        // Saving a cart for one user (CustomerId) should not clear cache for other users
+        protected override void ClearSearchCache(IEnumerable<ShoppingCart> models)
+        {
+            GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(string.Empty);
+
+            var customerIds = models
+                .Select(x => x.CustomerId)
+                .Where(x => x != null)
+                .Distinct();
+
+            foreach (var customerId in customerIds)
+            {
+                GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(customerId);
+            }
         }
 
         #region IShoppingCartService compatibility

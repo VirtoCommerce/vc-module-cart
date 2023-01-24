@@ -114,6 +114,7 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public virtual decimal FeeWithTax { get; set; }
 
+        public string VendorId { get; set; }
 
         #region IHasDiscounts
         public ICollection<Discount> Discounts { get; set; }

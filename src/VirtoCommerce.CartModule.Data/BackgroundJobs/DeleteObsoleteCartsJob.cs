@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.Extensions.Logging;
 using VirtoCommerce.CartModule.Core;
+using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -30,17 +32,19 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
         {
             _log.LogTrace($"Start processing DeleteObsoleteCartsJob job");
 
+            var ttl = (int)_settingsManager.GetValue(ModuleConstants.Settings.General.TimeToLive.Name, ModuleConstants.Settings.General.TimeToLive.DefaultValue);
             var takeCount = (int)_settingsManager.GetValue(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.Name, ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.DefaultValue);
-
 
             using (var repository = _repositoryFactory())
             {
-                var totalSoftDeleted = repository.ShoppingCarts.Count(x => x.IsDeleted);
+                Expression<Func<ShoppingCartEntity, bool>> predicate = x =>
+                    x.IsDeleted && (ttl == 0 || x.ModifiedDate < DateTime.UtcNow.AddDays(-ttl));
+                var totalSoftDeleted = repository.ShoppingCarts.Count(predicate);
                 _log.LogTrace($"Total soft deleted {totalSoftDeleted}");
 
                 for (var i = 0; i < totalSoftDeleted; i += takeCount)
                 {
-                    var cartIds = repository.ShoppingCarts.Where(x => x.IsDeleted).Select(x => x.Id).Take(takeCount).ToArray();
+                    var cartIds = repository.ShoppingCarts.Where(predicate).Select(x => x.Id).Take(takeCount).ToArray();
                     _log.LogTrace($"Do remove portion starting from {i} to {i + takeCount}");
                     await repository.RemoveCartsAsync(cartIds);
                     await repository.UnitOfWork.CommitAsync();

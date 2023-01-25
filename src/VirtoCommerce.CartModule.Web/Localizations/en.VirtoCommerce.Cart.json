@@ -49,6 +49,10 @@
       "CronDeleteObsoleteCarts": {
         "title": "Cron expression for cart hard delete job",
         "description": "When carts removal job should start"
+      },
+      "TimeToLive": {
+        "title": "Time to live for carts in days",
+        "description": "Job deletes carts that were modified more than this number of days ago"
       }
     }
   },

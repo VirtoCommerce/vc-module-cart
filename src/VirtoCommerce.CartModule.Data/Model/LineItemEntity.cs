@@ -133,6 +133,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         public string ShoppingCartId { get; set; }
         public virtual ShoppingCartEntity ShoppingCart { get; set; }
 
+        [StringLength(128)]
+        public string VendorId { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<TaxDetailEntity> TaxDetails { get; set; }
@@ -200,6 +203,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             lineItem.Sku = Sku;
             lineItem.FulfillmentCenterId = FulfillmentCenterId;
             lineItem.FulfillmentCenterName = FulfillmentCenterName;
+            lineItem.VendorId = VendorId;
 
             if (!Discounts.IsNullOrEmpty())
             {
@@ -278,6 +282,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             ModelLineItem = lineItem;
             FulfillmentCenterId = lineItem.FulfillmentCenterId;
             FulfillmentCenterName = lineItem.FulfillmentCenterName;
+            VendorId = lineItem.VendorId;
 
             if (lineItem.Discounts != null)
             {
@@ -340,6 +345,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.FulfillmentCenterId = FulfillmentCenterId;
             target.FulfillmentCenterName = FulfillmentCenterName;
             target.Sku = Sku;
+            target.VendorId = VendorId;
+
             if (!Discounts.IsNullCollection())
             {
                 var discountComparer = AbstractTypeFactory<DiscountEntityComparer>.TryCreateInstance();

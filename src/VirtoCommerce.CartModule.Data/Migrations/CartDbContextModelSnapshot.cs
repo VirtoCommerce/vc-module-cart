@@ -464,6 +464,10 @@ namespace VirtoCommerce.CartModule.Data.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<string>("VendorId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.Property<decimal?>("VolumetricWeight")
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");

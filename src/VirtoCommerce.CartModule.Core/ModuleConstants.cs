@@ -49,9 +49,9 @@ namespace VirtoCommerce.CartModule.Core
                     DefaultValue = "0 2 */1 * *"
                 };
 
-                public static readonly SettingDescriptor TimeToLive = new SettingDescriptor
+                public static readonly SettingDescriptor CartHardDeleteDays = new SettingDescriptor
                 {
-                    Name = "Cart.TimeToLive",
+                    Name = "Cart.CartHardDeleteDays",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.PositiveInteger,
                     DefaultValue = 0
@@ -64,7 +64,7 @@ namespace VirtoCommerce.CartModule.Core
                         yield return EnableDeleteObsoleteCarts;
                         yield return PortionDeleteObsoleteCarts;
                         yield return CronDeleteObsoleteCarts;
-                        yield return TimeToLive;
+                        yield return CartHardDeleteDays;
                     }
                 }
             }

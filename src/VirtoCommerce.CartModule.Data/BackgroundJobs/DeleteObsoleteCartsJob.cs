@@ -1,11 +1,9 @@
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.Extensions.Logging;
 using VirtoCommerce.CartModule.Core;
-using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -32,23 +30,32 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
         {
             _log.LogTrace($"Start processing DeleteObsoleteCartsJob job");
 
-            var ttl = (int)_settingsManager.GetValue(ModuleConstants.Settings.General.TimeToLive.Name, ModuleConstants.Settings.General.TimeToLive.DefaultValue);
-            var takeCount = (int)_settingsManager.GetValue(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.Name, ModuleConstants.Settings.General.PortionDeleteObsoleteCarts.DefaultValue);
+            var ttl = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.CartHardDeleteDays);
+            var takeCount = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts);
 
             using (var repository = _repositoryFactory())
             {
-                Expression<Func<ShoppingCartEntity, bool>> predicate = x =>
-                    x.IsDeleted && (ttl == 0 || x.ModifiedDate < DateTime.UtcNow.AddDays(-ttl));
-                var totalSoftDeleted = repository.ShoppingCarts.Count(predicate);
+                var totalSoftDeleted = 0;
                 _log.LogTrace($"Total soft deleted {totalSoftDeleted}");
 
-                for (var i = 0; i < totalSoftDeleted; i += takeCount)
+                while (true)
                 {
-                    var cartIds = repository.ShoppingCarts.Where(predicate).Select(x => x.Id).Take(takeCount).ToArray();
-                    _log.LogTrace($"Do remove portion starting from {i} to {i + takeCount}");
-                    await repository.RemoveCartsAsync(cartIds);
-                    await repository.UnitOfWork.CommitAsync();
-                    _log.LogTrace($"Complete remove portion");
+                    var cartIds = repository.ShoppingCarts.Where(x =>
+                            x.IsDeleted && (ttl == 0 || x.ModifiedDate < DateTime.UtcNow.AddDays(-ttl)))
+                        .Select(x => x.Id)
+                        .Take(takeCount).ToArray();
+                    if (cartIds.Any())
+                    {
+                        _log.LogTrace($"Do remove portion starting from {totalSoftDeleted} to {totalSoftDeleted + cartIds.Length}");
+                        await repository.RemoveCartsAsync(cartIds);
+                        await repository.UnitOfWork.CommitAsync();
+                        _log.LogTrace($"Complete remove portion");
+                        totalSoftDeleted += cartIds.Length;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
             _log.LogTrace($"Complete processing DeleteObsoleteCartsJob job");

@@ -51,8 +51,8 @@
         "description": "When carts removal job should start"
       },
       "TimeToLive": {
-        "title": "Time to live for carts in days",
-        "description": "Job deletes carts that were modified more than this number of days ago"
+        "title": "Time to live for soft deleted carts in days",
+        "description": "Job deletes carts that were marked to remove more than this number of days ago"
       }
     }
   },

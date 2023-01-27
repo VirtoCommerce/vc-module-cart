@@ -28,37 +28,45 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
         [DisableConcurrentExecution(10)]
         public async Task Process()
         {
-            _log.LogTrace($"Start processing DeleteObsoleteCartsJob job");
+            _log.LogTrace("Start processing DeleteObsoleteCartsJob job");
 
-            var ttl = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.CartHardDeleteDays);
+            var delayDays = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.HardDeleteDelayDays);
             var takeCount = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts);
 
-            using (var repository = _repositoryFactory())
-            {
-                var totalSoftDeleted = 0;
-                _log.LogTrace($"Total soft deleted {totalSoftDeleted}");
+            var totalDeleted = 0;
+            using var repository = _repositoryFactory();
 
-                while (true)
-                {
-                    var cartIds = repository.ShoppingCarts.Where(x =>
-                            x.IsDeleted && (ttl == 0 || x.ModifiedDate < DateTime.UtcNow.AddDays(-ttl)))
-                        .Select(x => x.Id)
-                        .Take(takeCount).ToArray();
-                    if (cartIds.Any())
-                    {
-                        _log.LogTrace($"Do remove portion starting from {totalSoftDeleted} to {totalSoftDeleted + cartIds.Length}");
-                        await repository.RemoveCartsAsync(cartIds);
-                        await repository.UnitOfWork.CommitAsync();
-                        _log.LogTrace($"Complete remove portion");
-                        totalSoftDeleted += cartIds.Length;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
+            var query = repository.ShoppingCarts.Where(x => x.IsDeleted);
+            if (delayDays > 0)
+            {
+                var thresholdDate = DateTime.UtcNow.AddDays(-delayDays);
+                query = query.Where(x => x.ModifiedDate < thresholdDate);
             }
-            _log.LogTrace($"Complete processing DeleteObsoleteCartsJob job");
+
+            var totalSoftDeleted = query.Count();
+            _log.LogTrace($"Total soft deleted: {totalSoftDeleted}");
+
+            while (true)
+            {
+                var cartIds = query
+                    .Select(x => x.Id)
+                    .Take(takeCount)
+                    .ToArray();
+
+                if (!cartIds.Any())
+                {
+                    break;
+                }
+
+                _log.LogTrace($"Do remove portion starting from {totalDeleted} to {totalDeleted + cartIds.Length}");
+                await repository.RemoveCartsAsync(cartIds);
+                await repository.UnitOfWork.CommitAsync();
+                _log.LogTrace("Complete remove portion");
+
+                totalDeleted += cartIds.Length;
+            }
+
+            _log.LogTrace("Complete processing DeleteObsoleteCartsJob job");
         }
     }
 }

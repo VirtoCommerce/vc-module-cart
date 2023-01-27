@@ -33,7 +33,6 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
             var delayDays = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.HardDeleteDelayDays);
             var takeCount = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts);
 
-            var totalDeleted = 0;
             using var repository = _repositoryFactory();
 
             var query = repository.ShoppingCarts.Where(x => x.IsDeleted);
@@ -43,8 +42,10 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
                 query = query.Where(x => x.ModifiedDate < thresholdDate);
             }
 
-            var totalSoftDeleted = query.Count();
-            _log.LogTrace($"Total soft deleted: {totalSoftDeleted}");
+            var totalCount = query.Count();
+            _log.LogTrace($"Total soft deleted: {totalCount}");
+
+            var deleted = 0;
 
             while (true)
             {
@@ -58,12 +59,12 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
                     break;
                 }
 
-                _log.LogTrace($"Do remove portion starting from {totalDeleted} to {totalDeleted + cartIds.Length}");
+                _log.LogTrace($"Do remove portion starting from {deleted} to {deleted + cartIds.Length}");
                 await repository.RemoveCartsAsync(cartIds);
                 await repository.UnitOfWork.CommitAsync();
                 _log.LogTrace("Complete remove portion");
 
-                totalDeleted += cartIds.Length;
+                deleted += cartIds.Length;
             }
 
             _log.LogTrace("Complete processing DeleteObsoleteCartsJob job");

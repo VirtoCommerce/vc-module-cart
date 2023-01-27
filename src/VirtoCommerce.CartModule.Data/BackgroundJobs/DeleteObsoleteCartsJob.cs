@@ -39,7 +39,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
             if (delayDays > 0)
             {
                 var thresholdDate = DateTime.UtcNow.AddDays(-delayDays);
-                query = query.Where(x => x.ModifiedDate < thresholdDate);
+                _log.LogTrace("Total soft deleted {0}", totalSoftDeleted);
             }
 
             var totalCount = query.Count();
@@ -54,7 +54,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
                     .Take(takeCount)
                     .ToArray();
 
-                if (!cartIds.Any())
+                        _log.LogTrace("Do remove portion starting from {0} to {1}", totalSoftDeleted, totalSoftDeleted + cartIds.Length);
                 {
                     break;
                 }

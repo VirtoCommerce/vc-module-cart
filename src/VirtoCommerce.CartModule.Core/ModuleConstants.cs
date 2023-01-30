@@ -49,6 +49,14 @@ namespace VirtoCommerce.CartModule.Core
                     DefaultValue = "0 2 */1 * *"
                 };
 
+                public static readonly SettingDescriptor HardDeleteDelayDays = new SettingDescriptor
+                {
+                    Name = "Cart.HardDeleteDelayDays",
+                    GroupName = "Cart|General",
+                    ValueType = SettingValueType.PositiveInteger,
+                    DefaultValue = 0,
+                };
+
                 public static IEnumerable<SettingDescriptor> AllSettings
                 {
                     get
@@ -56,6 +64,7 @@ namespace VirtoCommerce.CartModule.Core
                         yield return EnableDeleteObsoleteCarts;
                         yield return PortionDeleteObsoleteCarts;
                         yield return CronDeleteObsoleteCarts;
+                        yield return HardDeleteDelayDays;
                     }
                 }
             }

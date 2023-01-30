@@ -43,7 +43,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
             }
 
             var totalCount = query.Count();
-            _log.LogTrace("Total soft deleted: {0}", totalCount);
+            _log.LogTrace($"Total soft deleted: {totalCount}");
 
             var deleted = 0;
 
@@ -59,7 +59,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
                     break;
                 }
 
-                _log.LogTrace("Do remove portion starting from {0} to {1}", deleted, deleted + cartIds.Length);
+                _log.LogTrace($"Do remove portion starting from {deleted} to {deleted + cartIds.Length}");
                 await repository.RemoveCartsAsync(cartIds);
                 await repository.UnitOfWork.CommitAsync();
                 _log.LogTrace("Complete remove portion");

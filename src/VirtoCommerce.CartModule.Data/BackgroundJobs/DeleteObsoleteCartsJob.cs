@@ -52,11 +52,6 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
                     .Take(takeCount)
                     .ToArray();
 
-                if (!cartIds.Any())
-                {
-                    break;
-                }
-
                 _log.LogTrace("Do remove portion starting from {Start} to {End}", i, i + cartIds.Length);
                 await repository.RemoveCartsAsync(cartIds);
                 await repository.UnitOfWork.CommitAsync();

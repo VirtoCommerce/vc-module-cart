@@ -32,13 +32,67 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual async Task<ShoppingCartEntity[]> GetShoppingCartsByIdsAsync(string[] ids, string responseGroup = null)
         {
+            return await GetShoppingCartsByIdsInternalAsync(ids, responseGroup, false);
+        }
+
+        public virtual async Task RemoveCartsAsync(string[] ids)
+        {
+            var carts = await GetShoppingCartsByIdsInternalAsync(ids, null, true);
+            if (!carts.IsNullOrEmpty())
+            {
+                foreach (var cart in carts)
+                {
+                    // This extension is allow to get around breaking changes is introduced in EF Core 3.0 that leads to throw
+                    // Database operation expected to affect 1 row(s) but actually affected 0 row(s) exception when trying to add the new children entities with manually set keys
+                    // https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#detectchanges-honors-store-generated-key-values
+                    this.TrackModifiedAsAddedForNewChildEntities(cart);
+                    Remove(cart);
+                }
+            }
+        }
+
+        public virtual async Task SoftRemoveCartsAsync(string[] ids)
+        {
+            if (!ids.IsNullOrEmpty())
+            {
+                const string commandTemplate = @"
+                    UPDATE Cart SET IsDeleted = 1 WHERE Id IN ({0})
+                ";
+
+                var cartsRemoveCmd = CreateCommand(commandTemplate, ids);
+                await DbContext.ExecuteArrayAsync<string>(cartsRemoveCmd.Text, cartsRemoveCmd.Parameters.ToArray());
+            }
+        }
+
+        protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
+        {
+            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v)).ToArray();
+            var parameterNames = string.Join(",", parameters.Select(p => p.ParameterName));
+
+            return new Command
+            {
+                Text = string.Format(commandTemplate, parameterNames),
+                Parameters = parameters.OfType<object>().ToList(),
+            };
+        }
+
+        protected class Command
+        {
+            public string Text { get; set; }
+            public IList<object> Parameters { get; set; } = new List<object>();
+        }
+
+        #endregion
+
+        private async Task<ShoppingCartEntity[]> GetShoppingCartsByIdsInternalAsync(string[] ids, string responseGroup, bool isDeleted)
+        {
             // Array.Empty does not create empty array each time, all creations returns the same static object:
             // https://stackoverflow.com/a/33515349/5907312
             var result = Array.Empty<ShoppingCartEntity>();
 
             if (!ids.IsNullOrEmpty())
             {
-                result = ShoppingCarts.Where(x => ids.Contains(x.Id) && !x.IsDeleted).ToArray();
+                result = ShoppingCarts.Where(x => ids.Contains(x.Id) && x.IsDeleted == isDeleted).ToArray();
 
                 if (result.Any())
                 {
@@ -113,53 +167,5 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             return result;
         }
 
-        public virtual async Task RemoveCartsAsync(string[] ids)
-        {
-            var carts = await GetShoppingCartsByIdsAsync(ids);
-            if (!carts.IsNullOrEmpty())
-            {
-                foreach (var cart in carts)
-                {
-                    // This extension is allow to get around breaking changes is introduced in EF Core 3.0 that leads to throw
-                    // Database operation expected to affect 1 row(s) but actually affected 0 row(s) exception when trying to add the new children entities with manually set keys
-                    // https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#detectchanges-honors-store-generated-key-values
-                    this.TrackModifiedAsAddedForNewChildEntities(cart);
-                    Remove(cart);
-                }
-            }
-        }
-
-        public virtual async Task SoftRemoveCartsAsync(string[] ids)
-        {
-            if (!ids.IsNullOrEmpty())
-            {
-                const string commandTemplate = @"
-                    UPDATE Cart SET IsDeleted = 1 WHERE Id IN ({0})
-                ";
-
-                var cartsRemoveCmd = CreateCommand(commandTemplate, ids);
-                await DbContext.ExecuteArrayAsync<string>(cartsRemoveCmd.Text, cartsRemoveCmd.Parameters.ToArray());
-            }
-        }
-
-        protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
-        {
-            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v)).ToArray();
-            var parameterNames = string.Join(",", parameters.Select(p => p.ParameterName));
-
-            return new Command
-            {
-                Text = string.Format(commandTemplate, parameterNames),
-                Parameters = parameters.OfType<object>().ToList(),
-            };
-        }
-
-        protected class Command
-        {
-            public string Text { get; set; }
-            public IList<object> Parameters { get; set; } = new List<object>();
-        }
-
-        #endregion
     }
 }

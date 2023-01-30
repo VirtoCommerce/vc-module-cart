@@ -39,11 +39,11 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
             if (delayDays > 0)
             {
                 var thresholdDate = DateTime.UtcNow.AddDays(-delayDays);
-                _log.LogTrace("Total soft deleted {0}", totalSoftDeleted);
+                query = query.Where(x => x.ModifiedDate < thresholdDate);
             }
 
             var totalCount = query.Count();
-            _log.LogTrace($"Total soft deleted: {totalCount}");
+            _log.LogTrace("Total soft deleted: {0}", totalCount);
 
             var deleted = 0;
 
@@ -54,12 +54,12 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
                     .Take(takeCount)
                     .ToArray();
 
-                        _log.LogTrace("Do remove portion starting from {0} to {1}", totalSoftDeleted, totalSoftDeleted + cartIds.Length);
+                if (!cartIds.Any())
                 {
                     break;
                 }
 
-                _log.LogTrace($"Do remove portion starting from {deleted} to {deleted + cartIds.Length}");
+                _log.LogTrace("Do remove portion starting from {0} to {1}", deleted, deleted + cartIds.Length);
                 await repository.RemoveCartsAsync(cartIds);
                 await repository.UnitOfWork.CommitAsync();
                 _log.LogTrace("Complete remove portion");
@@ -71,3 +71,4 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
         }
     }
 }
+

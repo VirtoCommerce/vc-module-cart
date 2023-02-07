@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Cart</id>
   <version>3.201.1</version>
   <version-tag />
-  <platformVersion>3.200.0</platformVersion>
+  <platformVersion>3.216.0</platformVersion>
   <title>Shopping cart module</title>
   <description>Shopping cart / checkout functionality</description>
   <authors>
@@ -16,7 +16,7 @@
   <iconUrl>Modules/$(VirtoCommerce.Cart)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2011-2021 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011-2023 Virto Commerce. All rights reserved</copyright>
   <tags>shopping cart</tags>
   <assemblyFile>VirtoCommerce.CartModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.CartModule.Web.Module, VirtoCommerce.CartModule.Web</moduleType>

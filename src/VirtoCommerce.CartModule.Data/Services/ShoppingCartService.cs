@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
@@ -21,6 +22,8 @@ namespace VirtoCommerce.CartModule.Data.Services
     {
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
 
+        private const int _commitRetriesCount = 10;
+
         public ShoppingCartService(
             Func<ICartRepository> repositoryFactory,
             IShoppingCartTotalsCalculator totalsCalculator,
@@ -29,6 +32,38 @@ namespace VirtoCommerce.CartModule.Data.Services
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
             _totalsCalculator = totalsCalculator;
+        }
+
+        protected async override Task CommitAsync(IRepository repository)
+        {
+            bool saveFailed;
+            var retry = 0;
+
+            do
+            {
+                saveFailed = false;
+
+                try
+                {
+                    await repository.UnitOfWork.CommitAsync();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    saveFailed = true;
+                    retry++;
+
+                    if (retry == _commitRetriesCount)
+                    {
+                        throw ex;
+                    }
+
+                    foreach (var entry in ex.Entries)
+                    {
+                        entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                    }
+                }
+
+            } while (saveFailed);
         }
 
         protected override ShoppingCart ProcessModel(string responseGroup, ShoppingCartEntity entity, ShoppingCart model)

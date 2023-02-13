@@ -27,7 +27,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.271.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.281.0-alpha.12571-pt-10442" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CartModule.Core\VirtoCommerce.CartModule.Core.csproj" />

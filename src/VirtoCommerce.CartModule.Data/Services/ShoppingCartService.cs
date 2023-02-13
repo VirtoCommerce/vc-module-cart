@@ -54,7 +54,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
                     if (retry == _commitRetriesCount)
                     {
-                        throw ex;
+                        throw;
                     }
 
                     foreach (var entry in ex.Entries)

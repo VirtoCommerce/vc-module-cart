@@ -34,7 +34,7 @@ https://marketplace.visualstudio.com/items?itemName=Virto-Commerce.VirtoCommerce
 
 ## Concurrency handling
 
-To enable handling of possible concurrency conflict `CartEntity` contains the concurrency token column named `RowVersion`. 
+To add the possibility of handling concurrency conflict `CartEntity` contains the concurrency token column named `RowVersion`. If the same data gets modified at the same time EF Core's `SaveChanges()` throws a `DbUpdateConcurrencyException`. In cases when you need to handle such situations you can overrdie the `CommitAsync` method and handle `DbUpdateConcurrencyException`. There's an example of `client-wins` scenario:
 
 ```cs
     protected async override Task CommitAsync(IRepository repository)

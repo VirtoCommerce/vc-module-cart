@@ -21,8 +21,6 @@ namespace VirtoCommerce.CartModule.Data.Services
     {
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
 
-        private const int _commitRetriesCount = 10;
-
         public ShoppingCartService(
             Func<ICartRepository> repositoryFactory,
             IShoppingCartTotalsCalculator totalsCalculator,

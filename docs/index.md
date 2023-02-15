@@ -32,6 +32,44 @@ The VirtoCommerce.Cart module functionality can be extended and customized based
 
 https://marketplace.visualstudio.com/items?itemName=Virto-Commerce.VirtoCommerceModuleTemplates
 
+## Concurrency handling
+
+To enable handling of possible concurrency conflict `CartEntity` contains the concurrency token column named `RowVersion`. 
+
+```cs
+    protected async override Task CommitAsync(IRepository repository)
+    {
+        bool saveFailed;
+        var retry = 0;
+
+        do
+        {
+            saveFailed = false;
+
+            try
+            {
+                await repository.UnitOfWork.CommitAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                saveFailed = true;
+                retry++;
+
+                if (retry == _commitRetriesCount)
+                {
+                    throw;
+                }
+
+                foreach (var entry in ex.Entries)
+                {
+                    entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                }
+            }
+
+        } while (saveFailed);
+    }
+```
+
 ## Installation
 Installing the module:
 * Automatically: in VC Manager go to More -> Modules -> Shopping cart module -> Install

@@ -127,6 +127,9 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         #endregion
 
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         public virtual ShoppingCart ToModel(ShoppingCart model)
         {
             if (model == null)

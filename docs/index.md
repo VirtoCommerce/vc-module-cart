@@ -32,6 +32,44 @@ The VirtoCommerce.Cart module functionality can be extended and customized based
 
 https://marketplace.visualstudio.com/items?itemName=Virto-Commerce.VirtoCommerceModuleTemplates
 
+## Concurrency handling
+
+To add the possibility of handling concurrency conflict `CartEntity` contains the concurrency token column named `RowVersion`. If the same data gets modified at the same time EF Core's `SaveChanges()` throws a `DbUpdateConcurrencyException`. In cases when you need to handle such situations you can overrdie the `CommitAsync` method and handle `DbUpdateConcurrencyException`. There's an example of `client-wins` scenario:
+
+```cs
+    protected async override Task CommitAsync(IRepository repository)
+    {
+        bool saveFailed;
+        var retry = 0;
+
+        do
+        {
+            saveFailed = false;
+
+            try
+            {
+                await repository.UnitOfWork.CommitAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                saveFailed = true;
+                retry++;
+
+                if (retry == _commitRetriesCount)
+                {
+                    throw;
+                }
+
+                foreach (var entry in ex.Entries)
+                {
+                    entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                }
+            }
+
+        } while (saveFailed);
+    }
+```
+
 ## Installation
 Installing the module:
 * Automatically: in VC Manager go to More -> Modules -> Shopping cart module -> Install

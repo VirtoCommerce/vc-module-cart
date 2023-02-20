@@ -11,7 +11,7 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.MySql.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    [Migration("20230217165923_Initial")]
+    [Migration("20230220072150_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -211,7 +211,7 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasDatabaseName("IX_ObjectType_LineItemId");
 
                     b.HasIndex("ObjectType", "ObjectId")
-                        .HasDatabaseName("IX_ObjectType_ObjectId");
+                        .HasDatabaseName("IX_CartDynamicPropertyObjectValue_ObjectType_ObjectId");
 
                     b.HasIndex("ObjectType", "PaymentId")
                         .HasDatabaseName("IX_ObjectType_PaymentId");

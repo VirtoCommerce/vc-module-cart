@@ -133,7 +133,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.ObjectId })
                 .IsUnique(false)
-                .HasDatabaseName("IX_ObjectType_ObjectId");
+                .HasDatabaseName("IX_CartDynamicPropertyObjectValue_ObjectType_ObjectId");
 
             //need to set DeleteBehavior.Cascade manually
             modelBuilder.Entity<CartDynamicPropertyObjectValueEntity>().HasOne(p => p.ShoppingCart)

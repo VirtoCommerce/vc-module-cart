@@ -481,6 +481,11 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                 column: "LineItemId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartDynamicPropertyObjectValue_ObjectType_ObjectId",
+                table: "CartDynamicPropertyObjectValue",
+                columns: new[] { "ObjectType", "ObjectId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CartDynamicPropertyObjectValue_PaymentId",
                 table: "CartDynamicPropertyObjectValue",
                 column: "PaymentId");
@@ -499,11 +504,6 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                 name: "IX_ObjectType_LineItemId",
                 table: "CartDynamicPropertyObjectValue",
                 columns: new[] { "ObjectType", "LineItemId" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ObjectType_ObjectId",
-                table: "CartDynamicPropertyObjectValue",
-                columns: new[] { "ObjectType", "ObjectId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ObjectType_PaymentId",

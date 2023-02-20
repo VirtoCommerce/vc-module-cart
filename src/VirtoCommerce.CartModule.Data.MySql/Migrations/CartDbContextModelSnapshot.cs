@@ -209,7 +209,7 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasDatabaseName("IX_ObjectType_LineItemId");
 
                     b.HasIndex("ObjectType", "ObjectId")
-                        .HasDatabaseName("IX_ObjectType_ObjectId");
+                        .HasDatabaseName("IX_CartDynamicPropertyObjectValue_ObjectType_ObjectId");
 
                     b.HasIndex("ObjectType", "PaymentId")
                         .HasDatabaseName("IX_ObjectType_PaymentId");

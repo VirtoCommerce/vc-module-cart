@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CartModule.Data.Repositories
@@ -51,36 +49,40 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             }
         }
 
-        public virtual async Task SoftRemoveCartsAsync(string[] ids)
+        public virtual Task SoftRemoveCartsAsync(string[] ids)
         {
-            if (!ids.IsNullOrEmpty())
-            {
-                const string commandTemplate = @"
-                    UPDATE Cart SET IsDeleted = 1 WHERE Id IN ({0})
-                ";
+            return ExecuteSqlCommandAsync("UPDATE \"Cart\" SET IsDeleted = 1 WHERE Id IN ({0})", ids);
+        }
 
-                var cartsRemoveCmd = CreateCommand(commandTemplate, ids);
-                await DbContext.ExecuteArrayAsync<string>(cartsRemoveCmd.Text, cartsRemoveCmd.Parameters.ToArray());
+        #region Commands
+        protected virtual Task ExecuteSqlCommandAsync(string commandTemplate, IEnumerable<string> parameterValues)
+        {
+            if (parameterValues?.Count() > 0)
+            {
+                var command = CreateCommand(commandTemplate, parameterValues);
+                return DbContext.Database.ExecuteSqlRawAsync(command.Text, command.Parameters);
             }
+            return Task.CompletedTask;
         }
 
         protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
         {
-            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v)).ToArray();
-            var parameterNames = string.Join(",", parameters.Select(p => p.ParameterName));
+            var parameters = parameterValues.Select((v, i) => $"{{{i}}}");
+            var parameterNames = string.Join(",", parameters);
 
             return new Command
             {
                 Text = string.Format(commandTemplate, parameterNames),
-                Parameters = parameters.OfType<object>().ToList(),
+                Parameters = parameters.OfType<object>(),
             };
         }
 
         protected class Command
         {
             public string Text { get; set; }
-            public IList<object> Parameters { get; set; } = new List<object>();
+            public IEnumerable<object> Parameters { get; set; }
         }
+        #endregion
 
         #endregion
 
@@ -93,7 +95,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 return result;
             }
 
-            result = ShoppingCarts.Where(x => ids.Contains(x.Id) && x.IsDeleted == isDeleted).ToArray();
+            result = await ShoppingCarts.Where(x => ids.Contains(x.Id) && x.IsDeleted == isDeleted).ToArrayAsync();
 
             if (!result.Any())
             {

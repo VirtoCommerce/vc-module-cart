@@ -1,3 +1,4 @@
+using System.Reflection;
 using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CartModule.Data.Model;
@@ -34,7 +35,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<LineItemEntity>().Property(x => x.Weight).HasPrecision(18, 4);
             modelBuilder.Entity<LineItemEntity>().Property(x => x.Height).HasPrecision(18, 4);
             modelBuilder.Entity<LineItemEntity>().Property(x => x.Length).HasPrecision(18, 4);
-            modelBuilder.Entity<LineItemEntity>().Property(x => x.Width).HasPrecision(18, 4);            
+            modelBuilder.Entity<LineItemEntity>().Property(x => x.Width).HasPrecision(18, 4);
             modelBuilder.Entity<LineItemEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
             modelBuilder.Entity<LineItemEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Items)
                         .HasForeignKey(x => x.ShoppingCartId).IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -46,10 +47,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<ShipmentEntity>().ToTable("CartShipment").HasKey(x => x.Id);
             modelBuilder.Entity<ShipmentEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<ShipmentEntity>().Property(x => x.VolumetricWeight).HasPrecision(18, 4);
-            modelBuilder.Entity<ShipmentEntity>().Property(x => x.WeightValue).HasPrecision(18, 4);            
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.WeightValue).HasPrecision(18, 4);
             modelBuilder.Entity<ShipmentEntity>().Property(x => x.DimensionHeight).HasPrecision(18, 4);
             modelBuilder.Entity<ShipmentEntity>().Property(x => x.DimensionLength).HasPrecision(18, 4);
-            modelBuilder.Entity<ShipmentEntity>().Property(x => x.DimensionWidth).HasPrecision(18, 4);            
+            modelBuilder.Entity<ShipmentEntity>().Property(x => x.DimensionWidth).HasPrecision(18, 4);
             modelBuilder.Entity<ShipmentEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
             modelBuilder.Entity<ShipmentEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.Shipments)
                         .HasForeignKey(x => x.ShoppingCartId).IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -173,6 +174,21 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #endregion
 
             base.OnModelCreating(modelBuilder);
+
+            // Allows configuration for an entity type for different database types.
+            // Applies configuration from all <see cref="IEntityTypeConfiguration{TEntity}" in VirtoCommerce.CartModule.Data.XXX project. /> 
+            switch (this.Database.ProviderName)
+            {
+                case "Pomelo.EntityFrameworkCore.MySql":
+                    modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("VirtoCommerce.CartModule.Data.MySql"));
+                    break;
+                case "Npgsql.EntityFrameworkCore.PostgreSQL":
+                    modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("VirtoCommerce.CartModule.Data.PostgreSql"));
+                    break;
+                case "Microsoft.EntityFrameworkCore.SqlServer":
+                    modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("VirtoCommerce.CartModule.Data.SqlServer"));
+                    break;
+            }
         }
     }
 #pragma warning restore S109

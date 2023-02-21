@@ -11,7 +11,7 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.MySql.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    [Migration("20230220072150_Initial")]
+    [Migration("20230221133806_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

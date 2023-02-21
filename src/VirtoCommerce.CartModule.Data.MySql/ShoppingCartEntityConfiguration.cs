@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VirtoCommerce.CartModule.Data.Model;
 
-namespace VirtoCommerce.CoreModule.Data.MySql
+namespace VirtoCommerce.CartModule.Data.MySql
 {
     public class ShoppingCartEntityConfiguration : IEntityTypeConfiguration<ShoppingCartEntity>
     {

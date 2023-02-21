@@ -51,7 +51,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual Task SoftRemoveCartsAsync(string[] ids)
         {
-            return ExecuteSqlCommandAsync("UPDATE \"Cart\" SET IsDeleted = 1 WHERE Id IN ({0})", ids);
+            return ExecuteSqlCommandAsync("UPDATE \"Cart\" SET \"IsDeleted\" = 'true' WHERE \"Id\" IN ({0})", ids);
         }
 
         #region Commands
@@ -73,7 +73,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             return new Command
             {
                 Text = string.Format(commandTemplate, parameterNames),
-                Parameters = parameters.OfType<object>(),
+                Parameters = parameterValues.OfType<object>(),
             };
         }
 

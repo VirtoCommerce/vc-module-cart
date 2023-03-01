@@ -34,14 +34,14 @@ namespace VirtoCommerce.CartModule.Data.Services
                 missingIds => GetByIdsNoCache(customerId, storeId, missingIds),
                 ConfigureCache);
 
-            return models.Select(x => x.Id).ToList();
+            return models.Where(x => x.InWishlist).Select(x => x.Id).ToList();
         }
 
         protected virtual async Task<IEnumerable<InternalEntity>> GetByIdsNoCache(string customerId, string storeId, IList<string> productIds)
         {
             using var repository = _repositoryFactory();
 
-            return await repository
+            var result = await repository
                 .ShoppingCarts
                 .Where(cart => cart.CustomerId == customerId &&
                                cart.StoreId == storeId &&
@@ -51,17 +51,24 @@ namespace VirtoCommerce.CartModule.Data.Services
                 .Where(lineItem => productIds.Contains(lineItem.ProductId))
                 .Select(lineItem => lineItem.ProductId)
                 .Distinct()
-                .Select(x => new InternalEntity { Id = x })
+                .Select(x => new InternalEntity { Id = x, CustomerId = customerId, InWishlist = true })
                 .ToListAsync();
+
+            result.AddRange(productIds.Except(result.Select(x => x.Id))
+                .Select(x => new InternalEntity { Id = x, CustomerId = customerId }));
+
+            return result;
         }
 
         protected virtual void ConfigureCache(MemoryCacheEntryOptions cacheOptions, string id, InternalEntity model)
         {
-            cacheOptions.AddExpirationToken(GenericSearchCachingRegion<ShoppingCart>.CreateChangeToken());
+            cacheOptions.AddExpirationToken(GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(model.CustomerId));
         }
 
         protected class InternalEntity : Entity
         {
+            public string CustomerId { get; set; }
+            public bool InWishlist { get; set; }
         }
     }
 }

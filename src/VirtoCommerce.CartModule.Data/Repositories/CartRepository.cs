@@ -51,7 +51,8 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual Task SoftRemoveCartsAsync(string[] ids)
         {
-            return ExecuteSqlCommandAsync("UPDATE \"Cart\" SET \"IsDeleted\" = 'true' WHERE \"Id\" IN ({0})", ids);
+            // Literal '1' is supported as true value both for SqlServer, PostgreSql and MySql 
+            return ExecuteSqlCommandAsync("UPDATE \"Cart\" SET \"IsDeleted\" = '1' WHERE \"Id\" IN ({0})", ids);
         }
 
         #region Commands

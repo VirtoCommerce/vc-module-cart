@@ -51,8 +51,9 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual Task SoftRemoveCartsAsync(string[] ids)
         {
-            // Literal '1' is supported as true value both for SqlServer, PostgreSql and MySql 
-            return ExecuteSqlCommandAsync("UPDATE \"Cart\" SET \"IsDeleted\" = '1' WHERE \"Id\" IN ({0})", ids);
+            // Literal '1' is supported as true value both for SqlServer, PostgreSql and MySql
+            // There's no need to use quotation marks Cart,IsDeleted and Id are not keywords and this syntax is correct for all supported providers
+            return ExecuteSqlCommandAsync("UPDATE Cart SET IsDeleted = '1' WHERE Id IN ({0})", ids);
         }
 
         #region Commands

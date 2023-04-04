@@ -37,9 +37,9 @@ namespace VirtoCommerce.CartModule.Web
 
         public void Initialize(IServiceCollection serviceCollection)
         {
+            var databaseProvider = Configuration.GetValue("DatabaseProvider", "SqlServer");
             serviceCollection.AddDbContext<CartDbContext>((provider, options) =>
             {
-                var databaseProvider = Configuration.GetValue("DatabaseProvider", "SqlServer");
                 var connectionString = Configuration.GetConnectionString(ModuleInfo.Id) ?? Configuration.GetConnectionString("VirtoCommerce");
 
                 switch (databaseProvider)
@@ -55,6 +55,20 @@ namespace VirtoCommerce.CartModule.Web
                         break;
                 }
             });
+
+            switch (databaseProvider)
+            {
+                case "MySql":
+                    serviceCollection.AddTransient<ICartRawDatabaseCommand, MySqlCartRawDatabaseCommand>();
+                    break;
+                case "PostgreSql":
+                    serviceCollection.AddTransient<ICartRawDatabaseCommand, PostgreSqlCartRawDatabaseCommand>();
+                    break;
+                default:
+                    serviceCollection.AddTransient<ICartRawDatabaseCommand, SqlServerCartRawDatabaseCommand>();
+                    break;
+            }
+
 
             serviceCollection.AddTransient<ICartRepository, CartRepository>();
             serviceCollection.AddTransient<Func<ICartRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICartRepository>());

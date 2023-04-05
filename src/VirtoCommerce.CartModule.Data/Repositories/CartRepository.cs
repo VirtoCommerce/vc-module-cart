@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +11,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 {
     public class CartRepository : DbContextRepositoryBase<CartDbContext>, ICartRepository
     {
-        public CartRepository(CartDbContext dbContext) : base(dbContext)
+        private readonly ICartRawDatabaseCommand _rawDatabaseCommand;
+
+        public CartRepository(CartDbContext dbContext, ICartRawDatabaseCommand rawDatabaseCommand) : base(dbContext)
         {
+            _rawDatabaseCommand = rawDatabaseCommand;
         }
 
         #region ICartRepository Members
@@ -51,40 +53,8 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
         public virtual Task SoftRemoveCartsAsync(string[] ids)
         {
-            // Literal '1' is supported as true value both for SqlServer, PostgreSql and MySql
-            // There's no need to use quotation marks Cart,IsDeleted and Id are not keywords and this syntax is correct for all supported providers
-            return ExecuteSqlCommandAsync("UPDATE Cart SET IsDeleted = '1' WHERE Id IN ({0})", ids);
+            return _rawDatabaseCommand.SoftRemove(DbContext, ids);
         }
-
-        #region Commands
-        protected virtual Task ExecuteSqlCommandAsync(string commandTemplate, IEnumerable<string> parameterValues)
-        {
-            if (parameterValues?.Count() > 0)
-            {
-                var command = CreateCommand(commandTemplate, parameterValues);
-                return DbContext.Database.ExecuteSqlRawAsync(command.Text, command.Parameters);
-            }
-            return Task.CompletedTask;
-        }
-
-        protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
-        {
-            var parameters = parameterValues.Select((v, i) => $"{{{i}}}");
-            var parameterNames = string.Join(",", parameters);
-
-            return new Command
-            {
-                Text = string.Format(commandTemplate, parameterNames),
-                Parameters = parameterValues.OfType<object>(),
-            };
-        }
-
-        protected class Command
-        {
-            public string Text { get; set; }
-            public IEnumerable<object> Parameters { get; set; }
-        }
-        #endregion
 
         #endregion
 

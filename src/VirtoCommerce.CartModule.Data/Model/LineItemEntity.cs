@@ -36,7 +36,7 @@ namespace VirtoCommerce.CartModule.Data.Model
         public string ProductType { get; set; }
 
         [Required]
-        [StringLength(256)]
+        [StringLength(1024)]
         public string Name { get; set; }
 
         public int Quantity { get; set; }

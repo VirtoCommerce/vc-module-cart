@@ -40,12 +40,14 @@ namespace VirtoCommerce.CartModule.Core.Model
         public virtual decimal DiscountAmount { get; set; }
         public virtual decimal DiscountAmountWithTax { get; set; }
 
-        //Any extra Fee 
+        //Any extra Fee
         public virtual decimal Fee { get; set; }
 
         public virtual decimal FeeWithTax { get; set; }
 
         public string VendorId { get; set; }
+
+        public string Comment { get; set; }
 
         #region ITaxable Members
 

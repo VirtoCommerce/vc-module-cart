@@ -501,6 +501,10 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("Money");
 
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
@@ -581,6 +585,10 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(64)

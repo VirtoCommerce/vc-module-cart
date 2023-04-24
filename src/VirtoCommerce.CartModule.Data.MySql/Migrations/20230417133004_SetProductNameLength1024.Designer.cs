@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CartModule.Data.Repositories;
 
@@ -10,9 +11,10 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.MySql.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    partial class CartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230417133004_SetProductNameLength1024")]
+    partial class SetProductNameLength1024
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -510,10 +512,6 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<string>("Comment")
-                        .HasMaxLength(2048)
-                        .HasColumnType("varchar(2048)");
-
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
@@ -601,10 +599,6 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(2048)
-                        .HasColumnType("varchar(2048)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(64)

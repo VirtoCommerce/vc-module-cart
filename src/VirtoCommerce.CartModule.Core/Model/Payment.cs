@@ -13,6 +13,7 @@ namespace VirtoCommerce.CartModule.Core.Model
         public string Currency { get; set; }
         public string PaymentGatewayCode { get; set; }
         public decimal Amount { get; set; }
+        public string Purpose { get; set; }
 
         public Address BillingAddress { get; set; }
 
@@ -28,6 +29,8 @@ namespace VirtoCommerce.CartModule.Core.Model
         public virtual decimal DiscountAmountWithTax { get; set; }
 
         public string VendorId { get; set; }
+
+        public string Comment { get; set; }
 
         #region ITaxable Members
 

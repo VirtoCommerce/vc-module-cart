@@ -501,6 +501,10 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("Money");
 
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
@@ -581,6 +585,10 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(64)

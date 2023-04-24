@@ -62,6 +62,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string VendorId { get; set; }
 
+        [StringLength(2048)]
+        public string Comment { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; }
@@ -101,10 +104,10 @@ namespace VirtoCommerce.CartModule.Data.Model
             payment.TaxTotal = TaxTotal;
             payment.Total = Total;
             payment.TotalWithTax = TotalWithTax;
-            payment.VendorId = VendorId;
-            //TODO
-            //payment.Purpose = Purpose;
+            payment.Purpose = Purpose;
             payment.Currency = Currency;
+            payment.VendorId = VendorId;
+            payment.Comment = Comment;
 
             if (!TaxDetails.IsNullOrEmpty())
             {
@@ -158,10 +161,10 @@ namespace VirtoCommerce.CartModule.Data.Model
             TaxTotal = payment.TaxTotal;
             Total = payment.Total;
             TotalWithTax = payment.TotalWithTax;
+            Purpose = payment.Purpose;
             Currency = payment.Currency;
             VendorId = payment.VendorId;
-            //TODO
-            //Purpose = payment.Purpose;
+            Comment = payment.Comment;
 
             if (payment.BillingAddress != null)
             {
@@ -206,6 +209,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Purpose = Purpose;
             target.Currency = Currency;
             target.VendorId = VendorId;
+            target.Comment = Comment;
 
             if (!Addresses.IsNullCollection())
             {

@@ -32,6 +32,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
 
             var delayDays = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.HardDeleteDelayDays);
             var takeCount = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts);
+            var maximumCount = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.MaximumCountPerDeleteObsoleteCartsJobExecution);
 
             using var repository = _repositoryFactory();
 
@@ -42,7 +43,7 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
                 query = query.Where(x => x.ModifiedDate < thresholdDate);
             }
 
-            var totalCount = query.Count();
+            var totalCount = Math.Min(maximumCount, query.Count());
             _log.LogTrace("Total soft deleted: {TotalCount}", totalCount);
 
             for (var i = 0; i < totalCount; i += takeCount)

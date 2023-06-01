@@ -43,8 +43,12 @@
         "description": "Periodically delete obsolete carts from the database"
       },
       "PortionDeleteObsoleteCarts": {
-        "title": "How many cards should be deleted per one transaction",
+        "title": "How many carts should be deleted per one transaction",
         "description": "The delete carts job do removal by portions, this is the size of one. Big values cause database to slow."
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "How many carts should be deleted per one job execution",
+        "description": "The maximum number of baskets that will be deleted in one job run. The higher the number, the longer the job takes."
       },
       "CronDeleteObsoleteCarts": {
         "title": "Cron expression for cart hard delete job",

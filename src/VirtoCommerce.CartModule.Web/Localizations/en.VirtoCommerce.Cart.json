@@ -48,7 +48,7 @@
       },
       "MaximumCountPerDeleteObsoleteCartsJobExecution": {
         "title": "How many carts should be deleted per one job execution",
-        "description": "The maximum number of baskets that will be deleted in one job run. The higher the number, the longer the job takes."
+        "description": "The maximum number of carts that will be deleted in one job run. The higher the number, the longer the job takes."
       },
       "CronDeleteObsoleteCarts": {
         "title": "Cron expression for cart hard delete job",

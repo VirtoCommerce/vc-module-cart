@@ -41,6 +41,14 @@ namespace VirtoCommerce.CartModule.Core
                     DefaultValue = 20
                 };
 
+                public static readonly SettingDescriptor MaximumCountPerDeleteObsoleteCartsJobExecution = new SettingDescriptor
+                {
+                    Name = "Cart.MaximumCountPerDeleteObsoleteCartsJobExecution",
+                    GroupName = "Cart|General",
+                    ValueType = SettingValueType.PositiveInteger,
+                    DefaultValue = 1000
+                };
+
                 public static readonly SettingDescriptor CronDeleteObsoleteCarts = new SettingDescriptor
                 {
                     Name = "Cart.CronDeleteObsoleteCarts",
@@ -63,6 +71,7 @@ namespace VirtoCommerce.CartModule.Core
                     {
                         yield return EnableDeleteObsoleteCarts;
                         yield return PortionDeleteObsoleteCarts;
+                        yield return MaximumCountPerDeleteObsoleteCartsJobExecution;
                         yield return CronDeleteObsoleteCarts;
                         yield return HardDeleteDelayDays;
                     }

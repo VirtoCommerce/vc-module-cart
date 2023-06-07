@@ -23,9 +23,9 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public ShoppingCartService(
             Func<ICartRepository> repositoryFactory,
-            IShoppingCartTotalsCalculator totalsCalculator,
+            IPlatformMemoryCache platformMemoryCache,
             IEventPublisher eventPublisher,
-            IPlatformMemoryCache platformMemoryCache)
+            IShoppingCartTotalsCalculator totalsCalculator)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
             _totalsCalculator = totalsCalculator;
@@ -42,7 +42,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             return model;
         }
 
-        protected override Task BeforeSaveChanges(IEnumerable<ShoppingCart> models)
+        protected override Task BeforeSaveChanges(IList<ShoppingCart> models)
         {
             new ShoppingCartsValidator().ValidateAndThrow(models);
 
@@ -55,18 +55,18 @@ namespace VirtoCommerce.CartModule.Data.Services
             return Task.CompletedTask;
         }
 
-        protected override Task SoftDelete(IRepository repository, IEnumerable<string> ids)
+        protected override Task SoftDelete(IRepository repository, IList<string> ids)
         {
-            return ((ICartRepository)repository).SoftRemoveCartsAsync(ids.ToArray());
+            return ((ICartRepository)repository).SoftRemoveCartsAsync(ids);
         }
 
-        protected override async Task<IEnumerable<ShoppingCartEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
+        protected override Task<IList<ShoppingCartEntity>> LoadEntities(IRepository repository, IList<string> ids, string responseGroup)
         {
-            return await ((ICartRepository)repository).GetShoppingCartsByIdsAsync(ids.ToArray(), responseGroup);
+            return ((ICartRepository)repository).GetShoppingCartsByIdsAsync(ids, responseGroup);
         }
 
         // Saving a cart for one user (CustomerId) should not clear cache for other users
-        protected override void ClearSearchCache(IEnumerable<ShoppingCart> models)
+        protected override void ClearSearchCache(IList<ShoppingCart> models)
         {
             GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(string.Empty);
 
@@ -80,22 +80,5 @@ namespace VirtoCommerce.CartModule.Data.Services
                 GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(customerId);
             }
         }
-
-        #region IShoppingCartService compatibility
-        public async Task<ShoppingCart[]> GetByIdsAsync(string[] cartIds, string responseGroup = null)
-        {
-            return (await GetAsync(new List<string>(cartIds), responseGroup)).ToArray();
-        }
-
-        public Task SaveChangesAsync(ShoppingCart[] carts)
-        {
-            return SaveChangesAsync((IEnumerable<ShoppingCart>)carts);
-        }
-
-        public Task DeleteAsync(string[] cartIds, bool softDelete = false)
-        {
-            return DeleteAsync((IEnumerable<string>)cartIds, softDelete);
-        }
-        #endregion
     }
 }

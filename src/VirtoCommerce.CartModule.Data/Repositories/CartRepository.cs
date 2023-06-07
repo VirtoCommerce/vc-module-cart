@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -13,12 +14,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
     {
         private readonly ICartRawDatabaseCommand _rawDatabaseCommand;
 
-        public CartRepository(CartDbContext dbContext, ICartRawDatabaseCommand rawDatabaseCommand) : base(dbContext)
+        public CartRepository(CartDbContext dbContext, ICartRawDatabaseCommand rawDatabaseCommand)
+            : base(dbContext)
         {
             _rawDatabaseCommand = rawDatabaseCommand;
         }
-
-        #region ICartRepository Members
 
         public IQueryable<ShoppingCartEntity> ShoppingCarts => DbContext.Set<ShoppingCartEntity>();
         public IQueryable<AddressEntity> Addresses => DbContext.Set<AddressEntity>();
@@ -30,12 +30,12 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         protected IQueryable<CouponEntity> Coupons => DbContext.Set<CouponEntity>();
         protected IQueryable<CartDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues => DbContext.Set<CartDynamicPropertyObjectValueEntity>();
 
-        public virtual async Task<ShoppingCartEntity[]> GetShoppingCartsByIdsAsync(string[] ids, string responseGroup = null)
+        public virtual async Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsAsync(IList<string> ids, string responseGroup = null)
         {
             return await GetShoppingCartsByIdsInternalAsync(ids, responseGroup, false);
         }
 
-        public virtual async Task RemoveCartsAsync(string[] ids)
+        public virtual async Task RemoveCartsAsync(IList<string> ids)
         {
             var carts = await GetShoppingCartsByIdsInternalAsync(ids, responseGroup: null, isDeleted: true);
             if (!carts.IsNullOrEmpty())
@@ -51,55 +51,55 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             }
         }
 
-        public virtual Task SoftRemoveCartsAsync(string[] ids)
+        public virtual Task SoftRemoveCartsAsync(IList<string> ids)
         {
             return _rawDatabaseCommand.SoftRemove(DbContext, ids);
         }
 
-        #endregion
 
-        protected virtual async Task<ShoppingCartEntity[]> GetShoppingCartsByIdsInternalAsync(string[] ids, string responseGroup, bool isDeleted)
+        protected virtual async Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsInternalAsync(IList<string> ids, string responseGroup, bool isDeleted)
         {
-            var result = Array.Empty<ShoppingCartEntity>();
-
             if (ids.IsNullOrEmpty())
             {
-                return result;
+                return Array.Empty<ShoppingCartEntity>();
             }
 
-            result = await ShoppingCarts.Where(x => ids.Contains(x.Id) && x.IsDeleted == isDeleted).ToArrayAsync();
+            var carts = await ShoppingCarts
+                .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
+                .ToListAsync();
 
-            if (!result.Any())
+            if (carts.Any())
             {
-                return result;
+                var cartIds = carts.Select(x => x.Id).ToArray();
+
+                await TaxDetails.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
+                await Discounts.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
+                await Addresses.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
+                await Coupons.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
+
+                var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
+
+                await LoadPayments(cartIds, cartResponseGroup);
+                await LoadLineItems(cartIds, cartResponseGroup);
+                await LoadShipments(cartIds, cartResponseGroup);
+                await LoadDynamicProperties(cartIds, cartResponseGroup);
             }
 
-            ids = result.Select(x => x.Id).ToArray();
-
-            await TaxDetails.Where(x => ids.Contains(x.ShoppingCartId)).LoadAsync();
-            await Discounts.Where(x => ids.Contains(x.ShoppingCartId)).LoadAsync();
-            await Addresses.Where(x => ids.Contains(x.ShoppingCartId)).LoadAsync();
-            await Coupons.Where(x => ids.Contains(x.ShoppingCartId)).LoadAsync();
-
-            var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
-
-            await LoadPayments(ids, cartResponseGroup);
-            await LoadLineItems(ids, cartResponseGroup);
-            await LoadShipments(ids, cartResponseGroup);
-            await LoadDynamicProperties(ids, cartResponseGroup);
-
-            return result;
+            return carts;
         }
 
-        protected virtual async Task LoadPayments(string[] ids, CartResponseGroup cartResponseGroup)
+        protected virtual async Task LoadPayments(IList<string> ids, CartResponseGroup cartResponseGroup)
         {
             if (cartResponseGroup.HasFlag(CartResponseGroup.WithPayments))
             {
-                var payments = await Payments.Include(x => x.Addresses).Where(x => ids.Contains(x.ShoppingCartId)).ToArrayAsync();
-                var paymentIds = payments.Select(x => x.Id).ToArray();
+                var payments = await Payments
+                    .Include(x => x.Addresses)
+                    .Where(x => ids.Contains(x.ShoppingCartId))
+                    .ToListAsync();
 
-                if (paymentIds.Any())
+                if (payments.Any())
                 {
+                    var paymentIds = payments.Select(x => x.Id).ToArray();
                     await TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).LoadAsync();
                     await Discounts.Where(x => paymentIds.Contains(x.PaymentId)).LoadAsync();
 
@@ -114,15 +114,17 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             }
         }
 
-        protected virtual async Task LoadLineItems(string[] ids, CartResponseGroup cartResponseGroup)
+        protected virtual async Task LoadLineItems(IList<string> ids, CartResponseGroup cartResponseGroup)
         {
             if (cartResponseGroup.HasFlag(CartResponseGroup.WithLineItems))
             {
-                var lineItems = await LineItems.Where(x => ids.Contains(x.ShoppingCartId)).ToArrayAsync();
-                var lineItemIds = lineItems.Select(x => x.Id).ToArray();
+                var lineItems = await LineItems
+                    .Where(x => ids.Contains(x.ShoppingCartId))
+                    .ToListAsync();
 
-                if (lineItemIds.Any())
+                if (lineItems.Any())
                 {
+                    var lineItemIds = lineItems.Select(x => x.Id).ToArray();
                     await TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();
                     await Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();
 
@@ -137,15 +139,18 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             }
         }
 
-        protected virtual async Task LoadShipments(string[] ids, CartResponseGroup cartResponseGroup)
+        protected virtual async Task LoadShipments(IList<string> ids, CartResponseGroup cartResponseGroup)
         {
             if (cartResponseGroup.HasFlag(CartResponseGroup.WithShipments))
             {
-                var shipments = await Shipments.Include(x => x.Items).Where(x => ids.Contains(x.ShoppingCartId)).ToArrayAsync();
-                var shipmentIds = shipments.Select(x => x.Id).ToArray();
+                var shipments = await Shipments
+                    .Include(x => x.Items)
+                    .Where(x => ids.Contains(x.ShoppingCartId))
+                    .ToListAsync();
 
-                if (shipmentIds.Any())
+                if (shipments.Any())
                 {
+                    var shipmentIds = shipments.Select(x => x.Id).ToArray();
                     await TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
                     await Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
                     await Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
@@ -161,7 +166,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             }
         }
 
-        protected virtual async Task LoadDynamicProperties(string[] ids, CartResponseGroup cartResponseGroup)
+        protected virtual async Task LoadDynamicProperties(IList<string> ids, CartResponseGroup cartResponseGroup)
         {
             if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
             {

@@ -5,7 +5,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
 {
     public class SqlServerCartRawDatabaseCommand : ICartRawDatabaseCommand
     {
-        public Task SoftRemove(CartDbContext dbContext, string[] ids)
+        public Task SoftRemove(CartDbContext dbContext, IList<string> ids)
         {
             return ExecuteStoreQueryAsync(dbContext, "UPDATE \"Cart\" SET \"IsDeleted\"='1' WHERE \"Id\" IN ({0})", ids);
         }
@@ -55,6 +55,5 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
             public string Text { get; set; } = string.Empty;
             public IList<object> Parameters { get; set; } = new List<object>();
         }
-
     }
 }

@@ -71,7 +71,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         public virtual Address ToModel(Address address)
         {
             if (address == null)
+            {
                 throw new ArgumentNullException(nameof(address));
+            }
 
             address.Key = Id;
             address.Name = Name;
@@ -99,7 +101,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         public virtual AddressEntity FromModel(Address address)
         {
             if (address == null)
+            {
                 throw new ArgumentNullException(nameof(address));
+            }
 
             Id = address.Key;
             Name = address.Name;
@@ -111,7 +115,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             FirstName = address.FirstName;
             LastName = address.LastName;
             Line1 = address.Line1;
-            Line2 = address.Line2;             
+            Line2 = address.Line2;
             Organization = address.Organization;
             Phone = address.Phone;
             PostalCode = address.PostalCode;
@@ -149,7 +153,7 @@ namespace VirtoCommerce.CartModule.Data.Model
         {
             var result = base.Equals(obj);
             //For transient addresses need to compare two objects as value object (by content)
-            if (!result && IsTransient() && obj is AddressEntity otherAddressEntity)
+            if (!result && this.IsTransient() && obj is AddressEntity otherAddressEntity)
             {
                 var domainAddress = ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
                 var otherAddress = otherAddressEntity.ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
@@ -160,7 +164,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public override int GetHashCode()
         {
-            if (IsTransient())
+            if (this.IsTransient())
             {
                 //need to convert to domain address model to allow use ValueObject.GetHashCode
                 var domainAddress = ToModel(AbstractTypeFactory<Address>.TryCreateInstance());

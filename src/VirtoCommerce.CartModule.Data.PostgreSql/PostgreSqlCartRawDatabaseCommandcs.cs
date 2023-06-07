@@ -6,7 +6,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql
 {
     public class PostgreSqlCartRawDatabaseCommand : ICartRawDatabaseCommand
     {
-        public Task SoftRemove(CartDbContext dbContext, string[] ids)
+        public Task SoftRemove(CartDbContext dbContext, IList<string> ids)
         {
             return ExecuteStoreQueryAsync(dbContext, "UPDATE \"Cart\" SET \"IsDeleted\"='1' WHERE \"Id\" IN ({0})", ids);
         }

@@ -79,9 +79,9 @@ namespace VirtoCommerce.CartModule.Web
             serviceCollection.AddTransient<IShoppingCartTotalsCalculator, DefaultShoppingCartTotalsCalculator>();
             serviceCollection.AddTransient<IShoppingCartBuilder, ShoppingCartBuilder>();
             serviceCollection.AddTransient<IWishlistService, WishlistService>();
+            serviceCollection.AddTransient<IDeleteObsoleteCartsHandler, DeleteObsoleteCartsHandler>();
 
             serviceCollection.AddTransient<CartChangedEventHandler>();
-
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)

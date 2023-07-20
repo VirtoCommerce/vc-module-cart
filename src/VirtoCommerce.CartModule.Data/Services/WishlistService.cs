@@ -15,7 +15,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 {
     public class WishlistService : IWishlistService
     {
-        private const string WishlistCartType = "Wishlist";
+        protected const string WishlistCartType = "Wishlist";
 
         private readonly Func<ICartRepository> _repositoryFactory;
         private readonly IPlatformMemoryCache _platformMemoryCache;
@@ -37,7 +37,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             return models.Where(x => x.InWishlist).Select(x => x.Id).ToList();
         }
 
-        protected virtual async Task<IEnumerable<InternalEntity>> GetByIdsNoCache(string customerId, string storeId, IList<string> productIds)
+        protected virtual async Task<IList<InternalEntity>> GetByIdsNoCache(string customerId, string storeId, IList<string> productIds)
         {
             using var repository = _repositoryFactory();
 

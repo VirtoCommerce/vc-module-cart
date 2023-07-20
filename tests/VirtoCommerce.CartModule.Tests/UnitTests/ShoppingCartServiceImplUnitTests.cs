@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using Moq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
@@ -13,7 +12,6 @@ using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Data.Validation;
-using VirtoCommerce.CartModule.Tests.UnitTests;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
@@ -21,7 +19,7 @@ using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.Events;
 using Xunit;
 
-namespace VirtoCommerce.CartModule.Test.UnitTests
+namespace VirtoCommerce.CartModule.Tests.UnitTests
 {
     public class ShoppingCartServiceImplUnitTests : PlatformMemoryCacheTestBase
     {
@@ -30,7 +28,6 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         private readonly Mock<ICartRepository> _cartRepositoryMock;
         private readonly Func<ICartRepository> _repositoryFactory;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
-        private readonly Mock<ICacheEntry> _cacheEntryMock;
 
         public ShoppingCartServiceImplUnitTests()
         {
@@ -40,8 +37,6 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _cartRepositoryMock.Setup(ss => ss.UnitOfWork).Returns(_mockUnitOfWork.Object);
             _eventPublisherMock = new Mock<IEventPublisher>();
-            _cacheEntryMock = new Mock<ICacheEntry>();
-            _cacheEntryMock.SetupGet(c => c.ExpirationTokens).Returns(new List<IChangeToken>());
             FluentValidation.ValidatorOptions.Global.LanguageManager.Enabled = false;
         }
 
@@ -51,13 +46,13 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             //Arrange
             var cartId = Guid.NewGuid().ToString();
             var cartIds = new[] { cartId };
-            var list = new List<ShoppingCartEntity> { new ShoppingCartEntity { Id = cartId } };
+            var list = new List<ShoppingCartEntity> { new() { Id = cartId } };
             _cartRepositoryMock.Setup(x => x.GetShoppingCartsByIdsAsync(cartIds, null))
                 .ReturnsAsync(list.ToArray());
             var service = GetShoppingCartService(GetPlatformMemoryCache());
 
             //Act
-            var result = await service.GetByIdsAsync(new[] { cartId });
+            var result = await service.GetAsync(new[] { cartId });
 
             //Assert
             Assert.True(result.Any());
@@ -116,10 +111,10 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             //Act
             var nullCart = await service.GetByIdAsync(id);
             await service.SaveChangesAsync(new[] { newCart });
-            var Cart = await service.GetByIdAsync(id);
+            var cart = await service.GetByIdAsync(id);
 
             //Assert
-            Assert.NotEqual(nullCart, Cart);
+            Assert.NotEqual(nullCart, cart);
         }
 
         [Fact]
@@ -154,8 +149,15 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         public async Task SaveChangesAsync_ValidateBillingAddress()
         {
             //Arrange
-            var entity = new ShoppingCart { Id = "id", StoreId = "StoreId", CustomerId = "CustomerId", Currency = "USD" };
-            entity.Payments = new[] { new Payment { Currency = "USD", BillingAddress = new Address { LastName = null } } };
+            var entity = new ShoppingCart
+            {
+                Id = "id",
+                StoreId = "StoreId",
+                CustomerId = "CustomerId",
+                Currency = "USD",
+                Payments = new[] { new Payment { Currency = "USD", BillingAddress = new Address { LastName = null } } },
+            };
+
             var carts = new[] { entity };
             var service = GetShoppingCartService();
 
@@ -183,9 +185,7 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
 
         private ShoppingCartService GetShoppingCartService(IPlatformMemoryCache platformMemoryCache)
         {
-            return new ShoppingCartService(
-                _repositoryFactory, _calculatorMock.Object,
-                _eventPublisherMock.Object, platformMemoryCache);
+            return new ShoppingCartService(_repositoryFactory, platformMemoryCache, _eventPublisherMock.Object, _calculatorMock.Object);
         }
     }
 }

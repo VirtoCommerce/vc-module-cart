@@ -26,9 +26,9 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs
         {
             _log.LogTrace("Start processing DeleteObsoleteCartsJob job");
 
-            var delayDays = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.HardDeleteDelayDays);
-            var takeCount = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts);
-            var maximumCount = await _settingsManager.GetValueByDescriptorAsync<int>(ModuleConstants.Settings.General.MaximumCountPerDeleteObsoleteCartsJobExecution);
+            var delayDays = await _settingsManager.GetValueAsync<int>(ModuleConstants.Settings.General.HardDeleteDelayDays);
+            var takeCount = await _settingsManager.GetValueAsync<int>(ModuleConstants.Settings.General.PortionDeleteObsoleteCarts);
+            var maximumCount = await _settingsManager.GetValueAsync<int>(ModuleConstants.Settings.General.MaximumCountPerDeleteObsoleteCartsJobExecution);
 
             using var repository = _repositoryFactory();
 

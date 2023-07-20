@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
-using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.BackgroundJobs;
 using VirtoCommerce.CartModule.Data.Handlers;
@@ -20,7 +18,6 @@ using VirtoCommerce.CartModule.Data.SqlServer;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
-using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -38,7 +35,7 @@ namespace VirtoCommerce.CartModule.Web
         public void Initialize(IServiceCollection serviceCollection)
         {
             var databaseProvider = Configuration.GetValue("DatabaseProvider", "SqlServer");
-            serviceCollection.AddDbContext<CartDbContext>((provider, options) =>
+            serviceCollection.AddDbContext<CartDbContext>(options =>
             {
                 var connectionString = Configuration.GetConnectionString(ModuleInfo.Id) ?? Configuration.GetConnectionString("VirtoCommerce");
 
@@ -69,44 +66,35 @@ namespace VirtoCommerce.CartModule.Web
                     break;
             }
 
-
             serviceCollection.AddTransient<ICartRepository, CartRepository>();
             serviceCollection.AddTransient<Func<ICartRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICartRepository>());
-            serviceCollection.AddTransient<ICrudService<ShoppingCart>, ShoppingCartService>();
-            serviceCollection.AddTransient(x => (IShoppingCartService)x.GetRequiredService<ICrudService<ShoppingCart>>());
-            serviceCollection.AddTransient<ISearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart>, ShoppingCartSearchService>();
-            serviceCollection.AddTransient(x => (IShoppingCartSearchService)x.GetRequiredService<ISearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart>>());
+            serviceCollection.AddTransient<IShoppingCartService, ShoppingCartService>();
+            serviceCollection.AddTransient<IShoppingCartSearchService, ShoppingCartSearchService>();
             serviceCollection.AddTransient<IShoppingCartTotalsCalculator, DefaultShoppingCartTotalsCalculator>();
             serviceCollection.AddTransient<IShoppingCartBuilder, ShoppingCartBuilder>();
             serviceCollection.AddTransient<IWishlistService, WishlistService>();
             serviceCollection.AddTransient<IDeleteObsoleteCartsHandler, DeleteObsoleteCartsHandler>();
-
             serviceCollection.AddTransient<CartChangedEventHandler>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
         {
-            var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
-            permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x =>
-                new Permission()
-                {
-                    GroupName = "Cart",
-                    ModuleId = ModuleInfo.Id,
-                    Name = x
-                }).ToArray());
+            var serviceProvider = appBuilder.ApplicationServices;
 
-            var dynamicPropertyRegistrar = appBuilder.ApplicationServices.GetRequiredService<IDynamicPropertyRegistrar>();
+            var permissionsRegistrar = serviceProvider.GetRequiredService<IPermissionsRegistrar>();
+            permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "Cart", ModuleConstants.Security.Permissions.AllPermissions);
+
+            var dynamicPropertyRegistrar = serviceProvider.GetRequiredService<IDynamicPropertyRegistrar>();
             dynamicPropertyRegistrar.RegisterType<LineItem>();
             dynamicPropertyRegistrar.RegisterType<Payment>();
             dynamicPropertyRegistrar.RegisterType<Shipment>();
             dynamicPropertyRegistrar.RegisterType<ShoppingCart>();
 
-            var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
+            var settingsRegistrar = serviceProvider.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.General.AllSettings, ModuleInfo.Id);
 
-
-            var recurringJobManager = appBuilder.ApplicationServices.GetService<IRecurringJobManager>();
-            var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
+            var recurringJobManager = serviceProvider.GetService<IRecurringJobManager>();
+            var settingsManager = serviceProvider.GetService<ISettingsManager>();
 
             recurringJobManager.WatchJobSetting(
                 settingsManager,
@@ -116,23 +104,18 @@ namespace VirtoCommerce.CartModule.Web
                     .ToJob<DeleteObsoleteCartsJob>(x => x.Process())
                     .Build());
 
-            var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
-            inProcessBus.RegisterHandler<CartChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<CartChangedEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<CartChangeEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<CartChangedEventHandler>().Handle(message));
+            var handlerRegistrar = serviceProvider.GetService<IHandlerRegistrar>();
+            handlerRegistrar.RegisterHandler<CartChangedEvent>(async (message, _) => await serviceProvider.GetService<CartChangedEventHandler>().Handle(message));
+            handlerRegistrar.RegisterHandler<CartChangeEvent>(async (message, _) => await serviceProvider.GetService<CartChangedEventHandler>().Handle(message));
 
-            using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
+            using var serviceScope = serviceProvider.CreateScope();
+            using var dbContext = serviceScope.ServiceProvider.GetRequiredService<CartDbContext>();
+            var databaseProvider = Configuration.GetValue("DatabaseProvider", "SqlServer");
+            if (databaseProvider == "SqlServer")
             {
-                var databaseProvider = Configuration.GetValue("DatabaseProvider", "SqlServer");
-
-                using (var dbContext = serviceScope.ServiceProvider.GetRequiredService<CartDbContext>())
-                {
-                    if (databaseProvider == "SqlServer")
-                    {
-                        dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
-                    }
-                    dbContext.Database.Migrate();
-                }
+                dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
             }
+            dbContext.Database.Migrate();
         }
 
         public void Uninstall()

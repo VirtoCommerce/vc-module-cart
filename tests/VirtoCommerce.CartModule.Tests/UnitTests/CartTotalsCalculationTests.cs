@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 using Moq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CoreModule.Core.Currency;
-using VirtoCommerce.Platform.Caching;
 using Xunit;
 
-namespace VirtoCommerce.CartModule.Test.UnitTests
+namespace VirtoCommerce.CartModule.Tests.UnitTests
 {
     [Trait("Category", "CI")]
     public class OrderTotalsCalculationTest
@@ -21,11 +18,6 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
             {
                 RoundingPolicy = new DefaultMoneyRoundingPolicy()
             };
-            var repositoryFactory = new Mock<System.Func<CoreModule.Data.Repositories.ICoreRepository>>().Object;
-            var eventPublisher = new Mock<Platform.Core.Events.IEventPublisher>().Object;
-            var memoryCacheOptions = new MemoryCacheOptions();
-            var memoryCache = new MemoryCache(Options.Create(memoryCacheOptions));
-            var platformMemoryCache = new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), null);
             var currencyServiceMock = new Mock<ICurrencyService>();
             currencyServiceMock.Setup(c => c.GetAllCurrenciesAsync()).ReturnsAsync(new List<Currency>() { currency });
             return new DefaultShoppingCartTotalsCalculator(currencyServiceMock.Object);
@@ -190,4 +182,3 @@ namespace VirtoCommerce.CartModule.Test.UnitTests
         }
     }
 }
-

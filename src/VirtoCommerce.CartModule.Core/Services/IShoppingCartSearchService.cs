@@ -1,16 +1,10 @@
-using System;
-using System.Threading.Tasks;
+using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Model.Search;
+using VirtoCommerce.Platform.Core.GenericCrud;
 
 namespace VirtoCommerce.CartModule.Core.Services
 {
-    /// <summary>
-    /// This interface should implement <see cref="ISearchService"/> without explicitly defined methods.
-    /// Methods left for compatibility and should be removed after upgrade to inheritance
-    /// </summary>
-    public interface IShoppingCartSearchService
+    public interface IShoppingCartSearchService : ISearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart>
     {
-        [Obsolete(@"Need to remove after inherit IShoppingCartService from ICrudService<ShoppingCart>.")]
-        Task<ShoppingCartSearchResult> SearchCartAsync(ShoppingCartSearchCriteria criteria);
     }
 }

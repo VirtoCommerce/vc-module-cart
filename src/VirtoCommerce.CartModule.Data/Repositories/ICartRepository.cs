@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CartModule.Data.Model;
@@ -8,8 +9,9 @@ namespace VirtoCommerce.CartModule.Data.Repositories
     public interface ICartRepository : IRepository
     {
         IQueryable<ShoppingCartEntity> ShoppingCarts { get; }
-        Task<ShoppingCartEntity[]> GetShoppingCartsByIdsAsync(string[] ids, string responseGroup = null);
-        Task RemoveCartsAsync(string[] ids);
-        Task SoftRemoveCartsAsync(string[] ids);
+
+        Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsAsync(IList<string> ids, string responseGroup = null);
+        Task RemoveCartsAsync(IList<string> ids);
+        Task SoftRemoveCartsAsync(IList<string> ids);
     }
 }

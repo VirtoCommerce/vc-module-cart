@@ -65,7 +65,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 Currency = currency
             };
 
-            var searchResult = await _shoppingCartSearchService.SearchCartAsync(criteria);
+            var searchResult = await _shoppingCartSearchService.SearchAsync(criteria);
             Cart = searchResult.Results.FirstOrDefault();
 
             if (Cart == null)
@@ -147,7 +147,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 Codes = new[] { shippingMethodCode }
             };
 
-            var shippingMethod = (await _shippingMethodsSearchService.SearchShippingMethodsAsync(criteria))
+            var shippingMethod = (await _shippingMethodsSearchService.SearchAsync(criteria))
                                 .Results.FirstOrDefault();
 
             return shippingMethod?.CalculateRates(shippingEvaluationContext).ToList();
@@ -269,7 +269,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 StoreId = Store.Id
             };
 
-            var activeAvailableShippingMethods = (await _shippingMethodsSearchService.SearchShippingMethodsAsync(criteria)).Results;
+            var activeAvailableShippingMethods = (await _shippingMethodsSearchService.SearchAsync(criteria)).Results;
 
             var availableShippingRates = activeAvailableShippingMethods
                 .SelectMany(x => x.CalculateRates(shippingEvaluationContext))
@@ -288,7 +288,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 StoreId = Store.Id
             };
 
-            var searchResult = await _paymentMethodsSearchService.SearchPaymentMethodsAsync(criteria);
+            var searchResult = await _paymentMethodsSearchService.SearchAsync(criteria);
             return searchResult.Results;
         }
 
@@ -301,7 +301,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         #endregion
 
-        protected Store Store => _store ?? (_store = _storeService.GetByIdAsync(Cart.StoreId, StoreResponseGroup.StoreInfo.ToString()).GetAwaiter().GetResult());
+        protected Store Store => _store ??= _storeService.GetByIdAsync(Cart.StoreId, StoreResponseGroup.StoreInfo.ToString()).GetAwaiter().GetResult();
 
         protected virtual void InnerChangeItemQuantity(LineItem lineItem, int quantity)
         {

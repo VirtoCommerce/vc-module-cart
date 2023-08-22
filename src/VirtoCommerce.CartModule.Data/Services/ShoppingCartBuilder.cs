@@ -282,7 +282,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 IsActive = true,
                 Take = int.MaxValue,
-                StoreId = Store.Id
+                StoreId = Store.Id,
+                WithoutTransient = true
             };
 
             var searchResult = await _paymentMethodsSearchService.SearchAsync(criteria);

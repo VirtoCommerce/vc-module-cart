@@ -142,7 +142,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             var criteria = new ShippingMethodsSearchCriteria
             {
                 IsActive = true,
-                Take = int.MaxValue,
+                Take = 1,
                 StoreId = Store.Id,
                 Codes = new[] { shippingMethodCode },
                 WithoutTransient = true

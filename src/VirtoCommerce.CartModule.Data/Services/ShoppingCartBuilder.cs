@@ -25,9 +25,6 @@ namespace VirtoCommerce.CartModule.Data.Services
         private readonly IShoppingCartSearchService _shoppingCartSearchService;
         private readonly IShippingMethodsSearchService _shippingMethodsSearchService;
         private readonly IPaymentMethodsSearchService _paymentMethodsSearchService;
-
-        //private readonly IMemberService _memberService;
-
         private Store _store;
 
         public ShoppingCartBuilder(
@@ -35,8 +32,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             IShoppingCartService shoppingShoppingCartService,
             IShoppingCartSearchService shoppingCartSearchService,
             IShippingMethodsSearchService shippingMethodsSearchService,
-             IPaymentMethodsSearchService paymentMethodsSearchService
-            //, IMemberService memberService
+            IPaymentMethodsSearchService paymentMethodsSearchService
             )
         {
             _storeService = storeService;
@@ -44,7 +40,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             _shoppingCartSearchService = shoppingCartSearchService;
             _paymentMethodsSearchService = paymentMethodsSearchService;
             _shippingMethodsSearchService = shippingMethodsSearchService;
-            //_memberService = memberService;
         }
 
         #region ICartBuilder Members
@@ -142,9 +137,10 @@ namespace VirtoCommerce.CartModule.Data.Services
             var criteria = new ShippingMethodsSearchCriteria
             {
                 IsActive = true,
-                Take = int.MaxValue,
+                Take = 1,
                 StoreId = Store.Id,
-                Codes = new[] { shippingMethodCode }
+                Codes = new[] { shippingMethodCode },
+                WithoutTransient = true
             };
 
             var shippingMethod = (await _shippingMethodsSearchService.SearchShippingMethodsAsync(criteria))
@@ -266,7 +262,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 IsActive = true,
                 Take = int.MaxValue,
-                StoreId = Store.Id
+                StoreId = Store.Id,
+                WithoutTransient = true
             };
 
             var activeAvailableShippingMethods = (await _shippingMethodsSearchService.SearchShippingMethodsAsync(criteria)).Results;
@@ -285,16 +282,17 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 IsActive = true,
                 Take = int.MaxValue,
-                StoreId = Store.Id
+                StoreId = Store.Id,
+                WithoutTransient = true
             };
 
             var searchResult = await _paymentMethodsSearchService.SearchPaymentMethodsAsync(criteria);
             return searchResult.Results;
         }
 
-        public virtual async Task SaveAsync()
+        public virtual Task SaveAsync()
         {
-            await _shoppingCartService.SaveChangesAsync(new[] { Cart });
+            return _shoppingCartService.SaveChangesAsync(new[] { Cart });
         }
 
         public ShoppingCart Cart { get; private set; }

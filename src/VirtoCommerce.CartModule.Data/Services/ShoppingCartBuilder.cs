@@ -144,7 +144,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                 IsActive = true,
                 Take = int.MaxValue,
                 StoreId = Store.Id,
-                Codes = new[] { shippingMethodCode }
+                Codes = new[] { shippingMethodCode },
+                WithoutTransient = true
             };
 
             var shippingMethod = (await _shippingMethodsSearchService.SearchAsync(criteria))
@@ -266,7 +267,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 IsActive = true,
                 Take = int.MaxValue,
-                StoreId = Store.Id
+                StoreId = Store.Id,
+                WithoutTransient = true
             };
 
             var activeAvailableShippingMethods = (await _shippingMethodsSearchService.SearchAsync(criteria)).Results;

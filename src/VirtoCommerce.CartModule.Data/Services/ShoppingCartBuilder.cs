@@ -25,9 +25,6 @@ namespace VirtoCommerce.CartModule.Data.Services
         private readonly IShoppingCartSearchService _shoppingCartSearchService;
         private readonly IShippingMethodsSearchService _shippingMethodsSearchService;
         private readonly IPaymentMethodsSearchService _paymentMethodsSearchService;
-
-        //private readonly IMemberService _memberService;
-
         private Store _store;
 
         public ShoppingCartBuilder(
@@ -35,8 +32,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             IShoppingCartService shoppingShoppingCartService,
             IShoppingCartSearchService shoppingCartSearchService,
             IShippingMethodsSearchService shippingMethodsSearchService,
-             IPaymentMethodsSearchService paymentMethodsSearchService
-            //, IMemberService memberService
+            IPaymentMethodsSearchService paymentMethodsSearchService
             )
         {
             _storeService = storeService;
@@ -44,7 +40,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             _shoppingCartSearchService = shoppingCartSearchService;
             _paymentMethodsSearchService = paymentMethodsSearchService;
             _shippingMethodsSearchService = shippingMethodsSearchService;
-            //_memberService = memberService;
         }
 
         #region ICartBuilder Members
@@ -294,9 +289,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             return searchResult.Results;
         }
 
-        public virtual async Task SaveAsync()
+        public virtual Task SaveAsync()
         {
-            await _shoppingCartService.SaveChangesAsync(new[] { Cart });
+            return _shoppingCartService.SaveChangesAsync(new[] { Cart });
         }
 
         public ShoppingCart Cart { get; private set; }

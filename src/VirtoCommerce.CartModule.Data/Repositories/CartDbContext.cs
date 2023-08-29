@@ -1,12 +1,12 @@
 using System.Reflection;
-using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CartModule.Data.Model;
+using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CartModule.Data.Repositories
 {
 #pragma warning disable S109 
-    public class CartDbContext : DbContextWithTriggers
+    public class CartDbContext : DbContextBase
     {
         public CartDbContext(DbContextOptions<CartDbContext> options)
             : base(options)

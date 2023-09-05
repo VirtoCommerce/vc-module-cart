@@ -136,6 +136,8 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(128)]
         public string VendorId { get; set; }
 
+        public bool SelectedForCheckout { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<TaxDetailEntity> TaxDetails { get; set; }
@@ -204,6 +206,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             lineItem.FulfillmentCenterId = FulfillmentCenterId;
             lineItem.FulfillmentCenterName = FulfillmentCenterName;
             lineItem.VendorId = VendorId;
+            lineItem.SelectedForCheckout = SelectedForCheckout;
 
             if (!Discounts.IsNullOrEmpty())
             {
@@ -283,6 +286,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             FulfillmentCenterId = lineItem.FulfillmentCenterId;
             FulfillmentCenterName = lineItem.FulfillmentCenterName;
             VendorId = lineItem.VendorId;
+            SelectedForCheckout = lineItem.SelectedForCheckout;
 
             if (lineItem.Discounts != null)
             {
@@ -346,6 +350,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.FulfillmentCenterName = FulfillmentCenterName;
             target.Sku = Sku;
             target.VendorId = VendorId;
+            target.SelectedForCheckout = SelectedForCheckout;
 
             if (!Discounts.IsNullCollection())
             {

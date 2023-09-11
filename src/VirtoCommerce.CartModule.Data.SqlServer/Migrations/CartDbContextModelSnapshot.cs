@@ -17,7 +17,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -415,6 +415,10 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
 
                     b.Property<string>("ProductId")
                         .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ProductOuterId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 

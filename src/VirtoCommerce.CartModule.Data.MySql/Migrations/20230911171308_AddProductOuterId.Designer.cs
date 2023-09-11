@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CartModule.Data.Repositories;
 
@@ -10,9 +11,10 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.MySql.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    partial class CartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230911171308_AddProductOuterId")]
+    partial class AddProductOuterId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

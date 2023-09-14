@@ -16,7 +16,7 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.AddressEntity", b =>
@@ -440,6 +440,9 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                     b.Property<decimal>("SalePriceWithTax")
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
+
+                    b.Property<bool>("SelectedForCheckout")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ShipmentMethodCode")
                         .HasMaxLength(64)

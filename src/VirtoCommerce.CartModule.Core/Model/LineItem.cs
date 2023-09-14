@@ -116,6 +116,8 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public string VendorId { get; set; }
 
+        public bool SelectedForCheckout { get; set; } = true;
+
         #region IHasDiscounts
         public ICollection<Discount> Discounts { get; set; }
         #endregion

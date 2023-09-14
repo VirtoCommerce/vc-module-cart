@@ -33,7 +33,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
 
             //Calculate totals for line items
-            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift);
+            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift && x.SelectedForCheckout);
             foreach (var item in cartItemsWithoutGifts ?? Enumerable.Empty<LineItem>())
             {
                 CalculateLineItemTotals(item);

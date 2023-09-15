@@ -438,6 +438,9 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<decimal>("SalePriceWithTax")
                         .HasColumnType("Money");
 
+                    b.Property<bool>("SelectedForCheckout")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("ShipmentMethodCode")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");

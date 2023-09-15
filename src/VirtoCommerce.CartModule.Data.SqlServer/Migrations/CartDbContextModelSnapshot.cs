@@ -438,6 +438,10 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                     b.Property<decimal>("SalePriceWithTax")
                         .HasColumnType("Money");
 
+                    b.Property<bool>("SelectedForCheckout")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bit");
+
                     b.Property<string>("ShipmentMethodCode")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");

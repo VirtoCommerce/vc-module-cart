@@ -39,6 +39,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(1024)]
         public string Name { get; set; }
 
+        [StringLength(128)]
+        public string ProductOuterId { get; set; }
+
         public int Quantity { get; set; }
 
         [StringLength(64)]
@@ -202,6 +205,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             lineItem.CategoryId = CategoryId;
             lineItem.Currency = Currency;
             lineItem.Name = Name;
+            lineItem.ProductOuterId = ProductOuterId;
             lineItem.Sku = Sku;
             lineItem.FulfillmentCenterId = FulfillmentCenterId;
             lineItem.FulfillmentCenterName = FulfillmentCenterName;
@@ -280,6 +284,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             CategoryId = lineItem.CategoryId;
             Currency = lineItem.Currency;
             Name = lineItem.Name;
+            ProductOuterId = lineItem.ProductOuterId;
             Sku = lineItem.Sku;
             //Preserve link of the  original model LineItem for future references binding LineItems with  ShipmentLineItems 
             ModelLineItem = lineItem;
@@ -313,6 +318,7 @@ namespace VirtoCommerce.CartModule.Data.Model
                 throw new ArgumentNullException(nameof(target));
 
             target.Name = Name;
+            target.ProductOuterId = ProductOuterId;
             target.ListPrice = ListPrice;
             target.ListPriceWithTax = ListPriceWithTax;
             target.SalePrice = SalePrice;

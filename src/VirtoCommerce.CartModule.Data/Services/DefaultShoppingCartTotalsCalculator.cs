@@ -32,12 +32,14 @@ namespace VirtoCommerce.CartModule.Data.Services
                 throw new ArgumentNullException(nameof(cart));
             }
 
+            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift) ?? Enumerable.Empty<LineItem>();
+
             //Calculate totals for line items
-            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift && x.SelectedForCheckout);
-            foreach (var item in cartItemsWithoutGifts ?? Enumerable.Empty<LineItem>())
+            foreach (var item in cartItemsWithoutGifts)
             {
                 CalculateLineItemTotals(item);
             }
+
             //Calculate totals for shipments
             if (!cart.Shipments.IsNullOrEmpty())
             {
@@ -46,6 +48,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                     CalculateShipmentTotals(shipment);
                 }
             }
+
             //Calculate totals for payments
             if (!cart.Payments.IsNullOrEmpty())
             {
@@ -60,17 +63,18 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.FeeTotal = cart.Fee;
             cart.TaxTotal = 0m;
 
-            if (cartItemsWithoutGifts != null)
+            var selectedItemsWithoutGifts = cartItemsWithoutGifts.Where(x => x.SelectedForCheckout);
+            if (selectedItemsWithoutGifts.Any())
             {
-                cart.SubTotal = cartItemsWithoutGifts.Sum(x => x.ListPrice * x.Quantity);
-                cart.SubTotalWithTax = cartItemsWithoutGifts.Sum(x => x.ListPriceWithTax * x.Quantity);
-                cart.SubTotalDiscount = cartItemsWithoutGifts.Sum(x => x.DiscountTotal);
-                cart.SubTotalDiscountWithTax = cartItemsWithoutGifts.Sum(x => x.DiscountTotalWithTax);
-                cart.DiscountTotal += cartItemsWithoutGifts.Sum(x => x.DiscountTotal);
-                cart.DiscountTotalWithTax += cartItemsWithoutGifts.Sum(x => x.DiscountTotalWithTax);
-                cart.FeeTotal += cartItemsWithoutGifts.Sum(x => x.Fee);
-                cart.FeeTotalWithTax += cartItemsWithoutGifts.Sum(x => x.FeeWithTax);
-                cart.TaxTotal += cartItemsWithoutGifts.Sum(x => x.TaxTotal);
+                cart.SubTotal = selectedItemsWithoutGifts.Sum(x => x.ListPrice * x.Quantity);
+                cart.SubTotalWithTax = selectedItemsWithoutGifts.Sum(x => x.ListPriceWithTax * x.Quantity);
+                cart.SubTotalDiscount = selectedItemsWithoutGifts.Sum(x => x.DiscountTotal);
+                cart.SubTotalDiscountWithTax = selectedItemsWithoutGifts.Sum(x => x.DiscountTotalWithTax);
+                cart.DiscountTotal += selectedItemsWithoutGifts.Sum(x => x.DiscountTotal);
+                cart.DiscountTotalWithTax += selectedItemsWithoutGifts.Sum(x => x.DiscountTotalWithTax);
+                cart.FeeTotal += selectedItemsWithoutGifts.Sum(x => x.Fee);
+                cart.FeeTotalWithTax += selectedItemsWithoutGifts.Sum(x => x.FeeWithTax);
+                cart.TaxTotal += selectedItemsWithoutGifts.Sum(x => x.TaxTotal);
             }
 
             if (cart.Shipments != null)

@@ -32,10 +32,10 @@ namespace VirtoCommerce.CartModule.Data.Services
                 throw new ArgumentNullException(nameof(cart));
             }
 
-            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift) ?? Enumerable.Empty<LineItem>();
+            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift);
 
             //Calculate totals for line items
-            foreach (var item in cartItemsWithoutGifts)
+            foreach (var item in cartItemsWithoutGifts ?? Enumerable.Empty<LineItem>())
             {
                 CalculateLineItemTotals(item);
             }
@@ -63,8 +63,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.FeeTotal = cart.Fee;
             cart.TaxTotal = 0m;
 
-            var selectedItemsWithoutGifts = cartItemsWithoutGifts.Where(x => x.SelectedForCheckout);
-            if (selectedItemsWithoutGifts.Any())
+            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout);
+            if (selectedItemsWithoutGifts != null)
             {
                 cart.SubTotal = selectedItemsWithoutGifts.Sum(x => x.ListPrice * x.Quantity);
                 cart.SubTotalWithTax = selectedItemsWithoutGifts.Sum(x => x.ListPriceWithTax * x.Quantity);

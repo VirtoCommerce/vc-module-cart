@@ -39,11 +39,11 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("CountryCode")
+                        .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
                     b.Property<string>("CountryName")
-                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
@@ -62,6 +62,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Line1")
+                        .IsRequired()
                         .HasMaxLength(2048)
                         .HasColumnType("nvarchar(2048)");
 
@@ -89,6 +90,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("PostalCode")
+                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
@@ -439,7 +441,6 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .HasColumnType("Money");
 
                     b.Property<bool>("SelectedForCheckout")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bit");
 
                     b.Property<string>("ShipmentMethodCode")

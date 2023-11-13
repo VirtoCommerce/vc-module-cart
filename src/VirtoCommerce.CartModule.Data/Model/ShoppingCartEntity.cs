@@ -51,6 +51,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(2048)]
         public string Comment { get; set; }
 
+        [StringLength(2048)]
+        public string Description { get; set; }
+
         [Column(TypeName = "Money")]
         public decimal Total { get; set; }
 
@@ -154,6 +157,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.IsRecuring = IsRecuring;
             model.LanguageCode = LanguageCode;
             model.Comment = Comment;
+            model.Description = Description;
             model.OrganizationId = OrganizationId;
             model.Total = Total;
             model.SubTotal = SubTotal;
@@ -220,6 +224,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             IsRecuring = model.IsRecuring.GetValueOrDefault();
             LanguageCode = model.LanguageCode;
             Comment = model.Comment;
+            Description = model.Description;
             OrganizationId = model.OrganizationId;
             Total = model.Total;
             SubTotal = model.SubTotal;
@@ -311,6 +316,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.IsRecuring = IsRecuring;
             target.LanguageCode = LanguageCode;
             target.Comment = Comment;
+            target.Description = Description;
             target.OrganizationId = OrganizationId;
             target.Total = Total;
             target.SubTotal = SubTotal;

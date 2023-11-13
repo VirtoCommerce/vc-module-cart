@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Tax;
@@ -24,6 +23,7 @@ namespace VirtoCommerce.CartModule.Core.Model
         public bool? TaxIncluded { get; set; }
         public bool? IsRecuring { get; set; }
         public string Comment { get; set; }
+        public string Description { get; set; }
 
         public string Status { get; set; }
 

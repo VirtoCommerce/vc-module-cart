@@ -32,6 +32,46 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             var query = ((ICartRepository)repository).ShoppingCarts.Where(x => !x.IsDeleted);
 
+            if (criteria.CustomerOrOrganization)
+            {
+                // build "CustomerId or OrganizationId" predicate
+                var predicate = PredicateBuilder.False<ShoppingCartEntity>();
+
+                if (!string.IsNullOrEmpty(criteria.OrganizationId))
+                {
+                    predicate = predicate.Or(x => x.OrganizationId == criteria.OrganizationId);
+                }
+
+                if (!string.IsNullOrEmpty(criteria.CustomerId))
+                {
+                    predicate = predicate.Or(x => x.CustomerId == criteria.CustomerId);
+                }
+
+                if (!criteria.CustomerIds.IsNullOrEmpty())
+                {
+                    predicate = predicate.Or(x => criteria.CustomerIds.Contains(x.CustomerId));
+                }
+
+                query = query.Where(predicate);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(criteria.OrganizationId))
+                {
+                    query = query.Where(x => x.OrganizationId == criteria.OrganizationId);
+                }
+
+                if (!string.IsNullOrEmpty(criteria.CustomerId))
+                {
+                    query = query.Where(x => x.CustomerId == criteria.CustomerId);
+                }
+
+                if (!criteria.CustomerIds.IsNullOrEmpty())
+                {
+                    query = query.Where(x => criteria.CustomerIds.Contains(x.CustomerId));
+                }
+            }
+
             if (!string.IsNullOrEmpty(criteria.Status))
             {
                 query = query.Where(x => x.Status == criteria.Status);
@@ -40,11 +80,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             if (!string.IsNullOrEmpty(criteria.Name))
             {
                 query = query.Where(x => x.Name == criteria.Name);
-            }
-
-            if (!string.IsNullOrEmpty(criteria.CustomerId))
-            {
-                query = query.Where(x => x.CustomerId == criteria.CustomerId);
             }
 
             if (!string.IsNullOrEmpty(criteria.StoreId))
@@ -60,16 +95,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             if (!string.IsNullOrEmpty(criteria.Type))
             {
                 query = query.Where(x => x.Type == criteria.Type);
-            }
-
-            if (!string.IsNullOrEmpty(criteria.OrganizationId))
-            {
-                query = query.Where(x => x.OrganizationId == criteria.OrganizationId);
-            }
-
-            if (!criteria.CustomerIds.IsNullOrEmpty())
-            {
-                query = query.Where(x => criteria.CustomerIds.Contains(x.CustomerId));
             }
 
             if (criteria.CreatedStartDate != null)

@@ -141,9 +141,20 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected override IChangeToken CreateCacheToken(ShoppingCartSearchCriteria criteria)
         {
-            var key = criteria.CustomerId ?? string.Empty;
+            var customerKey = criteria.CustomerId ?? string.Empty;
+            var customerToken = GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(customerKey);
 
-            return GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(key);
+            var result = customerToken;
+
+            if (criteria.OrganizationId != null)
+            {
+                var organizationToken = GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(criteria.OrganizationId);
+
+                var changeTokens = new List<IChangeToken>() { customerToken, organizationToken };
+                result = new CompositeChangeToken(changeTokens);
+            }
+
+            return result;
         }
     }
 }

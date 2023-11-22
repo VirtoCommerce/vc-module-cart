@@ -71,14 +71,13 @@ namespace VirtoCommerce.CartModule.Data.Services
             GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(string.Empty);
 
             var customerOrganizationIds = models
-                .Select(x => new { x.CustomerId, x.OrganizationId })
+                .SelectMany(x => new[] { x.CustomerId, x.OrganizationId })
                 .Where(x => x != null)
                 .Distinct();
 
-            foreach (var tuple in customerOrganizationIds)
+            foreach (var id in customerOrganizationIds)
             {
-                GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(tuple.CustomerId);
-                GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(tuple.OrganizationId);
+                GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(id);
             }
         }
     }

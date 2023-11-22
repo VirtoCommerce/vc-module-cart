@@ -144,17 +144,14 @@ namespace VirtoCommerce.CartModule.Data.Services
             var customerKey = criteria.CustomerId ?? string.Empty;
             var customerToken = GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(customerKey);
 
-            var result = customerToken;
-
-            if (criteria.OrganizationId != null)
+            if (string.IsNullOrEmpty(criteria.OrganizationId))
             {
-                var organizationToken = GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(criteria.OrganizationId);
-
-                var changeTokens = new List<IChangeToken>() { customerToken, organizationToken };
-                result = new CompositeChangeToken(changeTokens);
+                return customerToken;
             }
 
-            return result;
+            var organizationToken = GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(criteria.OrganizationId);
+
+            return new CompositeChangeToken(new[] { customerToken, organizationToken });
         }
     }
 }

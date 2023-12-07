@@ -21,5 +21,6 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public DateTime? ModifiedEndDate { get; set; }
 
         public bool CustomerOrOrganization { get; set; }
+        public bool NoOrganization { get; set; }
     }
 }

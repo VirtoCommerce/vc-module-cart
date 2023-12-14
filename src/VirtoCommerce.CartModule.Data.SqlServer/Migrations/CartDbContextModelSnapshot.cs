@@ -790,8 +790,8 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("CustomerName")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(2048)
@@ -845,6 +845,10 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                     b.Property<string>("OrganizationId")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("OrganizationName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<decimal>("PaymentTotal")
                         .HasColumnType("Money");

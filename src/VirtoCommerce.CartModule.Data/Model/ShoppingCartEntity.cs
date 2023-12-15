@@ -31,11 +31,14 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string CustomerId { get; set; }
 
-        [StringLength(128)]
+        [StringLength(255)]
         public string CustomerName { get; set; }
 
         [StringLength(64)]
         public string OrganizationId { get; set; }
+
+        [StringLength(255)]
+        public string OrganizationName { get; set; }
 
         [Required]
         [StringLength(3)]
@@ -155,6 +158,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.LanguageCode = LanguageCode;
             model.Comment = Comment;
             model.OrganizationId = OrganizationId;
+            model.OrganizationName = OrganizationName;
             model.Total = Total;
             model.SubTotal = SubTotal;
             model.SubTotalWithTax = SubTotalWithTax;
@@ -221,6 +225,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             LanguageCode = model.LanguageCode;
             Comment = model.Comment;
             OrganizationId = model.OrganizationId;
+            OrganizationName = model.OrganizationName;
             Total = model.Total;
             SubTotal = model.SubTotal;
             SubTotalWithTax = model.SubTotalWithTax;
@@ -312,6 +317,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.LanguageCode = LanguageCode;
             target.Comment = Comment;
             target.OrganizationId = OrganizationId;
+            target.OrganizationName = OrganizationName;
             target.Total = Total;
             target.SubTotal = SubTotal;
             target.SubTotalWithTax = SubTotalWithTax;

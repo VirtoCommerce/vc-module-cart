@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CartModule.Data.Repositories;
 
@@ -10,13 +11,14 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.MySql.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    partial class CartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231214154047_OrganizationName")]
+    partial class OrganizationName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.AddressEntity", b =>
@@ -423,6 +425,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
+                    b.Property<string>("ProductOuterId")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
                     b.Property<string>("ProductType")
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
@@ -440,6 +446,9 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                     b.Property<decimal>("SalePriceWithTax")
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
+
+                    b.Property<bool>("SelectedForCheckout")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ShipmentMethodCode")
                         .HasMaxLength(64)
@@ -810,6 +819,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                     b.Property<string>("CustomerName")
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2048)
+                        .HasColumnType("varchar(2048)");
 
                     b.Property<decimal>("DiscountAmount")
                         .HasPrecision(18, 4)

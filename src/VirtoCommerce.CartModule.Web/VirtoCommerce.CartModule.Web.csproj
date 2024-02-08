@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>False</IsPackable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!--This line is necessary to copy all dependencies in the bin folder-->

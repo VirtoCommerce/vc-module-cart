@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
+using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
@@ -26,27 +27,41 @@ namespace VirtoCommerce.CartModule.Data.Services
             _platformMemoryCache = platformMemoryCache;
         }
 
-        public virtual async Task<IList<string>> FindProductsInWishlistsAsync(string customerId, string storeId, IList<string> productIds)
+        public virtual async Task<IList<string>> FindProductsInWishlistsAsync(string customerId, string organizationId, string storeId, IList<string> productIds)
         {
             var cacheKeyPrefix = CacheKey.With(GetType(), nameof(FindProductsInWishlistsAsync), customerId, storeId);
 
             var models = await _platformMemoryCache.GetOrLoadByIdsAsync(cacheKeyPrefix, productIds,
-                missingIds => GetByIdsNoCache(customerId, storeId, missingIds),
+                missingIds => GetByIdsNoCache(customerId, organizationId, storeId, missingIds),
                 ConfigureCache);
 
             return models.Where(x => x.InWishlist).Select(x => x.Id).ToList();
         }
 
-        protected virtual async Task<IList<InternalEntity>> GetByIdsNoCache(string customerId, string storeId, IList<string> productIds)
+        protected virtual async Task<IList<InternalEntity>> GetByIdsNoCache(string customerId, string organizationId, string storeId, IList<string> productIds)
         {
             using var repository = _repositoryFactory();
 
-            var result = await repository
-                .ShoppingCarts
-                .Where(cart => cart.CustomerId == customerId &&
+            var query = repository.ShoppingCarts.Where(cart =>
                                cart.StoreId == storeId &&
                                cart.Type == WishlistCartType &&
-                               !cart.IsDeleted)
+                               !cart.IsDeleted);
+
+            var predicate = PredicateBuilder.False<ShoppingCartEntity>();
+
+            if (!string.IsNullOrEmpty(customerId))
+            {
+                predicate = predicate.Or(x => x.CustomerId == customerId);
+            }
+
+            if (!string.IsNullOrEmpty(organizationId))
+            {
+                predicate = predicate.Or(x => x.OrganizationId == organizationId);
+            }
+
+            query = query.Where(predicate);
+
+            var result = await query
                 .SelectMany(cart => cart.Items)
                 .Where(lineItem => productIds.Contains(lineItem.ProductId))
                 .Select(lineItem => lineItem.ProductId)

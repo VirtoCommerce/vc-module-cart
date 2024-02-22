@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
@@ -16,8 +17,6 @@ namespace VirtoCommerce.CartModule.Data.Services
 {
     public class WishlistService : IWishlistService
     {
-        protected const string WishlistCartType = "Wishlist";
-
         private readonly Func<ICartRepository> _repositoryFactory;
         private readonly IPlatformMemoryCache _platformMemoryCache;
 
@@ -44,7 +43,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             var query = repository.ShoppingCarts.Where(cart =>
                                cart.StoreId == storeId &&
-                               cart.Type == WishlistCartType &&
+                               cart.Type == ModuleConstants.WishlistCartType &&
                                !cart.IsDeleted);
 
             var predicate = PredicateBuilder.False<ShoppingCartEntity>();

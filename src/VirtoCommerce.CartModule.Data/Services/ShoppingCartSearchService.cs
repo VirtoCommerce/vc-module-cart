@@ -27,7 +27,6 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
         }
 
-
         protected override IQueryable<ShoppingCartEntity> BuildQuery(IRepository repository, ShoppingCartSearchCriteria criteria)
         {
             var query = ((ICartRepository)repository).ShoppingCarts.Where(x => !x.IsDeleted);

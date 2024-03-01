@@ -63,7 +63,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-        private static async Task ValidateName(ShoppingCart cart, ICartRepository repository)
+        protected virtual async Task ValidateName(ShoppingCart cart, ICartRepository repository)
         {
             var resultName = cart.Name;
             var query = repository.ShoppingCarts.Where(x =>

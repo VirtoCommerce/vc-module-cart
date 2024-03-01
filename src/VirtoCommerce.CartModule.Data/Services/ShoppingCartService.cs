@@ -63,12 +63,13 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-        private async Task ValidateName(ShoppingCart cart, ICartRepository repository)
+        private static async Task ValidateName(ShoppingCart cart, ICartRepository repository)
         {
             var resultName = cart.Name;
             var query = repository.ShoppingCarts.Where(x =>
-                !x.IsDeleted && x.Id != cart.Id &&
-                ((cart.OrganizationId != null && x.OrganizationId == cart.OrganizationId) || x.CustomerId == cart.CustomerId)
+                !x.IsDeleted && x.Id != cart.Id
+                && ((cart.OrganizationId != null && x.OrganizationId == cart.OrganizationId)
+                    || x.CustomerId == cart.CustomerId)
             );
             var index = 1;
             while (await query.AnyAsync(x => x.Name == resultName))

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
@@ -19,6 +21,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 {
     public class ShoppingCartService : CrudService<ShoppingCart, ShoppingCartEntity, CartChangeEvent, CartChangedEvent>, IShoppingCartService
     {
+        private readonly Func<ICartRepository> _repositoryFactory;
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
 
         public ShoppingCartService(
@@ -28,6 +31,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             IShoppingCartTotalsCalculator totalsCalculator)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
+            _repositoryFactory = repositoryFactory;
             _totalsCalculator = totalsCalculator;
         }
 
@@ -42,17 +46,37 @@ namespace VirtoCommerce.CartModule.Data.Services
             return model;
         }
 
-        protected override Task BeforeSaveChanges(IList<ShoppingCart> models)
+        protected override async Task BeforeSaveChanges(IList<ShoppingCart> models)
         {
             new ShoppingCartsValidator().ValidateAndThrow(models);
+
+            using var repository = _repositoryFactory();
 
             foreach (var cart in models)
             {
                 //Calculate cart totals before save
                 _totalsCalculator.CalculateTotals(cart);
+                if (cart.Type == ModuleConstants.WishlistCartType)
+                {
+                    await ValidateName(cart, repository);
+                }
             }
+        }
 
-            return Task.CompletedTask;
+        protected virtual async Task ValidateName(ShoppingCart cart, ICartRepository repository)
+        {
+            var resultName = cart.Name;
+            var query = repository.ShoppingCarts.Where(x =>
+                !x.IsDeleted && x.Id != cart.Id
+                && ((cart.OrganizationId != null && x.OrganizationId == cart.OrganizationId)
+                    || x.CustomerId == cart.CustomerId)
+            );
+            var index = 1;
+            while (await query.AnyAsync(x => x.Name == resultName))
+            {
+                resultName = $"{cart.Name} ({index++})";
+            }
+            cart.Name = resultName;
         }
 
         protected override Task SoftDelete(IRepository repository, IList<string> ids)

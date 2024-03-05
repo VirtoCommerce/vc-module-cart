@@ -7,6 +7,8 @@ namespace VirtoCommerce.CartModule.Core
     [ExcludeFromCodeCoverage]
     public static class ModuleConstants
     {
+        public const string WishlistCartType = "Wishlist";
+
         public static class Security
         {
             public static class Permissions

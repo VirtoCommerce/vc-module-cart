@@ -99,6 +99,8 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public virtual decimal FeeTotalWithTax { get; set; }
 
+        public virtual int LineItemsCount { get; set; }
+
         public ICollection<Address> Addresses { get; set; }
         public ICollection<LineItem> Items { get; set; }
         public ICollection<Payment> Payments { get; set; }

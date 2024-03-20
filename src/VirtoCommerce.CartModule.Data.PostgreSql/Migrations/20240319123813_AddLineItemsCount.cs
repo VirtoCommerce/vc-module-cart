@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -14,8 +14,10 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                 name: "LineItemsCount",
                 table: "Cart",
                 type: "integer",
-                nullable: false,
-                defaultValue: 0);
+            nullable: false,
+            defaultValue: 0);
+
+            migrationBuilder.Sql("UPDATE \"Cart\" SET \"LineItemsCount\" = (SELECT COUNT(\"Id\") FROM \"CartLineItem\" WHERE \"Cart\".\"Id\" = \"CartLineItem\".\"ShoppingCartId\")");
         }
 
         /// <inheritdoc />

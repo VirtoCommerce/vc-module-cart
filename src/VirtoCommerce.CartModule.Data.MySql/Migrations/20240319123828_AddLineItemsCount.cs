@@ -16,6 +16,8 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.Sql("UPDATE `Cart` c SET `LineItemsCount` = (SELECT COUNT(Id) FROM `CartLineItem` WHERE `ShoppingCartId` = c.Id)");
         }
 
         /// <inheritdoc />

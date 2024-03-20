@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -16,6 +16,8 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.Sql("UPDATE Cart SET LineItemsCount = (SELECT COUNT(Id) FROM CartLineItem WHERE ShoppingCartId = Cart.Id)");
         }
 
         /// <inheritdoc />

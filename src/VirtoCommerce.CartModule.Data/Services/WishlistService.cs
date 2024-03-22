@@ -82,9 +82,13 @@ namespace VirtoCommerce.CartModule.Data.Services
                 {
                     Id = lineItemGroup.Key,
                     WishlistIds = lineItemGroup.Select(x => x.ShoppingCartId).ToList(),
+                    InWishlist = true,
                     CustomerId = customerId,
                 })
                 .ToListAsync();
+
+            result.AddRange(productIds.Except(result.Select(x => x.Id))
+                .Select(x => new InternalEntity { Id = x, CustomerId = customerId }));
 
             return result;
         }
@@ -122,7 +126,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             public string CustomerId { get; set; }
             public bool InWishlist { get; set; }
-            public IList<string> WishlistIds { get; set; }
+            public IList<string> WishlistIds { get; set; } = [];
         }
     }
 }

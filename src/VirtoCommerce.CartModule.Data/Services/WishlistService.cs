@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Primitives;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
@@ -84,11 +85,17 @@ namespace VirtoCommerce.CartModule.Data.Services
                     WishlistIds = lineItemGroup.Select(x => x.ShoppingCartId).ToList(),
                     InWishlist = true,
                     CustomerId = customerId,
+                    OrganizationId = organizationId,
                 })
                 .ToListAsync();
 
             result.AddRange(productIds.Except(result.Select(x => x.Id))
-                .Select(x => new InternalEntity { Id = x, CustomerId = customerId }));
+                .Select(x => new InternalEntity
+                {
+                    Id = x,
+                    CustomerId = customerId,
+                    OrganizationId = organizationId
+                }));
 
             return result;
         }
@@ -119,12 +126,21 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected virtual void ConfigureCache(MemoryCacheEntryOptions cacheOptions, string id, InternalEntity model)
         {
-            cacheOptions.AddExpirationToken(GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(model.CustomerId));
+            var token = GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(model.CustomerId);
+
+            if (!string.IsNullOrEmpty(model.OrganizationId))
+            {
+                var organizationToken = GenericSearchCachingRegion<ShoppingCart>.CreateChangeTokenForKey(model.OrganizationId);
+                token = new CompositeChangeToken(new[] { token, organizationToken });
+            }
+
+            cacheOptions.AddExpirationToken(token);
         }
 
         protected class InternalEntity : Entity
         {
             public string CustomerId { get; set; }
+            public string OrganizationId { get; set; }
             public bool InWishlist { get; set; }
             public IList<string> WishlistIds { get; set; } = [];
         }

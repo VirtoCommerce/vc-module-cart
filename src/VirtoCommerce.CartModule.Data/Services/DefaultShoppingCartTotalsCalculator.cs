@@ -138,6 +138,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.PaymentDiscountTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentDiscountTotalWithTax, currency);
 
             cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
+
+            cart.LineItemsCount = cart.Items?.Count ?? 0;
         }
 
         protected virtual void CalculatePaymentTotals(Payment payment)

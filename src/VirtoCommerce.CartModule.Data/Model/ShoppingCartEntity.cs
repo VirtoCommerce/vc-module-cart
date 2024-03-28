@@ -116,6 +116,8 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string Type { get; set; }
 
+        public int LineItemsCount { get; set; }
+
         //Soft delete
         public bool IsDeleted { get; set; }
 
@@ -179,6 +181,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.TaxPercentRate = TaxPercentRate;
             model.Type = Type;
             model.Name = Name;
+            model.LineItemsCount = LineItemsCount;
 
             model.Discounts = Discounts.Select(x => x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
             model.Items = Items.Select(x => x.ToModel(AbstractTypeFactory<LineItem>.TryCreateInstance())).ToList();
@@ -248,6 +251,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             Type = model.Type;
             Name = model.Name;
             StoreId = model.StoreId;
+            LineItemsCount = model.LineItemsCount;
 
             if (model.Addresses != null)
             {
@@ -340,6 +344,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.TaxPercentRate = TaxPercentRate;
             target.Type = Type;
             target.Name = Name;
+            target.LineItemsCount = LineItemsCount;
 
             if (!Items.IsNullCollection())
             {

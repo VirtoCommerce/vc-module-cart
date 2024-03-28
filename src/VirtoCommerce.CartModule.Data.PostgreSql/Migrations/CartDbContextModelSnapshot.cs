@@ -17,7 +17,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.13")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -138,7 +138,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("DecimalValue")
-                        .HasColumnType("numeric(18,5)");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<string>("DictionaryItemId")
                         .HasMaxLength(128)
@@ -458,7 +458,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<decimal>("TaxPercentRate")
-                        .HasColumnType("numeric(18,4)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("TaxTotal")
                         .HasColumnType("Money");
@@ -560,7 +560,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<decimal>("TaxPercentRate")
-                        .HasColumnType("numeric(18,4)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("TaxTotal")
                         .HasColumnType("Money");
@@ -674,7 +674,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<decimal>("TaxPercentRate")
-                        .HasColumnType("numeric(18,4)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("TaxTotal")
                         .HasColumnType("Money");
@@ -831,6 +831,9 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
+                    b.Property<int>("LineItemsCount")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
@@ -890,7 +893,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<decimal>("TaxPercentRate")
-                        .HasColumnType("numeric(18,4)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("TaxTotal")
                         .HasColumnType("Money");

@@ -17,13 +17,12 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
             var commandTemlate = new StringBuilder();
 
             commandTemlate.Append(@"
-                  SELECT c.ID, li.ProductId, c.CustomerId, c.OrganizationId
+                  SELECT c.ID, li.ProductId
                   FROM [VirtoCommerce3target76].[dbo].[Cart] AS C
                   LEFT JOIN CartLineItem AS LI
                   ON C.id = LI.ShoppingCartId
                   WHERE C.IsDeleted = 0 AND C.Type = 'Wishlist'
-                  AND LI.ProductId IN (@productIds)
-                  ");
+                  AND LI.ProductId IN (@productIds)");
 
             if (!string.IsNullOrEmpty(organizationId) && !string.IsNullOrEmpty(customerId))
             {

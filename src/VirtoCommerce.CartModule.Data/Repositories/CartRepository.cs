@@ -56,6 +56,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             return _rawDatabaseCommand.SoftRemove(DbContext, ids);
         }
 
+        public Task<IList<ProductWishlistEntity>> FindWishlistsByProductsAsync(string customerId, string organizationId, string storeId, IList<string> productIds)
+        {
+            return _rawDatabaseCommand.FindWishlistsByProductsAsync(DbContext, customerId, organizationId, storeId, productIds);
+        }
 
         protected virtual async Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsInternalAsync(IList<string> ids, string responseGroup, bool isDeleted)
         {

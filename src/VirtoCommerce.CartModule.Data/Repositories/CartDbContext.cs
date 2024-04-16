@@ -173,6 +173,8 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             #endregion
 
+            modelBuilder.Entity<ProductWishlistEntity>().HasNoKey().ToView("empty");
+
             base.OnModelCreating(modelBuilder);
 
             // Allows configuration for an entity type for different database types.

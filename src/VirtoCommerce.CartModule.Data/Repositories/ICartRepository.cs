@@ -13,5 +13,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsAsync(IList<string> ids, string responseGroup = null);
         Task RemoveCartsAsync(IList<string> ids);
         Task SoftRemoveCartsAsync(IList<string> ids);
+        Task<IList<ProductWishlistEntity>> FindWishlistsByProductsAsync(string customerId, string organizationId, string storeId, IList<string> productIds);
     }
 }

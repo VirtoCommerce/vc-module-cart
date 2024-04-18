@@ -18,7 +18,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
 
             commandTemlate.Append(@"
                   SELECT c.ID, li.ProductId
-                  FROM [VirtoCommerce3target76].[dbo].[Cart] AS C
+                  FROM Cart AS C
                   LEFT JOIN CartLineItem AS LI
                   ON C.id = LI.ShoppingCartId
                   WHERE C.IsDeleted = 0 AND C.Type = 'Wishlist'

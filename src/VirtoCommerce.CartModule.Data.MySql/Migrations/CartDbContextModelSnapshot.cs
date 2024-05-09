@@ -602,6 +602,19 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                     b.ToTable("CartPayment", (string)null);
                 });
 
+            modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ProductWishlistEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProductId")
+                        .HasColumnType("longtext");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("empty", (string)null);
+                });
+
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ShipmentEntity", b =>
                 {
                     b.Property<string>("Id")

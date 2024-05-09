@@ -14,39 +14,36 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
 
         public async Task<IList<ProductWishlistEntity>> FindWishlistsByProductsAsync(CartDbContext dbContext, string customerId, string organizationId, string storeId, IList<string> productIds)
         {
+            var command = new Command();
             var commandTemlate = new StringBuilder();
 
             commandTemlate.Append(@"
-                  SELECT c.ID, li.ProductId
-                  FROM Cart AS C
-                  LEFT JOIN CartLineItem AS LI
-                  ON C.id = LI.ShoppingCartId
-                  WHERE C.IsDeleted = 0 AND C.Type = 'Wishlist'
-                  AND LI.ProductId IN (@productIds)");
+                  SELECT c.Id, li.ProductId
+                  FROM Cart c
+                  LEFT JOIN CartLineItem li
+                  ON c.Id = li.ShoppingCartId
+                  WHERE c.IsDeleted = 0 AND c.Type = 'Wishlist'
+                  AND li.ProductId IN (@productIds)");
 
             if (!string.IsNullOrEmpty(organizationId) && !string.IsNullOrEmpty(customerId))
             {
                 commandTemlate.Append(@"
-                    AND (C.CustomerId = @customerId OR C.OrganizationId = @organizationId)
+                    AND (c.CustomerId = @customerId OR c.OrganizationId = @organizationId)
                 ");
+
+                command.Parameters.Add(new Microsoft.Data.SqlClient.SqlParameter("@customerId", customerId));
+                command.Parameters.Add(new Microsoft.Data.SqlClient.SqlParameter("@organizationId", organizationId));
             }
             else if (!string.IsNullOrEmpty(customerId))
             {
                 commandTemlate.Append(@"
-                    AND C.CustomerId = @customerId
+                    AND c.CustomerId = @customerId
                 ");
+
+                command.Parameters.Add(new Microsoft.Data.SqlClient.SqlParameter("@customerId", customerId));
             }
 
-            var commandText = commandTemlate.ToString();
-            var command = new Command
-            {
-                Text = commandText,
-                Parameters = new List<object>
-                {
-                    new Microsoft.Data.SqlClient.SqlParameter("@customerId", customerId),
-                    new Microsoft.Data.SqlClient.SqlParameter("@organizationId", organizationId),
-                }
-            };
+            command.Text = commandTemlate.ToString();
 
             AddArrayParameters(command, "@productIds", productIds);
 

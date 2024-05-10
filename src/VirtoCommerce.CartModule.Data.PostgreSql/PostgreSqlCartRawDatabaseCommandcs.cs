@@ -28,28 +28,26 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql
 
             if (!string.IsNullOrEmpty(organizationId) && !string.IsNullOrEmpty(customerId))
             {
+                command.Parameters.Add(new NpgsqlParameter("@customerId", customerId));
+                command.Parameters.Add(new NpgsqlParameter("@organizationId", organizationId));
+
                 commandTemlate.Append(@"
                     AND (c.""CustomerId"" = @customerId OR c.""OrganizationId"" = @organizationId)
                 ");
-
-                command.Parameters.Add(new NpgsqlParameter("@customerId", customerId));
-                command.Parameters.Add(new NpgsqlParameter("@organizationId", organizationId));
             }
             else if (!string.IsNullOrEmpty(customerId))
             {
+                command.Parameters.Add(new NpgsqlParameter("@customerId", customerId));
+
                 commandTemlate.Append(@"
                     AND c.""CustomerId"" = @customerId
                 ");
-
-                command.Parameters.Add(new NpgsqlParameter("@customerId", customerId));
             }
 
             command.Text = commandTemlate.ToString();
-
             AddArrayParameters(command, "@productIds", productIds);
 
-            var result = await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
-            return result;
+            return await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
         }
 
         protected virtual Task<int> ExecuteStoreQueryAsync(CartDbContext dbContext, string commandTemplate, IEnumerable<string> parameterValues)

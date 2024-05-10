@@ -44,11 +44,9 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
             }
 
             command.Text = commandTemlate.ToString();
-
             AddArrayParameters(command, "@productIds", productIds);
 
-            var result = await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
-            return result;
+            return await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
         }
 
         protected virtual Task<int> ExecuteStoreQueryAsync(CartDbContext dbContext, string commandTemplate, IEnumerable<string> parameterValues)

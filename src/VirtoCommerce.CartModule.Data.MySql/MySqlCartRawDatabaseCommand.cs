@@ -54,8 +54,7 @@ namespace VirtoCommerce.CartModule.Data.MySql
                 command.Parameters.Add(new MySqlParameter(parameterName.ParameterName, parameterName.ProductId));
             }
 
-            var result = await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
-            return result;
+            return await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
         }
 
         protected virtual async Task<int> ExecuteStoreQueryAsync(CartDbContext dbContext, string commandTemplate, IEnumerable<string> parameterValues)

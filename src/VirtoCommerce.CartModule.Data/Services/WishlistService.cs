@@ -73,21 +73,19 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             using var repository = _repositoryFactory();
 
-            var query = GetCustomerWishListsQuery(repository, customerId, organizationId, storeId);
+            var productWishlists = await repository.FindWishlistsByProductsAsync(customerId, organizationId, storeId, productIds);
 
-            var result = await query
-                .SelectMany(cart => cart.Items)
-                .Where(lineItem => productIds.Contains(lineItem.ProductId))
-                .GroupBy(lineItem => lineItem.ProductId)
-                .Select(lineItemGroup => new InternalEntity
+            var result = productWishlists
+                .GroupBy(x => x.ProductId)
+                .Select(g => new InternalEntity
                 {
-                    Id = lineItemGroup.Key,
-                    WishlistIds = lineItemGroup.Select(x => x.ShoppingCartId).ToList(),
+                    Id = g.Key,
+                    WishlistIds = g.Select(x => x.Id).ToList(),
                     InWishlist = true,
                     CustomerId = customerId,
                     OrganizationId = organizationId,
                 })
-                .ToListAsync();
+                .ToList();
 
             result.AddRange(productIds.Except(result.Select(x => x.Id))
                 .Select(x => new InternalEntity

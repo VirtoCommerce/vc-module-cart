@@ -27,6 +27,7 @@ namespace VirtoCommerce.CartModule.Data.MySql
                   LEFT JOIN CartLineItem li
                   ON c.Id = li.ShoppingCartId
                   WHERE c.IsDeleted = '0' AND c.Type = 'Wishlist'
+                  AND li.IsGift = '0'
                   AND li.ProductId IN ({parameterNamesTemplate})");
 
             if (!string.IsNullOrEmpty(organizationId) && !string.IsNullOrEmpty(customerId))

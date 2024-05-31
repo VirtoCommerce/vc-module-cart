@@ -16,10 +16,10 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(64)]
         public string Organization { get; set; }
 
+        [Required]
         [StringLength(3)]
         public string CountryCode { get; set; }
-
-        [Required]
+        
         [StringLength(64)]
         public string CountryName { get; set; }
 
@@ -27,9 +27,11 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(128)]
         public string City { get; set; }
 
+        [Required]
         [StringLength(64)]
         public string PostalCode { get; set; }
 
+        [Required]
         [StringLength(2048)]
         public string Line1 { get; set; }
 

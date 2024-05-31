@@ -24,6 +24,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql
                   LEFT JOIN ""CartLineItem"" li
                   ON c.""Id"" = li.""ShoppingCartId""
                   WHERE c.""IsDeleted"" = '0' AND c.""Type"" = 'Wishlist'
+                  AND li.""IsGift"" = '0'
                   AND li.""ProductId"" IN (@productIds)");
 
             if (!string.IsNullOrEmpty(organizationId) && !string.IsNullOrEmpty(customerId))

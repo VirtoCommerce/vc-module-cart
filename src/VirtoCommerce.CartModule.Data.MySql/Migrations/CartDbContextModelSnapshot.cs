@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CartModule.Data.Repositories;
 
@@ -16,8 +17,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.AddressEntity", b =>
                 {
@@ -27,8 +30,8 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasColumnType("varchar(128)");
 
                     b.Property<string>("AddressType")
-                        .HasMaxLength(32)
-                        .HasColumnType("varchar(32)");
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -41,22 +44,22 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
 
                     b.Property<string>("CountryName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(254)
-                        .HasColumnType("varchar(254)");
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("Line1")
                         .HasMaxLength(2048)
@@ -71,8 +74,8 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasColumnType("varchar(2048)");
 
                     b.Property<string>("Organization")
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
+                        .HasMaxLength(512)
+                        .HasColumnType("varchar(512)");
 
                     b.Property<string>("OuterId")
                         .HasMaxLength(128)

@@ -17,7 +17,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -30,8 +30,8 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<string>("AddressType")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -44,22 +44,22 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 
                     b.Property<string>("CountryName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Line1")
                         .HasMaxLength(2048)
@@ -74,8 +74,8 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasColumnType("character varying(2048)");
 
                     b.Property<string>("Organization")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("OuterId")
                         .HasMaxLength(128)

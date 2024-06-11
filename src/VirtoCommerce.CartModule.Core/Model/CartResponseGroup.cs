@@ -11,6 +11,6 @@ namespace VirtoCommerce.CartModule.Core.Model
         WithShipments = 1 << 2,
         WithDynamicProperties = 1 << 3,
         RecalculateTotals = 1 << 4,
-        Full = Default | WithPayments | WithLineItems | WithShipments | WithDynamicProperties | RecaculateTotals
+        Full = Default | WithPayments | WithLineItems | WithShipments | WithDynamicProperties | RecalculateTotals
     }
 }

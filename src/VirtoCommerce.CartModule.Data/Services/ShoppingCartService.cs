@@ -38,8 +38,8 @@ namespace VirtoCommerce.CartModule.Data.Services
         protected override ShoppingCart ProcessModel(string responseGroup, ShoppingCartEntity entity, ShoppingCart model)
         {
             //Calculate totals only for full responseGroup
-            if (string.IsNullOrEmpty(responseGroup) ||
-                Enum.Parse<CartResponseGroup>(responseGroup) == CartResponseGroup.Full)
+            var cartResponseGroup = EnumUtility.SafeParse(responseGroup, CartResponseGroup.Full);
+            if ((cartResponseGroup & CartResponseGroup.Full) == CartResponseGroup.Full)
             {
                 _totalsCalculator.CalculateTotals(model);
             }

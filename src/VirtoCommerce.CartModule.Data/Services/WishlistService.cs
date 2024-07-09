@@ -29,7 +29,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual async Task<IList<string>> FindProductsInWishlistsAsync(string customerId, string organizationId, string storeId, IList<string> productIds)
         {
-            var cacheKeyPrefix = CacheKey.With(GetType(), nameof(FindProductsInWishlistsAsync), customerId, storeId);
+            var cacheKeyPrefix = CacheKey.With(GetType(), nameof(FindProductsInWishlistsAsync), customerId, organizationId, storeId);
 
             var models = await _platformMemoryCache.GetOrLoadByIdsAsync(cacheKeyPrefix, productIds,
                 missingIds => FindProductsInWishlistsNoCacheAsync(customerId, organizationId, storeId, missingIds),
@@ -40,7 +40,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         public virtual async Task<IDictionary<string, IList<string>>> FindWishlistsByProductsAsync(string customerId, string organizationId, string storeId, IList<string> productIds)
         {
-            var cacheKeyPrefix = CacheKey.With(GetType(), nameof(FindWishlistsByProductsAsync), customerId, storeId);
+            var cacheKeyPrefix = CacheKey.With(GetType(), nameof(FindWishlistsByProductsAsync), customerId, organizationId, storeId);
 
             var models = await _platformMemoryCache.GetOrLoadByIdsAsync(cacheKeyPrefix, productIds,
                  missingIds => FindWishlistsByProductsNoCacheAsync(customerId, organizationId, storeId, missingIds),
@@ -109,7 +109,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             if (!string.IsNullOrEmpty(customerId))
             {
-                predicate = predicate.Or(x => x.CustomerId == customerId);
+                predicate = predicate.Or(x => x.CustomerId == customerId && x.OrganizationId == null);
             }
 
             if (!string.IsNullOrEmpty(organizationId))

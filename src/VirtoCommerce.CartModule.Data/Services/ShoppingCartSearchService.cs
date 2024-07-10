@@ -43,23 +43,19 @@ namespace VirtoCommerce.CartModule.Data.Services
 
                 if (!string.IsNullOrEmpty(criteria.CustomerId))
                 {
-                    predicate = predicate.Or(x => x.CustomerId == criteria.CustomerId);
+                    predicate = predicate.Or(x => x.CustomerId == criteria.CustomerId && x.OrganizationId == null);
                 }
 
                 if (!criteria.CustomerIds.IsNullOrEmpty())
                 {
-                    predicate = predicate.Or(x => criteria.CustomerIds.Contains(x.CustomerId));
+                    predicate = predicate.Or(x => criteria.CustomerIds.Contains(x.CustomerId) && x.OrganizationId == null);
                 }
 
                 query = query.Where(predicate);
             }
             else
             {
-                if (criteria.NoOrganization)
-                {
-                    query = query.Where(x => x.OrganizationId == null);
-                }
-                else if (!string.IsNullOrEmpty(criteria.OrganizationId))
+                if (!string.IsNullOrEmpty(criteria.OrganizationId))
                 {
                     query = query.Where(x => x.OrganizationId == criteria.OrganizationId);
                 }

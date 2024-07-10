@@ -21,6 +21,8 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public DateTime? ModifiedEndDate { get; set; }
 
         public bool CustomerOrOrganization { get; set; }
+
+        [Obsolete("Not being used", DiagnosticId = "VC0008", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         public bool NoOrganization { get; set; }
     }
 }

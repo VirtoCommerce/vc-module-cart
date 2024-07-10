@@ -33,7 +33,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql
                 command.Parameters.Add(new NpgsqlParameter("@organizationId", organizationId));
 
                 commandTemlate.Append(@"
-                    AND (c.""CustomerId"" = @customerId OR c.""OrganizationId"" = @organizationId)
+                    AND (c.""CustomerId"" = @customerId AND c.""OrganizationId"" IS NULL OR c.""OrganizationId"" = @organizationId)
                 ");
             }
             else if (!string.IsNullOrEmpty(customerId))
@@ -41,7 +41,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql
                 command.Parameters.Add(new NpgsqlParameter("@customerId", customerId));
 
                 commandTemlate.Append(@"
-                    AND c.""CustomerId"" = @customerId
+                    AND c.""CustomerId"" = @customerId AND c.""OrganizationId"" IS NULL
                 ");
             }
 

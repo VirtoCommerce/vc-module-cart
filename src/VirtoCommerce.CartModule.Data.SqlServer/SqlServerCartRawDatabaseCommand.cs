@@ -29,7 +29,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
             if (!string.IsNullOrEmpty(organizationId) && !string.IsNullOrEmpty(customerId))
             {
                 commandTemlate.Append(@"
-                    AND (c.CustomerId = @customerId OR c.OrganizationId = @organizationId)
+                    AND (c.CustomerId = @customerId AND c.OrganizationId IS NULL OR c.OrganizationId = @organizationId)
                 ");
 
                 command.Parameters.Add(new Microsoft.Data.SqlClient.SqlParameter("@customerId", customerId));
@@ -38,7 +38,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
             else if (!string.IsNullOrEmpty(customerId))
             {
                 commandTemlate.Append(@"
-                    AND c.CustomerId = @customerId
+                    AND c.CustomerId = @customerId AND c.OrganizationId IS NULL
                 ");
 
                 command.Parameters.Add(new Microsoft.Data.SqlClient.SqlParameter("@customerId", customerId));

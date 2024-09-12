@@ -242,7 +242,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         {
             try
             {
-                await _shoppingCartService.SaveChangesAsync(new[] { cart });
+                await _shoppingCartService.SaveChangesAsync([cart]);
             }
             catch (FluentValidation.ValidationException ex)
             {
@@ -265,7 +265,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             {
                 try
                 {
-                    await _shoppingCartService.SaveChangesAsync(new[] { cart });
+                    await _shoppingCartService.SaveChangesAsync([cart]);
                 }
                 catch (FluentValidation.ValidationException ex)
                 {

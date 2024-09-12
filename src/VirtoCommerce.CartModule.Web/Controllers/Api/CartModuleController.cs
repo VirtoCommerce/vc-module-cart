@@ -40,7 +40,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{storeId}/{customerId}/{cartName}/{currency}/{cultureName}/current")]
         public async Task<ActionResult<ShoppingCart>> GetCart(string storeId, string customerId, string cartName, string currency, string cultureName)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), string.Join(":", storeId, customerId, cartName, currency))).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), string.Join(":", storeId, customerId, cartName, currency))).LockAsync())
             {
                 await _cartBuilder.GetOrCreateCartAsync(storeId, customerId, cartName, currency, cultureName);
             }
@@ -60,7 +60,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AddItemToCart(string cartId, [FromBody] LineItem lineItem)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.Full.ToString());
                 await _cartBuilder.TakeCart(cart).AddItem(lineItem).SaveAsync();
@@ -73,7 +73,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> ChangeCartItem(string cartId, [FromQuery] string lineItemId, [FromQuery] int quantity)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.Full.ToString());
                 _cartBuilder.TakeCart(cart);
@@ -91,7 +91,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{cartId}/items/{lineItemId}")]
         public async Task<ActionResult<int>> RemoveCartItem(string cartId, string lineItemId)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.Full.ToString());
                 await _cartBuilder.TakeCart(cart).RemoveItem(lineItemId).SaveAsync();
@@ -103,7 +103,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("{cartId}/items")]
         public async Task<ActionResult> ClearCart(string cartId)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.Full.ToString());
                 await _cartBuilder.TakeCart(cart).Clear().SaveAsync();
@@ -116,7 +116,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> MergeWithCart(string cartId, [FromBody] ShoppingCart otherCart)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.Full.ToString());
                 var builder = await _cartBuilder.TakeCart(cart).MergeWithCartAsync(otherCart);
@@ -158,7 +158,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AddCartCoupon(string cartId, string couponCode)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.Default.ToString());
                 await _cartBuilder.TakeCart(cart).AddCoupon(couponCode).SaveAsync();
@@ -171,7 +171,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> RemoveCartCoupon(string cartId, string couponCode)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.Default.ToString());
                 await _cartBuilder.TakeCart(cart).RemoveCoupon().SaveAsync();
@@ -184,7 +184,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AddOrUpdateCartShipment(string cartId, [FromBody] Shipment shipment)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.WithShipments.ToString());
                 await (await _cartBuilder.TakeCart(cart).AddOrUpdateShipmentAsync(shipment)).SaveAsync();
@@ -197,7 +197,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AddOrUpdateCartPayment(string cartId, [FromBody] Payment payment)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.WithPayments.ToString());
                 await (await _cartBuilder.TakeCart(cart).AddOrUpdatePaymentAsync(payment)).SaveAsync();
@@ -242,7 +242,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         {
             try
             {
-                await _shoppingCartService.SaveChangesAsync(new[] { cart });
+                await _shoppingCartService.SaveChangesAsync([cart]);
             }
             catch (FluentValidation.ValidationException ex)
             {
@@ -261,11 +261,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Update)]
         public async Task<ActionResult<ShoppingCart>> UpdateShoppingCart([FromBody] ShoppingCart cart)
         {
-            using (await AsyncLock.GetLockByKey(CacheKey.With(cart.GetType(), cart.Id)).GetReleaserAsync())
+            using (await AsyncLock.GetLockByKey(CacheKey.With(cart.GetType(), cart.Id)).LockAsync())
             {
                 try
                 {
-                    await _shoppingCartService.SaveChangesAsync(new[] { cart });
+                    await _shoppingCartService.SaveChangesAsync([cart]);
                 }
                 catch (FluentValidation.ValidationException ex)
                 {

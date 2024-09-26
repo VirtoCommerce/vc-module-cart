@@ -99,6 +99,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 var payments = await Payments
                     .Include(x => x.Addresses)
                     .Where(x => ids.Contains(x.ShoppingCartId))
+                    .AsSplitQuery()
                     .ToListAsync();
 
                 if (payments.Any())
@@ -150,6 +151,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 var shipments = await Shipments
                     .Include(x => x.Items)
                     .Where(x => ids.Contains(x.ShoppingCartId))
+                    .AsSplitQuery()
                     .ToListAsync();
 
                 if (shipments.Any())

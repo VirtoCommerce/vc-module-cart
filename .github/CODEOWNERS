@@ -1,3 +1,9 @@
+# Common settings
+
+.github/* @VirtoCommerce/platform
+.gitignore @VirtoCommerce/platform
+.dockerignore @VirtoCommerce/platform
+
 # Main Code and Tests
 
 src/* @VirtoCommerce/platform
@@ -5,3 +11,6 @@ tests/* @VirtoCommerce/platform
 .editorconfig @VirtoCommerce/platform
 3rd-party-components.md @VirtoCommerce/platform
 VirtoCommerce.Platform.sln  @VirtoCommerce/platform
+
+# Docs
+docs/* @VirtoCommerce/platform

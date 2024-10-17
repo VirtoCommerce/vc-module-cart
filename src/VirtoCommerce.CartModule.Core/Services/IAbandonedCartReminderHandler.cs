@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace VirtoCommerce.CartModule.Core.Services;
 
-public interface IDeleteObsoleteCartsHandler
+public interface IAbandonedCartReminderHandler
 {
-    Task DeleteObsoleteCarts();
+    Task RemindAboutAbandonedCarts();
 }

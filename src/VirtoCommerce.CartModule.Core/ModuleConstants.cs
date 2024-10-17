@@ -19,7 +19,7 @@ namespace VirtoCommerce.CartModule.Core
                 public const string Update = "cart:update";
                 public const string Delete = "cart:delete";
 
-                public static string[] AllPermissions = new[] { Read, Create, Access, Update, Delete };
+                public static string[] AllPermissions = [Read, Create, Access, Update, Delete];
             }
         }
 
@@ -64,7 +64,31 @@ namespace VirtoCommerce.CartModule.Core
                     Name = "Cart.HardDeleteDelayDays",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.PositiveInteger,
-                    DefaultValue = 0,
+                    DefaultValue = 0
+                };
+
+                public static readonly SettingDescriptor EnableAbandonedCartReminder = new SettingDescriptor
+                {
+                    Name = "Cart.EnableAbandonedCartReminder",
+                    GroupName = "Cart|Abandoned Cart Reminder",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = false
+                };
+
+                public static readonly SettingDescriptor CronAbandonedCartReminder = new SettingDescriptor
+                {
+                    Name = "Cart.CronAbandonedCartReminder",
+                    GroupName = "Cart|Abandoned Cart Reminder",
+                    ValueType = SettingValueType.ShortText,
+                    DefaultValue = "0 9 * * *"
+                };
+
+                public static readonly SettingDescriptor HoursInAbandonedCart = new SettingDescriptor
+                {
+                    Name = "Cart.HoursInAbandonedCart",
+                    GroupName = "Cart|Abandoned Cart Reminder",
+                    ValueType = SettingValueType.PositiveInteger,
+                    DefaultValue = 120
                 };
 
                 public static IEnumerable<SettingDescriptor> AllSettings
@@ -76,7 +100,20 @@ namespace VirtoCommerce.CartModule.Core
                         yield return MaximumCountPerDeleteObsoleteCartsJobExecution;
                         yield return CronDeleteObsoleteCarts;
                         yield return HardDeleteDelayDays;
+                        yield return EnableAbandonedCartReminder;
+                        yield return CronAbandonedCartReminder;
+                        yield return HoursInAbandonedCart;
                     }
+                }
+            }
+
+            public static IEnumerable<SettingDescriptor> StoreSettings
+            {
+                get
+                {
+                    yield return General.EnableAbandonedCartReminder;
+                    yield return General.CronAbandonedCartReminder;
+                    yield return General.HoursInAbandonedCart;
                 }
             }
         }

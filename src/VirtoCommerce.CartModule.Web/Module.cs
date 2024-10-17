@@ -25,6 +25,7 @@ using VirtoCommerce.Platform.Data.MySql.Extensions;
 using VirtoCommerce.Platform.Data.PostgreSql.Extensions;
 using VirtoCommerce.Platform.Data.SqlServer.Extensions;
 using VirtoCommerce.Platform.Hangfire;
+using VirtoCommerce.StoreModule.Core.Model;
 
 namespace VirtoCommerce.CartModule.Web
 {
@@ -76,6 +77,7 @@ namespace VirtoCommerce.CartModule.Web
             serviceCollection.AddTransient<IWishlistService, WishlistService>();
             serviceCollection.AddTransient<IDeleteObsoleteCartsHandler, DeleteObsoleteCartsHandler>();
             serviceCollection.AddTransient<CartChangedEventHandler>();
+            serviceCollection.AddTransient<IAbandonedCartReminderHandler, AbandonedCartReminderHandler>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -93,6 +95,7 @@ namespace VirtoCommerce.CartModule.Web
 
             var settingsRegistrar = serviceProvider.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.General.AllSettings, ModuleInfo.Id);
+            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.StoreSettings, nameof(Store));
 
             var recurringJobService = serviceProvider.GetService<IRecurringJobService>();
             recurringJobService.WatchJobSetting(
@@ -100,6 +103,12 @@ namespace VirtoCommerce.CartModule.Web
                     .SetEnablerSetting(ModuleConstants.Settings.General.EnableDeleteObsoleteCarts)
                     .SetCronSetting(ModuleConstants.Settings.General.CronDeleteObsoleteCarts)
                     .ToJob<DeleteObsoleteCartsJob>(x => x.Process())
+                    .Build());
+            recurringJobService.WatchJobSetting(
+                new SettingCronJobBuilder()
+                    .SetEnablerSetting(ModuleConstants.Settings.General.EnableAbandonedCartReminder)
+                    .SetCronSetting(ModuleConstants.Settings.General.CronAbandonedCartReminder)
+                    .ToJob<AbandonedCartReminderJob>(x => x.Process())
                     .Build());
 
             appBuilder.RegisterEventHandler<CartChangedEvent, CartChangedEventHandler>();

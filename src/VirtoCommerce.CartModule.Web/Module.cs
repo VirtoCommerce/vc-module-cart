@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
+using VirtoCommerce.CartModule.Core.Notifications;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.BackgroundJobs;
 using VirtoCommerce.CartModule.Data.Handlers;
@@ -14,6 +16,8 @@ using VirtoCommerce.CartModule.Data.PostgreSql;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Data.SqlServer;
+using VirtoCommerce.NotificationsModule.Core.Services;
+using VirtoCommerce.NotificationsModule.TemplateLoader.FileSystem;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
@@ -122,6 +126,10 @@ namespace VirtoCommerce.CartModule.Web
                 dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
             }
             dbContext.Database.Migrate();
+
+            var notificationRegistrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
+            var defaultTemplatesDirectory = Path.Combine(ModuleInfo.FullPhysicalPath, "NotificationTemplates");
+            notificationRegistrar.RegisterNotification<AbandonedCartEmailNotification>().WithTemplatesFromPath(defaultTemplatesDirectory);
         }
 
         public void Uninstall()

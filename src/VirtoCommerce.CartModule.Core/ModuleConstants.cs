@@ -112,7 +112,6 @@ namespace VirtoCommerce.CartModule.Core
                 get
                 {
                     yield return General.EnableAbandonedCartReminder;
-                    yield return General.CronAbandonedCartReminder;
                     yield return General.HoursInAbandonedCart;
                 }
             }

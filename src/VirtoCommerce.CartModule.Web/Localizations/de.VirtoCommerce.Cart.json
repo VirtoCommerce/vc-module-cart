@@ -77,5 +77,11 @@
     "cart:update": "Warenkorb-Daten aktualisieren",
     "cart:delete": "Warenkorb-Daten löschen",
     "cart:access": "Zugriff auf Warenkorb-Daten"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Benachrichtigung über zurückgelassene Warenkörbe",
+      "description": "Der Kunde erhält eine E-Mail-Benachrichtigung über die im Warenkorb zurückgelassenen Artikel."
+    }
   }
 }

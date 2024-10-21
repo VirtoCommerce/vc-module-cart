@@ -7,6 +7,7 @@ using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Notifications;
 using VirtoCommerce.CartModule.Core.Services;
+using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.NotificationsModule.Core.Extensions;
@@ -55,12 +56,12 @@ public class AbandonedCartReminderHandler : IAbandonedCartReminderHandler
 
         foreach (var store in stores)
         {
-            var query = cartRepository.ShoppingCarts.Where(x =>
-                !x.IsDeleted &&
-                !x.IsAnonymous &&
-                x.Type != ModuleConstants.WishlistCartType &&
-                x.LineItemsCount > 0 &&
-                x.StoreId == store.Id);
+            var query = cartRepository.ShoppingCarts.Where(cart =>
+                !cart.IsDeleted &&
+                !cart.IsAnonymous &&
+                cart.Type != ModuleConstants.WishlistCartType &&
+                cart.LineItemsCount > 0 &&
+                cart.StoreId == store.Id);
 
             var delayHours = store.Settings.GetValue<int>(CartSettings.HoursInAbandonedCart);
 
@@ -74,21 +75,26 @@ public class AbandonedCartReminderHandler : IAbandonedCartReminderHandler
 
             foreach (var cartEntity in query)
             {
-                var notification = await _notificationSearchService.GetNotificationAsync<AbandonedCartEmailNotification>(new TenantIdentity(cartEntity.StoreId, nameof(Store)));
-                var cart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
-
-                cartEntity.ToModel(cart);
-
-                notification.Cart = cart;
-                notification.LanguageCode = cart.LanguageCode;
-                notification.From = store?.EmailWithName;
-                notification.To = await GetCustomerEmailAsync(cart.CustomerId);
-
-                if (!string.IsNullOrEmpty(notification.From) && !string.IsNullOrEmpty(notification.To))
-                {
-                    await _notificationSender.ScheduleSendNotificationAsync(notification);
-                }
+                await SendNotification(store, cartEntity);
             }
+        }
+    }
+
+    private async Task SendNotification(Store store, ShoppingCartEntity cartEntity)
+    {
+        var notification = await _notificationSearchService.GetNotificationAsync<AbandonedCartEmailNotification>(new TenantIdentity(cartEntity.StoreId, nameof(Store)));
+        var cart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
+
+        cartEntity.ToModel(cart);
+
+        notification.Cart = cart;
+        notification.LanguageCode = cart.LanguageCode;
+        notification.From = store.EmailWithName;
+        notification.To = await GetCustomerEmailAsync(cart.CustomerId);
+
+        if (!string.IsNullOrEmpty(notification.From) && !string.IsNullOrEmpty(notification.To))
+        {
+            await _notificationSender.ScheduleSendNotificationAsync(notification);
         }
     }
 

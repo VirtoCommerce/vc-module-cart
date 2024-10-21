@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
+using VirtoCommerce.CartModule.Core.Notifications;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.BackgroundJobs;
 using VirtoCommerce.CartModule.Data.Handlers;
@@ -14,6 +16,8 @@ using VirtoCommerce.CartModule.Data.PostgreSql;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Data.SqlServer;
+using VirtoCommerce.NotificationsModule.Core.Services;
+using VirtoCommerce.NotificationsModule.TemplateLoader.FileSystem;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
@@ -25,6 +29,7 @@ using VirtoCommerce.Platform.Data.MySql.Extensions;
 using VirtoCommerce.Platform.Data.PostgreSql.Extensions;
 using VirtoCommerce.Platform.Data.SqlServer.Extensions;
 using VirtoCommerce.Platform.Hangfire;
+using VirtoCommerce.StoreModule.Core.Model;
 
 namespace VirtoCommerce.CartModule.Web
 {
@@ -76,6 +81,7 @@ namespace VirtoCommerce.CartModule.Web
             serviceCollection.AddTransient<IWishlistService, WishlistService>();
             serviceCollection.AddTransient<IDeleteObsoleteCartsHandler, DeleteObsoleteCartsHandler>();
             serviceCollection.AddTransient<CartChangedEventHandler>();
+            serviceCollection.AddTransient<IAbandonedCartReminderHandler, AbandonedCartReminderHandler>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -93,6 +99,7 @@ namespace VirtoCommerce.CartModule.Web
 
             var settingsRegistrar = serviceProvider.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.General.AllSettings, ModuleInfo.Id);
+            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.StoreSettings, nameof(Store));
 
             var recurringJobService = serviceProvider.GetService<IRecurringJobService>();
             recurringJobService.WatchJobSetting(
@@ -100,6 +107,12 @@ namespace VirtoCommerce.CartModule.Web
                     .SetEnablerSetting(ModuleConstants.Settings.General.EnableDeleteObsoleteCarts)
                     .SetCronSetting(ModuleConstants.Settings.General.CronDeleteObsoleteCarts)
                     .ToJob<DeleteObsoleteCartsJob>(x => x.Process())
+                    .Build());
+            recurringJobService.WatchJobSetting(
+                new SettingCronJobBuilder()
+                    .SetEnablerSetting(ModuleConstants.Settings.General.EnableAbandonedCartReminder)
+                    .SetCronSetting(ModuleConstants.Settings.General.CronAbandonedCartReminder)
+                    .ToJob<AbandonedCartReminderJob>(x => x.Process())
                     .Build());
 
             appBuilder.RegisterEventHandler<CartChangedEvent, CartChangedEventHandler>();
@@ -113,6 +126,10 @@ namespace VirtoCommerce.CartModule.Web
                 dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
             }
             dbContext.Database.Migrate();
+
+            var notificationRegistrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
+            var defaultTemplatesDirectory = Path.Combine(ModuleInfo.FullPhysicalPath, "NotificationTemplates");
+            notificationRegistrar.RegisterNotification<AbandonedCartEmailNotification>().WithTemplatesFromPath(defaultTemplatesDirectory);
         }
 
         public void Uninstall()

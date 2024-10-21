@@ -56,12 +56,13 @@ public class AbandonedCartReminderHandler : IAbandonedCartReminderHandler
 
         foreach (var store in stores)
         {
-            var query = cartRepository.ShoppingCarts.Where(cart =>
+            var query = cartRepository.ShoppingCarts.Where(cart => cart.StoreId == store.Id);
+
+            query = query.Where(cart =>
                 !cart.IsDeleted &&
                 !cart.IsAnonymous &&
                 cart.Type != ModuleConstants.WishlistCartType &&
-                cart.LineItemsCount > 0 &&
-                cart.StoreId == store.Id);
+                cart.LineItemsCount > 0);
 
             var delayHours = store.Settings.GetValue<int>(CartSettings.HoursInAbandonedCart);
 

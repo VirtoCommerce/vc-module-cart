@@ -57,17 +57,19 @@
         "title": "Zeit bis zur endgültigen Löschung (Tage)",
         "description": "Der Job löscht Warenkörbe, die vor mehr als dieser Anzahl an Tagen zum Entfernen markiert wurden"
       },
-      "EnableAbandonedCartReminder": {
-        "title": "Benachrichtigungen für verlassene Warenkörbe aktivieren",
-        "description": "Erinnern Sie Kunden per E-Mail an Produkte, die im Warenkorb liegen geblieben sind"
-      },
-      "CronAbandonedCartReminder": {
-        "title": "Cron-Ausdruck für die regelmäßige Benachrichtigung",
-        "description": "Wann Benachrichtigungen über verlassene Warenkörbe gesendet werden sollen"
-      },
-      "HoursInAbandonedCart": {
-        "title": "Anzahl der Stunden, nach denen der Warenkorb als verlassen gilt",
-        "description": "Der Warenkorb gilt als verlassen nach der angegebenen Anzahl von Stunden, wenn er in dieser Zeit nicht geleert oder gekauft wurde"
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Benachrichtigungen für verlassene Warenkörbe aktivieren",
+          "description": "Erinnern Sie Kunden per E-Mail an Produkte, die im Warenkorb liegen geblieben sind"
+        },
+        "CronExpression": {
+          "title": "Cron-Ausdruck für die regelmäßige Benachrichtigung",
+          "description": "Wann Benachrichtigungen über verlassene Warenkörbe gesendet werden sollen"
+        },
+        "HoursInCart": {
+          "title": "Anzahl der Stunden, nach denen der Warenkorb als verlassen gilt",
+          "description": "Der Warenkorb gilt als verlassen nach der angegebenen Anzahl von Stunden, wenn er in dieser Zeit nicht geleert oder gekauft wurde"
+        }
       }
     }
   },

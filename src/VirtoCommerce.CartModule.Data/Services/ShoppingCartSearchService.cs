@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Services;
@@ -114,6 +115,21 @@ namespace VirtoCommerce.CartModule.Data.Services
             if (criteria.ModifiedEndDate != null)
             {
                 query = query.Where(x => x.ModifiedDate <= criteria.ModifiedEndDate.Value);
+            }
+
+            if (criteria.NotEmpty)
+            {
+                query = query.Where(x => x.LineItemsCount > 0);
+            }
+
+            if (criteria.NotAnonymous)
+            {
+                query = query.Where(x => !x.IsAnonymous);
+            }
+
+            if (criteria.NotWishlist)
+            {
+                query = query.Where(x => x.Type != ModuleConstants.WishlistCartType);
             }
 
             return query;

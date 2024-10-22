@@ -5,7 +5,8 @@ namespace VirtoCommerce.CartModule.Core.Notifications;
 
 public class AbandonedCartEmailNotification : EmailNotification
 {
-    public AbandonedCartEmailNotification() : base(nameof(AbandonedCartEmailNotification))
+    public AbandonedCartEmailNotification()
+        : base(nameof(AbandonedCartEmailNotification))
     {
     }
 

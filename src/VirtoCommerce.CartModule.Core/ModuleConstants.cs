@@ -27,68 +27,68 @@ namespace VirtoCommerce.CartModule.Core
         {
             public static class General
             {
-                public static readonly SettingDescriptor EnableDeleteObsoleteCarts = new SettingDescriptor
+                public static SettingDescriptor EnableDeleteObsoleteCarts { get; } = new()
                 {
                     Name = "Cart.EnableDeleteObsoleteCarts",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.Boolean,
-                    DefaultValue = false
+                    DefaultValue = false,
                 };
 
-                public static readonly SettingDescriptor PortionDeleteObsoleteCarts = new SettingDescriptor
+                public static SettingDescriptor PortionDeleteObsoleteCarts { get; } = new()
                 {
                     Name = "Cart.PortionDeleteObsoleteCarts",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.PositiveInteger,
-                    DefaultValue = 20
+                    DefaultValue = 20,
                 };
 
-                public static readonly SettingDescriptor MaximumCountPerDeleteObsoleteCartsJobExecution = new SettingDescriptor
+                public static SettingDescriptor MaximumCountPerDeleteObsoleteCartsJobExecution { get; } = new()
                 {
                     Name = "Cart.MaximumCountPerDeleteObsoleteCartsJobExecution",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.PositiveInteger,
-                    DefaultValue = 1000
+                    DefaultValue = 1000,
                 };
 
-                public static readonly SettingDescriptor CronDeleteObsoleteCarts = new SettingDescriptor
+                public static SettingDescriptor CronDeleteObsoleteCarts { get; } = new()
                 {
                     Name = "Cart.CronDeleteObsoleteCarts",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.ShortText,
-                    DefaultValue = "0 2 */1 * *"
+                    DefaultValue = "0 2 */1 * *",
                 };
 
-                public static readonly SettingDescriptor HardDeleteDelayDays = new SettingDescriptor
+                public static SettingDescriptor HardDeleteDelayDays { get; } = new()
                 {
                     Name = "Cart.HardDeleteDelayDays",
                     GroupName = "Cart|General",
                     ValueType = SettingValueType.PositiveInteger,
-                    DefaultValue = 0
+                    DefaultValue = 0,
                 };
 
-                public static readonly SettingDescriptor EnableAbandonedCartReminder = new SettingDescriptor
+                public static SettingDescriptor EnableAbandonedCartReminder { get; } = new()
                 {
-                    Name = "Cart.EnableAbandonedCartReminder",
+                    Name = "Cart.AbandonedCartReminder.Enable",
                     GroupName = "Cart|Abandoned Cart Reminder",
                     ValueType = SettingValueType.Boolean,
-                    DefaultValue = false
+                    DefaultValue = false,
                 };
 
-                public static readonly SettingDescriptor CronAbandonedCartReminder = new SettingDescriptor
+                public static SettingDescriptor CronAbandonedCartReminder { get; } = new()
                 {
-                    Name = "Cart.CronAbandonedCartReminder",
+                    Name = "Cart.AbandonedCartReminder.CronExpression",
                     GroupName = "Cart|Abandoned Cart Reminder",
                     ValueType = SettingValueType.ShortText,
-                    DefaultValue = "0 9 * * *"
+                    DefaultValue = "0 9 * * *",
                 };
 
-                public static readonly SettingDescriptor HoursInAbandonedCart = new SettingDescriptor
+                public static SettingDescriptor HoursInAbandonedCart { get; } = new()
                 {
-                    Name = "Cart.HoursInAbandonedCart",
+                    Name = "Cart.AbandonedCartReminder.HoursInCart",
                     GroupName = "Cart|Abandoned Cart Reminder",
                     ValueType = SettingValueType.PositiveInteger,
-                    DefaultValue = 120
+                    DefaultValue = 120,
                 };
 
                 public static IEnumerable<SettingDescriptor> AllSettings

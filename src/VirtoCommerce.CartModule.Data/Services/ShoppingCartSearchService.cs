@@ -116,14 +116,16 @@ namespace VirtoCommerce.CartModule.Data.Services
                 query = query.Where(x => x.ModifiedDate <= criteria.ModifiedEndDate.Value);
             }
 
-            if (criteria.NotEmpty)
-            {
-                query = query.Where(x => x.LineItemsCount > 0);
-            }
-
-            if (criteria.IsAnonymous.HasValue)
+            if (criteria.IsAnonymous != null)
             {
                 query = query.Where(x => x.IsAnonymous == criteria.IsAnonymous.Value);
+            }
+
+            if (criteria.HasLineItems != null)
+            {
+                query = criteria.HasLineItems.Value
+                    ? query.Where(x => x.LineItemsCount > 0)
+                    : query.Where(x => x.LineItemsCount <= 0);
             }
 
             if (!string.IsNullOrEmpty(criteria.NotType))

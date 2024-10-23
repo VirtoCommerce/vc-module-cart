@@ -60,17 +60,17 @@ public class AbandonedCartReminderJob
 
             foreach (var store in stores)
             {
-                await ProcessСartsInStore(store);
+                await ProcessCartsInStore(store);
             }
         }
     }
 
-    private async Task ProcessСartsInStore(Store store)
+    private async Task ProcessCartsInStore(Store store)
     {
         var cartSearchCriteria = AbstractTypeFactory<ShoppingCartSearchCriteria>.TryCreateInstance();
         cartSearchCriteria.StoreId = store.Id;
         cartSearchCriteria.IsAnonymous = false;
-        cartSearchCriteria.NotEmpty = true;
+        cartSearchCriteria.HasLineItems = true;
         cartSearchCriteria.NotType = ModuleConstants.WishlistCartType;
 
         var delayHours = store.Settings.GetValue<int>(CartSettings.HoursInAbandonedCart);
@@ -109,13 +109,10 @@ public class AbandonedCartReminderJob
         using var userManager = _userManagerFactory();
         var user = await userManager.FindByIdAsync(userId);
 
-        if (user != null)
-        {
-            var member = await _memberService.GetByIdAsync(user.MemberId);
+        var member = string.IsNullOrEmpty(user?.MemberId)
+            ? null
+            : await _memberService.GetByIdAsync(user.MemberId);
 
-            return member?.Emails?.FirstOrDefault() ?? user.Email;
-        }
-
-        return null;
+        return member?.Emails?.FirstOrDefault() ?? user?.Email;
     }
 }

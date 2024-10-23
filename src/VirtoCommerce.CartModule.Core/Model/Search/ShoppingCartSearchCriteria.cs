@@ -26,7 +26,7 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public bool NoOrganization { get; set; }
 
         public bool? IsAnonymous { get; set; }
-        public bool NotEmpty { get; set; }
+        public bool? HasLineItems { get; set; }
         public string NotType { get; set; }
     }
 }

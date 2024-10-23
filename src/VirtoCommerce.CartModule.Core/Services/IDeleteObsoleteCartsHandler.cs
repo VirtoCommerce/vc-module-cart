@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 
-namespace VirtoCommerce.CartModule.Core.Services
+namespace VirtoCommerce.CartModule.Core.Services;
+
+public interface IDeleteObsoleteCartsHandler
 {
-    public interface IDeleteObsoleteCartsHandler
-    {
-        Task DeleteObsoleteCarts();
-    }
+    Task DeleteObsoleteCarts();
 }

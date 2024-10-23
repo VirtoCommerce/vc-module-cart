@@ -22,10 +22,19 @@
     <None Remove="node_modules\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="VirtoCommerce.NotificationsModule.TemplateLoader.FileSystem" Version="3.811.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CartModule.Core\VirtoCommerce.CartModule.Core.csproj" />
     <ProjectReference Include="..\VirtoCommerce.CartModule.Data.MySql\VirtoCommerce.CartModule.Data.MySql.csproj" />
     <ProjectReference Include="..\VirtoCommerce.CartModule.Data.PostgreSql\VirtoCommerce.CartModule.Data.PostgreSql.csproj" />
     <ProjectReference Include="..\VirtoCommerce.CartModule.Data.SqlServer\VirtoCommerce.CartModule.Data.SqlServer.csproj" />
     <ProjectReference Include="..\VirtoCommerce.CartModule.Data\VirtoCommerce.CartModule.Data.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <NotificationTemplates Include="NotificationTemplates\**" />
+  </ItemGroup>
+  <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
+    <Copy SourceFiles="@(NotificationTemplates)" DestinationFiles="$(PublishDir)\..\%(Identity)" />
+  </Target>
 </Project>

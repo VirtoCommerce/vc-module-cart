@@ -66,7 +66,7 @@
           "title": "Cron-Ausdruck für die regelmäßige Benachrichtigung",
           "description": "Wann Benachrichtigungen über verlassene Warenkörbe gesendet werden sollen"
         },
-        "HoursInCart": {
+        "HoursUntilCartAbandoned": {
           "title": "Anzahl der Stunden, nach denen der Warenkorb als verlassen gilt",
           "description": "Der Warenkorb gilt als verlassen nach der angegebenen Anzahl von Stunden, wenn er in dieser Zeit nicht geleert oder gekauft wurde"
         }

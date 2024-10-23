@@ -67,7 +67,7 @@
           "title": "Cron expression for periodic notification sending",
           "description": "When to start sending notifications about the abandoned carts"
         },
-        "HoursInCart": {
+        "HoursUntilCartAbandoned": {
           "title": "Number of hours after which the cart is considered abandoned",
           "description": "The cart is considered abandoned after the specified number of hours if it has not been cleared or purchased during this time"
         }

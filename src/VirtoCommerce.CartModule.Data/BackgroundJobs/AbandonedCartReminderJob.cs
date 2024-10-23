@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
+using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Notifications;
@@ -55,7 +56,7 @@ public class AbandonedCartReminderJob
 
         await foreach (var searchResult in _storeSearchService.SearchBatchesNoCloneAsync(storeSearchCriteria))
         {
-            var stores = searchResult.Results.Where(s => s.Settings.GetValue<bool>(CartSettings.EnableAbandonedCartReminder)).ToList();
+            var stores = searchResult.Results.Where(x => x.Settings.GetValue<bool>(CartSettings.EnableAbandonedCartReminder)).ToList();
 
             foreach (var store in stores)
             {
@@ -68,9 +69,9 @@ public class AbandonedCartReminderJob
     {
         var cartSearchCriteria = AbstractTypeFactory<ShoppingCartSearchCriteria>.TryCreateInstance();
         cartSearchCriteria.StoreId = store.Id;
-        cartSearchCriteria.NotAnonymous = true;
+        cartSearchCriteria.IsAnonymous = false;
         cartSearchCriteria.NotEmpty = true;
-        cartSearchCriteria.NotWishlist = true;
+        cartSearchCriteria.NotType = ModuleConstants.WishlistCartType;
 
         var delayHours = store.Settings.GetValue<int>(CartSettings.HoursInAbandonedCart);
 

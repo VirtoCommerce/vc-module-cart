@@ -85,7 +85,7 @@ namespace VirtoCommerce.CartModule.Core
 
                 public static SettingDescriptor HoursInAbandonedCart { get; } = new()
                 {
-                    Name = "Cart.AbandonedCartReminder.HoursInCart",
+                    Name = "Cart.AbandonedCartReminder.HoursUntilCartAbandoned",
                     GroupName = "Cart|Abandoned Cart Reminder",
                     ValueType = SettingValueType.PositiveInteger,
                     DefaultValue = 120,

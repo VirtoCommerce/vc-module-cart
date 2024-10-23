@@ -117,6 +117,10 @@ namespace VirtoCommerce.CartModule.Web
             appBuilder.RegisterEventHandler<CartChangedEvent, CartChangedEventHandler>();
             appBuilder.RegisterEventHandler<CartChangeEvent, CartChangedEventHandler>();
 
+            var notificationRegistrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
+            var defaultTemplatesDirectory = Path.Combine(ModuleInfo.FullPhysicalPath, "NotificationTemplates");
+            notificationRegistrar.RegisterNotification<AbandonedCartEmailNotification>().WithTemplatesFromPath(defaultTemplatesDirectory);
+
             using var serviceScope = serviceProvider.CreateScope();
             using var dbContext = serviceScope.ServiceProvider.GetRequiredService<CartDbContext>();
             var databaseProvider = Configuration.GetValue("DatabaseProvider", "SqlServer");
@@ -125,10 +129,6 @@ namespace VirtoCommerce.CartModule.Web
                 dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
             }
             dbContext.Database.Migrate();
-
-            var notificationRegistrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
-            var defaultTemplatesDirectory = Path.Combine(ModuleInfo.FullPhysicalPath, "NotificationTemplates");
-            notificationRegistrar.RegisterNotification<AbandonedCartEmailNotification>().WithTemplatesFromPath(defaultTemplatesDirectory);
         }
 
         public void Uninstall()

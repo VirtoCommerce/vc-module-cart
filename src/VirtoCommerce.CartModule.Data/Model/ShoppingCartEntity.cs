@@ -121,6 +121,8 @@ namespace VirtoCommerce.CartModule.Data.Model
         //Soft delete
         public bool IsDeleted { get; set; }
 
+        public DateTime? AbandonmentNotificationDate { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; } = new NullCollection<DiscountEntity>();
@@ -182,6 +184,9 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.Type = Type;
             model.Name = Name;
             model.LineItemsCount = LineItemsCount;
+            // We doesn't allow to pop up this property from entity to business model.
+            // It helps to be shure that if business changes the cart it automatically will be cleared.
+            // model.AbandonmentNotificationDate = AbandonmentNotificationDate;
 
             model.Discounts = Discounts.Select(x => x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
             model.Items = Items.Select(x => x.ToModel(AbstractTypeFactory<LineItem>.TryCreateInstance())).ToList();
@@ -252,6 +257,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             Name = model.Name;
             StoreId = model.StoreId;
             LineItemsCount = model.LineItemsCount;
+            AbandonmentNotificationDate = model.AbandonmentNotificationDate;
 
             if (model.Addresses != null)
             {
@@ -345,6 +351,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Type = Type;
             target.Name = Name;
             target.LineItemsCount = LineItemsCount;
+            target.AbandonmentNotificationDate = AbandonmentNotificationDate;
 
             if (!Items.IsNullCollection())
             {

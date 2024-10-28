@@ -31,6 +31,7 @@ public class AbandonedCartReminderJob
     private readonly INotificationSearchService _notificationSearchService;
     private readonly INotificationSender _notificationSender;
     private readonly IMemberService _memberService;
+    private readonly IShoppingCartService _shoppingCartService;
     private readonly Func<UserManager<ApplicationUser>> _userManagerFactory;
 
     public AbandonedCartReminderJob(
@@ -39,6 +40,7 @@ public class AbandonedCartReminderJob
         INotificationSearchService notificationSearchService,
         INotificationSender notificationSender,
         IMemberService memberService,
+        IShoppingCartService shoppingCartService,
         Func<UserManager<ApplicationUser>> userManagerFactory)
     {
         _storeSearchService = storeSearchService;
@@ -46,6 +48,7 @@ public class AbandonedCartReminderJob
         _notificationSearchService = notificationSearchService;
         _notificationSender = notificationSender;
         _memberService = memberService;
+        _shoppingCartService = shoppingCartService;
         _userManagerFactory = userManagerFactory;
     }
 
@@ -72,6 +75,8 @@ public class AbandonedCartReminderJob
         cartSearchCriteria.IsAnonymous = false;
         cartSearchCriteria.HasLineItems = true;
         cartSearchCriteria.NotType = ModuleConstants.WishlistCartType;
+        cartSearchCriteria.Name = ModuleConstants.DefaultCartName;
+        cartSearchCriteria.HasAbandonmentNotification = false;
 
         var delayHours = store.Settings.GetValue<int>(CartSettings.HoursInAbandonedCart);
 
@@ -101,6 +106,12 @@ public class AbandonedCartReminderJob
         if (!string.IsNullOrEmpty(notification.From) && !string.IsNullOrEmpty(notification.To))
         {
             await _notificationSender.ScheduleSendNotificationAsync(notification);
+
+            // This doesn't work properly in the current implementation
+            // because of the previous method doesn't send the notification immediately
+            // and doesn't garanteer that the notification will be delivered
+            cart.AbandonmentNotificationDate = DateTime.UtcNow;
+            await _shoppingCartService.SaveChangesAsync([cart]);
         }
     }
 

@@ -28,5 +28,9 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public bool? IsAnonymous { get; set; }
         public bool? HasLineItems { get; set; }
         public string NotType { get; set; }
+
+        public bool? HasAbandonmentNotification { get; set; }
+        public DateTime? AbandonmentNotificationStartDate { get; set; }
+        public DateTime? AbandonmentNotificationEndDate { get; set; }
     }
 }

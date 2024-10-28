@@ -133,6 +133,23 @@ namespace VirtoCommerce.CartModule.Data.Services
                 query = query.Where(x => x.Type != criteria.NotType);
             }
 
+            if (criteria.HasAbandonmentNotification != null)
+            {
+                query = criteria.HasAbandonmentNotification.Value
+                    ? query.Where(x => x.AbandonmentNotificationDate.HasValue)
+                    : query.Where(x => !x.AbandonmentNotificationDate.HasValue);
+            }
+
+            if (criteria.AbandonmentNotificationStartDate != null)
+            {
+                query = query.Where(x => x.AbandonmentNotificationDate >= criteria.AbandonmentNotificationStartDate.Value);
+            }
+
+            if (criteria.AbandonmentNotificationEndDate != null)
+            {
+                query = query.Where(x => x.AbandonmentNotificationDate <= criteria.AbandonmentNotificationEndDate.Value);
+            }
+
             return query;
         }
 

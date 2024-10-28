@@ -85,7 +85,7 @@ public class AbandonedCartReminderJob
             cartSearchCriteria.ModifiedEndDate = DateTime.UtcNow.AddHours(-delayHours);
         }
 
-        await foreach (var searchResult in _shoppingCartSearchService.SearchBatchesNoCloneAsync(cartSearchCriteria))
+        await foreach (var searchResult in _shoppingCartSearchService.SearchBatchesAsync(cartSearchCriteria))
         {
             foreach (var cart in searchResult.Results)
             {
@@ -105,12 +105,10 @@ public class AbandonedCartReminderJob
 
         if (!string.IsNullOrEmpty(notification.From) && !string.IsNullOrEmpty(notification.To))
         {
-            await _notificationSender.ScheduleSendNotificationAsync(notification);
+            await _notificationSender.SendNotificationAsync(notification);
 
-            // This doesn't work properly in the current implementation
-            // because of the previous method doesn't send the notification immediately
-            // and doesn't garanteer that the notification will be delivered
             cart.AbandonmentNotificationDate = DateTime.UtcNow;
+
             await _shoppingCartService.SaveChangesAsync([cart]);
         }
     }

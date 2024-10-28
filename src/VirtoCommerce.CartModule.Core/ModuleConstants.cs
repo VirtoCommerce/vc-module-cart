@@ -20,7 +20,7 @@ namespace VirtoCommerce.CartModule.Core
                 public const string Update = "cart:update";
                 public const string Delete = "cart:delete";
 
-                public static string[] AllPermissions = [Read, Create, Access, Update, Delete];
+                public static string[] AllPermissions { get; } = [Read, Create, Access, Update, Delete];
             }
         }
 

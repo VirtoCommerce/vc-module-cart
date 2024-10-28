@@ -184,9 +184,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.Type = Type;
             model.Name = Name;
             model.LineItemsCount = LineItemsCount;
-            // We doesn't allow to pop up this property from entity to business model.
-            // It helps to be shure that if business changes the cart it automatically will be cleared.
-            // model.AbandonmentNotificationDate = AbandonmentNotificationDate;
+            // We don't allow to pop up the AbandonmentNotificationDate property from entity to business model.
+            // It helps us to be shure that if business changes the cart this property automatically will be cleared.
 
             model.Discounts = Discounts.Select(x => x.ToModel(AbstractTypeFactory<Discount>.TryCreateInstance())).ToList();
             model.Items = Items.Select(x => x.ToModel(AbstractTypeFactory<LineItem>.TryCreateInstance())).ToList();

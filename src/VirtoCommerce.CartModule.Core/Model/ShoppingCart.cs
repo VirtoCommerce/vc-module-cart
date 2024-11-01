@@ -10,6 +10,7 @@ namespace VirtoCommerce.CartModule.Core.Model
 {
     public class ShoppingCart : AuditableEntity, IHasTaxDetalization, IHasDynamicProperties, ITaxable, IHasDiscounts, ICloneable
     {
+        public string CheckoutId { get; set; }
         public string Name { get; set; }
         public string StoreId { get; set; }
         public string ChannelId { get; set; }

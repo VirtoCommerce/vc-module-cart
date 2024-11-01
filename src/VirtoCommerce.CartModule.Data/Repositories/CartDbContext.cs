@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.CartModule.Data.Common;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Platform.Data.Infrastructure;
 
@@ -25,6 +26,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             modelBuilder.Entity<ShoppingCartEntity>().ToTable("Cart").HasKey(x => x.Id);
             modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.TaxPercentRate).HasColumnType("decimal(18,4)");
+            modelBuilder.Entity<ShoppingCartEntity>().Property(x => x.CheckoutId).HasMaxLength(128).HasValueGenerator<CheckoutIdGenerator>();
             modelBuilder.Entity<ShoppingCartEntity>().HasIndex(x => new { x.CustomerId, x.StoreId, x.ModifiedDate /* (! Important !) DESC */}).HasDatabaseName("IX_CustomerId_StoreId_Date");
             #endregion
 

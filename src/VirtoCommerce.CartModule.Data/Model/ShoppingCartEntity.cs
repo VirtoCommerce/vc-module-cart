@@ -15,6 +15,10 @@ namespace VirtoCommerce.CartModule.Data.Model
 {
     public class ShoppingCartEntity : AuditableEntity, IDataEntity<ShoppingCartEntity, ShoppingCart>
     {
+        [Required]
+        [StringLength(128)]
+        public string CheckoutId { get; set; }
+
         [StringLength(64)]
         public string Name { get; set; }
 
@@ -149,6 +153,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.ModifiedBy = ModifiedBy;
             model.ModifiedDate = ModifiedDate;
 
+            model.CheckoutId = CheckoutId;
             model.StoreId = StoreId;
             model.Fee = Fee;
             model.FeeWithTax = FeeWithTax;
@@ -251,6 +256,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             Type = model.Type;
             Name = model.Name;
             StoreId = model.StoreId;
+            CheckoutId = model.CheckoutId;
             LineItemsCount = model.LineItemsCount;
 
             if (model.Addresses != null)
@@ -313,6 +319,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
 
+            target.CheckoutId = CheckoutId;
             target.Fee = Fee;
             target.FeeWithTax = FeeWithTax;
             target.Status = Status;

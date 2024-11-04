@@ -173,6 +173,13 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             #endregion
 
+            #region ConfigurationItem
+            modelBuilder.Entity<ConfigurationItemEntity>().ToTable("CartConfigurationItem").HasKey(x => x.Id);
+            modelBuilder.Entity<ConfigurationItemEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ConfigurationItemEntity>().HasOne(x => x.LineItem).WithMany(x => x.ConfigurationItems)
+                        .HasForeignKey(x => x.LineItemId).IsRequired().OnDelete(DeleteBehavior.ClientCascade);
+            #endregion
+
             modelBuilder.Entity<ProductWishlistEntity>().HasNoKey().ToView("empty");
 
             base.OnModelCreating(modelBuilder);

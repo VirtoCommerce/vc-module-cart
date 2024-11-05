@@ -46,6 +46,8 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public decimal? VolumetricWeight { get; set; }
 
+        public DateTime? AbandonmentNotificationDate { get; set; }
+
         //Grand  cart total
         public virtual decimal Total { get; set; }
 

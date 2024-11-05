@@ -17,7 +17,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -776,6 +776,9 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime?>("AbandonmentNotificationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ChannelId")
                         .HasMaxLength(64)

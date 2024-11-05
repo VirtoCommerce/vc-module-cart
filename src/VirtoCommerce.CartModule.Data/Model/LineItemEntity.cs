@@ -390,7 +390,6 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             if (!ConfigurationItems.IsNullCollection())
             {
-                //var configurationItemComparer = AbstractTypeFactory<ConfigurationItemEntityComparer>.TryCreateInstance();
                 ConfigurationItems.Patch(target.ConfigurationItems, (sourceConfigurationItem, targetConfigurationItem) => sourceConfigurationItem.Patch(targetConfigurationItem));
             }
 

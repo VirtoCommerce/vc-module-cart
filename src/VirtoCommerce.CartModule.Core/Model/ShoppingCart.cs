@@ -10,7 +10,6 @@ namespace VirtoCommerce.CartModule.Core.Model
 {
     public class ShoppingCart : AuditableEntity, IHasTaxDetalization, IHasDynamicProperties, ITaxable, IHasDiscounts, ICloneable
     {
-        public string CheckoutId { get; set; }
         public string Name { get; set; }
         public string StoreId { get; set; }
         public string ChannelId { get; set; }
@@ -48,6 +47,8 @@ namespace VirtoCommerce.CartModule.Core.Model
         public decimal? VolumetricWeight { get; set; }
 
         public DateTime? AbandonmentNotificationDate { get; set; }
+
+        public string CheckoutId { get; set; }
 
         //Grand  cart total
         public virtual decimal Total { get; set; }

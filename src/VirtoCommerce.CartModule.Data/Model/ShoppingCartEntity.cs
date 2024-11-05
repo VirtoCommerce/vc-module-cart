@@ -15,10 +15,6 @@ namespace VirtoCommerce.CartModule.Data.Model
 {
     public class ShoppingCartEntity : AuditableEntity, IDataEntity<ShoppingCartEntity, ShoppingCart>
     {
-        [Required]
-        [StringLength(128)]
-        public string CheckoutId { get; set; }
-
         [StringLength(64)]
         public string Name { get; set; }
 
@@ -127,6 +123,10 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public DateTime? AbandonmentNotificationDate { get; set; }
 
+        [Required]
+        [StringLength(128)]
+        public string CheckoutId { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; } = new NullCollection<DiscountEntity>();
@@ -155,7 +155,6 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.ModifiedBy = ModifiedBy;
             model.ModifiedDate = ModifiedDate;
 
-            model.CheckoutId = CheckoutId;
             model.StoreId = StoreId;
             model.Fee = Fee;
             model.FeeWithTax = FeeWithTax;
@@ -189,6 +188,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.Type = Type;
             model.Name = Name;
             model.LineItemsCount = LineItemsCount;
+            model.CheckoutId = CheckoutId;
             // We don't allow to pop up the AbandonmentNotificationDate property from entity to business model.
             // It helps us to be shure that if business changes the cart this property automatically will be cleared.
 
@@ -260,9 +260,9 @@ namespace VirtoCommerce.CartModule.Data.Model
             Type = model.Type;
             Name = model.Name;
             StoreId = model.StoreId;
-            CheckoutId = model.CheckoutId;
             LineItemsCount = model.LineItemsCount;
             AbandonmentNotificationDate = model.AbandonmentNotificationDate;
+            CheckoutId = model.CheckoutId;
 
             if (model.Addresses != null)
             {
@@ -324,7 +324,6 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
 
-            target.CheckoutId = CheckoutId;
             target.Fee = Fee;
             target.FeeWithTax = FeeWithTax;
             target.Status = Status;
@@ -358,6 +357,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Name = Name;
             target.LineItemsCount = LineItemsCount;
             target.AbandonmentNotificationDate = AbandonmentNotificationDate;
+            target.CheckoutId = CheckoutId;
 
             if (!Items.IsNullCollection())
             {

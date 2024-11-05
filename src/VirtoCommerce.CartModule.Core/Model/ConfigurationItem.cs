@@ -8,7 +8,6 @@ namespace VirtoCommerce.CartModule.Core.Model;
 public class ConfigurationItem : AuditableEntity, ICloneable
 {
     public string LineItemId { get; set; }
-    public LineItem LineItem { get; set; }
 
     public string ProductId { get; set; }
 

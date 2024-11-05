@@ -777,6 +777,9 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<DateTime?>("AbandonmentNotificationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ChannelId")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");

@@ -17,7 +17,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -776,6 +776,9 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime?>("AbandonmentNotificationDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ChannelId")
                         .HasMaxLength(64)

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CartModule.Data.Repositories;
 
@@ -11,9 +12,11 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    partial class CartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241028120816_AbandonmentNotificationDateField")]
+    partial class AbandonmentNotificationDateField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,66 +229,6 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                     b.ToTable("CartDynamicPropertyObjectValue", (string)null);
                 });
 
-            modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ConfigurationItemEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("CatalogId")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("CategoryId")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ImageUrl")
-                        .HasMaxLength(1028)
-                        .HasColumnType("nvarchar(1028)");
-
-                    b.Property<string>("LineItemId")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.Property<string>("ProductId")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Sku")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LineItemId");
-
-                    b.ToTable("CartConfigurationItem", (string)null);
-                });
-
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.CouponEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -426,9 +369,6 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(1028)
                         .HasColumnType("nvarchar(1028)");
-
-                    b.Property<bool>("IsConfigured")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsGift")
                         .HasColumnType("bit");
@@ -1094,17 +1034,6 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                     b.Navigation("ShoppingCart");
                 });
 
-            modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ConfigurationItemEntity", b =>
-                {
-                    b.HasOne("VirtoCommerce.CartModule.Data.Model.LineItemEntity", "LineItem")
-                        .WithMany("ConfigurationItems")
-                        .HasForeignKey("LineItemId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.Navigation("LineItem");
-                });
-
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.CouponEntity", b =>
                 {
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.ShoppingCartEntity", "ShoppingCart")
@@ -1232,8 +1161,6 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.LineItemEntity", b =>
                 {
-                    b.Navigation("ConfigurationItems");
-
                     b.Navigation("Discounts");
 
                     b.Navigation("DynamicPropertyObjectValues");

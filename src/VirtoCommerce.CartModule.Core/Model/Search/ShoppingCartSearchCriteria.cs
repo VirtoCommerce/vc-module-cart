@@ -24,5 +24,13 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
 
         [Obsolete("Not being used", DiagnosticId = "VC0008", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         public bool NoOrganization { get; set; }
+
+        public bool? IsAnonymous { get; set; }
+        public bool? HasLineItems { get; set; }
+        public string NotType { get; set; }
+
+        public bool? HasAbandonmentNotification { get; set; }
+        public DateTime? AbandonmentNotificationStartDate { get; set; }
+        public DateTime? AbandonmentNotificationEndDate { get; set; }
     }
 }

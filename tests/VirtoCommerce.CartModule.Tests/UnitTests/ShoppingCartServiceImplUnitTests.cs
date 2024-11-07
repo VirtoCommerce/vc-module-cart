@@ -155,7 +155,7 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
                 StoreId = "StoreId",
                 CustomerId = "CustomerId",
                 Currency = "USD",
-                Payments = new[] { new Payment { Currency = "USD", BillingAddress = new Address { LastName = null } } },
+                Payments = new[] { new Payment { Currency = "USD", BillingAddress = new Address { CountryName = null } } },
             };
 
             var carts = new[] { entity };
@@ -165,7 +165,7 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
             var ex = await Assert.ThrowsAsync<FluentValidation.ValidationException>(() => service.SaveChangesAsync(carts));
 
             //Assert
-            Assert.Contains("'Last Name' must not be empty.", ex.Message);
+            Assert.Contains("'Country Name' must not be empty.", ex.Message);
         }
 
         private ShoppingCartService GetCustomerOrderServiceWithPlatformMemoryCache()

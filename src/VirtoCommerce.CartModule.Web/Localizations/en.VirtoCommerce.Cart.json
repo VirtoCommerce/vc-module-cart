@@ -57,6 +57,20 @@
       "HardDeleteDelayDays": {
         "title": "Time to live for soft deleted carts (days)",
         "description": "Job deletes carts that were marked to remove more than this number of days ago"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Enable notifications about abandoned carts",
+          "description": "Remind customers by email about the items abandoned in the cart"
+        },
+        "CronExpression": {
+          "title": "Cron expression for periodic notification sending",
+          "description": "When to start sending notifications about the abandoned carts"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "Number of hours after which the cart is considered abandoned",
+          "description": "The cart is considered abandoned after the specified number of hours if it has not been cleared or purchased during this time"
+        }
       }
     }
   },
@@ -66,5 +80,11 @@
     "cart:update": "Update cart related data",
     "cart:delete": "Delete cart related data",
     "cart:access": "Access cart related data"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Notification on abandoned carts",
+      "description": "The customer will receive an email notification about the items abandoned in the cart."
+    }
   }
 }

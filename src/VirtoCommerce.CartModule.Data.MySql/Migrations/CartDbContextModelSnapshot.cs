@@ -52,12 +52,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 

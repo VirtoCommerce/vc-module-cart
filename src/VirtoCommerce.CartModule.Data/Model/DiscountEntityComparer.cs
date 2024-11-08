@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
@@ -11,7 +11,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (x != null && y != null)
             {
                 equals = x.PromotionId == y.PromotionId &&
-                         x.PromotionDescription == y.PromotionDescription &&
+                         x.PromotionName == y.PromotionName &&
                          x.CouponCode == y.CouponCode &&
                          x.Currency == y.Currency;
             }
@@ -29,7 +29,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             // Using prime numbers
             hashCode += 17 * obj.PromotionId?.GetHashCode() ?? 19;
-            hashCode += 23 * obj.PromotionDescription?.GetHashCode() ?? 29;
+            hashCode += 23 * obj.PromotionName?.GetHashCode() ?? 29;
             hashCode += 31 * obj.CouponCode?.GetHashCode() ?? 37;
             hashCode += 41 * obj.Currency?.GetHashCode() ?? 43;
 

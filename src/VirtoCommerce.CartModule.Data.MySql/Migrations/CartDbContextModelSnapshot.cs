@@ -284,6 +284,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
+                    b.Property<string>("PromotionName")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
                     b.Property<string>("ShipmentId")
                         .HasColumnType("varchar(128)");
 

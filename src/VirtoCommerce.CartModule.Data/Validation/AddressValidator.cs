@@ -18,8 +18,8 @@ namespace VirtoCommerce.CartModule.Data.Validation
             RuleFor(x => x.Line2).MaximumLength(2048);
             RuleFor(x => x.RegionId).MaximumLength(128);
             RuleFor(x => x.RegionName).MaximumLength(128);
-            RuleFor(x => x.FirstName).NotNull().NotEmpty().MaximumLength(128);
-            RuleFor(x => x.LastName).NotNull().NotEmpty().MaximumLength(128);
+            RuleFor(x => x.FirstName).MaximumLength(128);
+            RuleFor(x => x.LastName).MaximumLength(128);
             RuleFor(x => x.Phone).MaximumLength(64);
             RuleFor(x => x.Email).MaximumLength(256);
             RuleFor(x => x.OuterId).MaximumLength(128);

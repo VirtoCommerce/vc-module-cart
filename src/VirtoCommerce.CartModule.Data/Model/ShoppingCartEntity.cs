@@ -263,6 +263,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             LineItemsCount = model.LineItemsCount;
             AbandonmentNotificationDate = model.AbandonmentNotificationDate;
             CheckoutId = model.CheckoutId ?? Guid.NewGuid().ToString();
+            model.CheckoutId = CheckoutId;
 
             if (model.Addresses != null)
             {

@@ -123,6 +123,10 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public DateTime? AbandonmentNotificationDate { get; set; }
 
+        [Required]
+        [StringLength(128)]
+        public string CheckoutId { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<DiscountEntity> Discounts { get; set; } = new NullCollection<DiscountEntity>();
@@ -184,6 +188,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.Type = Type;
             model.Name = Name;
             model.LineItemsCount = LineItemsCount;
+            model.CheckoutId = CheckoutId;
             // We don't allow to pop up the AbandonmentNotificationDate property from entity to business model.
             // It helps us to be shure that if business changes the cart this property automatically will be cleared.
 
@@ -257,6 +262,8 @@ namespace VirtoCommerce.CartModule.Data.Model
             StoreId = model.StoreId;
             LineItemsCount = model.LineItemsCount;
             AbandonmentNotificationDate = model.AbandonmentNotificationDate;
+            CheckoutId = model.CheckoutId ?? Guid.NewGuid().ToString();
+            model.CheckoutId = CheckoutId;
 
             if (model.Addresses != null)
             {
@@ -351,6 +358,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Name = Name;
             target.LineItemsCount = LineItemsCount;
             target.AbandonmentNotificationDate = AbandonmentNotificationDate;
+            target.CheckoutId = CheckoutId;
 
             if (!Items.IsNullCollection())
             {

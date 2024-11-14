@@ -810,6 +810,11 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
+                    b.Property<string>("CheckoutId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
                     b.Property<string>("Comment")
                         .HasMaxLength(2048)
                         .HasColumnType("varchar(2048)");

@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Moq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Services;
+using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Currency;
 using Xunit;
 
@@ -12,10 +14,67 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
     [Trait("Category", "CI")]
     public class OrderTotalsCalculationTest
     {
-        private DefaultShoppingCartTotalsCalculator GetTotalsCalculator()
-        {
-            var currency = new Currency
+        public static IEnumerable<object[]> Data =>
+            new List<object[]>
             {
+                //                                                                                  Expected      Expected       Expected
+                //             MidpointRounding,               ListPrice, DiscountAmount, Quantity, CartSubTotal, DiscountTotal, CartTotal
+                new object[] { MidpointRounding.AwayFromZero,  49.95m,      4.9950m,       1,         49.95m,        5.00m,        44.95m },
+                new object[] { MidpointRounding.ToZero,        49.95m,      4.9950m,       1,         49.95m,        4.99m,        44.96m },
+                new object[] { MidpointRounding.AwayFromZero,  26.25m,      1.3125m,       1,         26.25m,        1.31m,        24.94m },
+                new object[] { MidpointRounding.ToZero,        26.25m,      1.3125m,       1,         26.25m,        1.31m,        24.94m },
+                new object[] { MidpointRounding.AwayFromZero,  26.25m,      1.3125m,       3,         78.75m,        3.94m,        74.81m },
+                new object[] { MidpointRounding.ToZero,        26.25m,      1.3125m,       3,         78.75m,        3.93m,        74.82m },
+                new object[] { MidpointRounding.AwayFromZero, 422.50m,    190.1250m,       1,        422.50m,      190.13m,       232.37m },
+                new object[] { MidpointRounding.ToZero,       422.50m,    190.1250m,       1,        422.50m,      190.12m,       232.38m },
+                new object[] { MidpointRounding.AwayFromZero, 422.50m,    190.1250m,      10,       4225.00m,     1901.25m,      2323.75m },
+                new object[] { MidpointRounding.ToZero,       422.50m,    190.1250m,      10,       4225.00m,     1901.25m,      2323.75m },
+            };
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void CalculateTotals_LineItemDiscountTotal_MustBeRounded(
+            MidpointRounding midpointRounding,
+            decimal listPrice,
+            decimal discountAmount,
+            int quantity,
+            decimal expectedCartSubTotal,
+            decimal expectedDiscountTotal,
+            decimal expectedCartTotal)
+        {
+            // Arrange
+            var lineItem = new LineItem
+            {
+                ListPrice = listPrice,
+                SalePrice = listPrice,
+                DiscountAmount = discountAmount,
+                Quantity = quantity,
+            };
+
+            var cart = new ShoppingCart
+            {
+                Items = new List<LineItem> { lineItem },
+            };
+
+            var totalsCalculator = GetTotalsCalculator(midpointRounding);
+
+            // Act
+            totalsCalculator.CalculateTotals(cart);
+
+            // Assert
+            Assert.Equal(expectedCartSubTotal, cart.SubTotal);
+            Assert.Equal(expectedDiscountTotal, cart.DiscountTotal);
+            Assert.Equal(expectedCartTotal, cart.Total);
+
+            Assert.Equal(expectedDiscountTotal, lineItem.DiscountTotal);
+            Assert.Equal(expectedCartTotal, lineItem.ExtendedPrice);
+        }
+
+        private static DefaultShoppingCartTotalsCalculator GetTotalsCalculator(MidpointRounding midpointRounding = MidpointRounding.AwayFromZero)
+        {
+            var currency = new Currency(new Language("en-US"), code: null)
+            {
+                MidpointRounding = midpointRounding.ToString(),
                 RoundingPolicy = new DefaultMoneyRoundingPolicy()
             };
             var currencyServiceMock = new Mock<ICurrencyService>();

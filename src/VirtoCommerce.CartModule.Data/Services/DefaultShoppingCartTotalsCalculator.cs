@@ -32,7 +32,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 throw new ArgumentNullException(nameof(cart));
             }
 
-            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift);
+            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift).ToArray();
 
             //Calculate totals for line items
             foreach (var item in cartItemsWithoutGifts ?? Enumerable.Empty<LineItem>())
@@ -63,7 +63,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.FeeTotal = cart.Fee;
             cart.TaxTotal = 0m;
 
-            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout);
+            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToArray();
             if (selectedItemsWithoutGifts != null)
             {
                 cart.SubTotal = selectedItemsWithoutGifts.Sum(x => x.ListPrice * x.Quantity);
@@ -177,18 +177,22 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 throw new ArgumentNullException(nameof(lineItem));
             }
+
             var taxFactor = 1 + lineItem.TaxPercentRate;
+            var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Code == lineItem.Currency);
+
+            lineItem.PlacedPrice = lineItem.ListPrice - lineItem.DiscountAmount;
+            lineItem.DiscountTotal = lineItem.DiscountAmount * Math.Max(1, lineItem.Quantity);
+            lineItem.DiscountTotal = currency.RoundingPolicy.RoundMoney(lineItem.DiscountTotal, currency);
+            lineItem.ExtendedPrice = lineItem.ListPrice * Math.Max(1, lineItem.Quantity) - lineItem.DiscountTotal;
+
             lineItem.ListPriceWithTax = lineItem.ListPrice * taxFactor;
             lineItem.SalePriceWithTax = lineItem.SalePrice * taxFactor;
-            lineItem.PlacedPrice = lineItem.ListPrice - lineItem.DiscountAmount;
             lineItem.PlacedPriceWithTax = lineItem.PlacedPrice * taxFactor;
-            lineItem.ExtendedPrice = lineItem.PlacedPrice * lineItem.Quantity;
+            lineItem.ExtendedPriceWithTax = lineItem.ExtendedPrice * taxFactor;
             lineItem.DiscountAmountWithTax = lineItem.DiscountAmount * taxFactor;
-            lineItem.DiscountTotal = lineItem.DiscountAmount * Math.Max(1, lineItem.Quantity);
+            lineItem.DiscountTotalWithTax = lineItem.DiscountTotal * taxFactor;
             lineItem.FeeWithTax = lineItem.Fee * taxFactor;
-            lineItem.PlacedPriceWithTax = lineItem.PlacedPrice * taxFactor;
-            lineItem.ExtendedPriceWithTax = lineItem.PlacedPriceWithTax * lineItem.Quantity;
-            lineItem.DiscountTotalWithTax = lineItem.DiscountAmountWithTax * Math.Max(1, lineItem.Quantity);
             lineItem.TaxTotal = (lineItem.ExtendedPrice + lineItem.Fee) * lineItem.TaxPercentRate;
         }
     }

@@ -32,7 +32,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 throw new ArgumentNullException(nameof(cart));
             }
 
-            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift).ToArray();
+            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift).ToList();
 
             //Calculate totals for line items
             foreach (var item in cartItemsWithoutGifts ?? Enumerable.Empty<LineItem>())
@@ -63,7 +63,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.FeeTotal = cart.Fee;
             cart.TaxTotal = 0m;
 
-            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToArray();
+            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
             if (selectedItemsWithoutGifts != null)
             {
                 cart.SubTotal = selectedItemsWithoutGifts.Sum(x => x.ListPrice * x.Quantity);
@@ -139,7 +139,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
 
-            cart.LineItemsCount = cartItemsWithoutGifts?.Count() ?? 0;
+            cart.LineItemsCount = cartItemsWithoutGifts?.Count ?? 0;
         }
 
         protected virtual void CalculatePaymentTotals(Payment payment)

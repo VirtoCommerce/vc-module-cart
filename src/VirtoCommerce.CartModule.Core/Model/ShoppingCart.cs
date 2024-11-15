@@ -48,6 +48,8 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public DateTime? AbandonmentNotificationDate { get; set; }
 
+        public string CheckoutId { get; set; }
+
         //Grand  cart total
         public virtual decimal Total { get; set; }
 

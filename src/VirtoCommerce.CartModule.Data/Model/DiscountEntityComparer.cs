@@ -12,6 +12,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             {
                 equals = x.PromotionId == y.PromotionId &&
                          x.PromotionName == y.PromotionName &&
+                         x.PromotionDescription == y.PromotionDescription &&
                          x.CouponCode == y.CouponCode &&
                          x.Currency == y.Currency;
             }
@@ -30,8 +31,9 @@ namespace VirtoCommerce.CartModule.Data.Model
             // Using prime numbers
             hashCode += 17 * obj.PromotionId?.GetHashCode() ?? 19;
             hashCode += 23 * obj.PromotionName?.GetHashCode() ?? 29;
-            hashCode += 31 * obj.CouponCode?.GetHashCode() ?? 37;
-            hashCode += 41 * obj.Currency?.GetHashCode() ?? 43;
+            hashCode += 31 * obj.PromotionDescription?.GetHashCode() ?? 37;
+            hashCode += 41 * obj.CouponCode?.GetHashCode() ?? 43;
+            hashCode += 47 * obj.Currency?.GetHashCode() ?? 53;
 
             return hashCode;
         }

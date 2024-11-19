@@ -14,6 +14,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(1024)]
         public string PromotionDescription { get; set; }
 
+        [StringLength(128)]
+        public string PromotionName { get; set; }
+
         [StringLength(64)]
         public string CouponCode { get; set; }
 
@@ -49,6 +52,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             model.PromotionId = PromotionId;
             model.Description = PromotionDescription;
+            model.Name = PromotionName;
             model.Coupon = CouponCode;
             model.Currency = Currency;
             model.DiscountAmount = DiscountAmount;
@@ -66,6 +70,7 @@ namespace VirtoCommerce.CartModule.Data.Model
 
             PromotionId = model.PromotionId;
             PromotionDescription = model.Description;
+            PromotionName = model.Name;
             CouponCode = model.Coupon;
             Currency = model.Currency;
             DiscountAmount = model.DiscountAmount;
@@ -78,6 +83,7 @@ namespace VirtoCommerce.CartModule.Data.Model
         {
             target.PromotionId = PromotionId;
             target.PromotionDescription = PromotionDescription;
+            target.PromotionName = PromotionName;
             target.CouponCode = CouponCode;
             target.Currency = Currency;
             target.DiscountAmount = DiscountAmount;

@@ -186,7 +186,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             // Allows configuration for an entity type for different database types.
             // Applies configuration from all <see cref="IEntityTypeConfiguration{TEntity}" in VirtoCommerce.CartModule.Data.XXX project. /> 
-            switch (this.Database.ProviderName)
+            switch (Database.ProviderName)
             {
                 case "Pomelo.EntityFrameworkCore.MySql":
                     modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("VirtoCommerce.CartModule.Data.MySql"));

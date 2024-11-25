@@ -47,6 +47,8 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public bool TaxIncluded { get; set; }
 
+        public bool IsConfigured { get; set; }
+
         public decimal? VolumetricWeight { get; set; }
 
 
@@ -146,6 +148,8 @@ namespace VirtoCommerce.CartModule.Core.Model
         public virtual ICollection<DynamicObjectProperty> DynamicProperties { get; set; }
 
         #endregion
+
+        public ICollection<ConfigurationItem> ConfigurationItems { get; set; }
 
         #region ICloneable members
 

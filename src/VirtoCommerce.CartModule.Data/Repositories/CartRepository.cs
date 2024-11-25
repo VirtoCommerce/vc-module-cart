@@ -28,6 +28,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         protected IQueryable<DiscountEntity> Discounts => DbContext.Set<DiscountEntity>();
         protected IQueryable<TaxDetailEntity> TaxDetails => DbContext.Set<TaxDetailEntity>();
         protected IQueryable<CouponEntity> Coupons => DbContext.Set<CouponEntity>();
+        protected IQueryable<ConfigurationItemEntity> ConfigurationItems => DbContext.Set<ConfigurationItemEntity>();
         protected IQueryable<CartDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues => DbContext.Set<CartDynamicPropertyObjectValueEntity>();
 
         public virtual async Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsAsync(IList<string> ids, string responseGroup = null)
@@ -138,6 +139,14 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                         var lineItemTypeFullName = typeof(LineItem).FullName;
                         await DynamicPropertyObjectValues
                             .Where(x => x.ObjectType == lineItemTypeFullName && lineItemIds.Contains(x.LineItemId))
+                            .LoadAsync();
+                    }
+
+                    var configurationItemIds = lineItems.Where(x => x.IsConfigured).Select(x => x.Id).ToArray();
+                    if (configurationItemIds.Any())
+                    {
+                        await ConfigurationItems
+                            .Where(x => configurationItemIds.Contains(x.LineItemId))
                             .LoadAsync();
                     }
                 }

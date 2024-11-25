@@ -69,6 +69,8 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public bool IsReccuring { get; set; }
 
+        public bool IsConfigured { get; set; }
+
         public bool TaxIncluded { get; set; }
 
         public decimal? VolumetricWeight { get; set; }
@@ -152,6 +154,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         public virtual ObservableCollection<ShipmentItemEntity> ShipmentItems { get; set; }
             = new NullCollection<ShipmentItemEntity>();
 
+        public virtual ObservableCollection<ConfigurationItemEntity> ConfigurationItems { get; set; }
+            = new NullCollection<ConfigurationItemEntity>();
+
         public virtual ObservableCollection<CartDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues { get; set; }
             = new NullCollection<CartDynamicPropertyObjectValueEntity>();
 
@@ -193,6 +198,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             lineItem.IsReccuring = IsReccuring;
             lineItem.IsGift = IsGift;
             lineItem.IsRejected = IsRejected;
+            lineItem.IsConfigured = IsConfigured;
             lineItem.ImageUrl = ImageUrl;
             lineItem.ProductId = ProductId;
             lineItem.ProductType = ProductType;
@@ -220,6 +226,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (!TaxDetails.IsNullOrEmpty())
             {
                 lineItem.TaxDetails = TaxDetails.Select(x => x.ToModel(AbstractTypeFactory<TaxDetail>.TryCreateInstance())).ToList();
+            }
+
+            if (!ConfigurationItems.IsNullOrEmpty())
+            {
+                lineItem.ConfigurationItems = ConfigurationItems.Select(x => x.ToModel(AbstractTypeFactory<ConfigurationItem>.TryCreateInstance())).ToList();
             }
 
             lineItem.DynamicProperties = DynamicPropertyObjectValues.GroupBy(g => g.PropertyId).Select(x =>
@@ -272,6 +283,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             IsReccuring = lineItem.IsReccuring;
             IsGift = lineItem.IsGift;
             IsRejected = lineItem.IsRejected;
+            IsConfigured = lineItem.IsConfigured;
             ImageUrl = lineItem.ImageUrl;
             ProductId = lineItem.ProductId;
             ProductType = lineItem.ProductType;
@@ -301,6 +313,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (lineItem.TaxDetails != null)
             {
                 TaxDetails = new ObservableCollection<TaxDetailEntity>(lineItem.TaxDetails.Select(x => AbstractTypeFactory<TaxDetailEntity>.TryCreateInstance().FromModel(x)));
+            }
+
+            if (lineItem.ConfigurationItems != null)
+            {
+                ConfigurationItems = new ObservableCollection<ConfigurationItemEntity>(lineItem.ConfigurationItems.Select(x => AbstractTypeFactory<ConfigurationItemEntity>.TryCreateInstance().FromModel(x, pkMap)));
             }
 
             if (lineItem.DynamicProperties != null)
@@ -345,6 +362,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.IsReccuring = IsReccuring;
             target.IsGift = IsGift;
             target.IsRejected = IsRejected;
+            target.IsConfigured = IsConfigured;
             target.ImageUrl = ImageUrl;
             target.ProductId = ProductId;
             target.ProductType = ProductType;
@@ -368,6 +386,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             {
                 var taxDetailComparer = AbstractTypeFactory<TaxDetailEntityComparer>.TryCreateInstance();
                 TaxDetails.Patch(target.TaxDetails, taxDetailComparer, (sourceTaxDetail, targetTaxDetail) => sourceTaxDetail.Patch(targetTaxDetail));
+            }
+
+            if (!ConfigurationItems.IsNullCollection())
+            {
+                ConfigurationItems.Patch(target.ConfigurationItems, (sourceConfigurationItem, targetConfigurationItem) => sourceConfigurationItem.Patch(targetConfigurationItem));
             }
 
             if (!DynamicPropertyObjectValues.IsNullCollection())

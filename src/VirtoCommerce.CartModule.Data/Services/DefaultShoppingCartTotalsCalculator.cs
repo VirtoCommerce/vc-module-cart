@@ -27,12 +27,9 @@ namespace VirtoCommerce.CartModule.Data.Services
         /// </summary>
         public virtual void CalculateTotals(ShoppingCart cart)
         {
-            if (cart == null)
-            {
-                throw new ArgumentNullException(nameof(cart));
-            }
+            ArgumentNullException.ThrowIfNull(cart);
 
-            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift);
+            var cartItemsWithoutGifts = cart.Items?.Where(x => !x.IsGift).ToList();
 
             //Calculate totals for line items
             foreach (var item in cartItemsWithoutGifts ?? Enumerable.Empty<LineItem>())
@@ -63,7 +60,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.FeeTotal = cart.Fee;
             cart.TaxTotal = 0m;
 
-            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout);
+            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
             if (selectedItemsWithoutGifts != null)
             {
                 cart.SubTotal = selectedItemsWithoutGifts.Sum(x => x.ListPrice * x.Quantity);
@@ -139,15 +136,13 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
 
-            cart.LineItemsCount = cartItemsWithoutGifts?.Count() ?? 0;
+            cart.LineItemsCount = cartItemsWithoutGifts?.Count ?? 0;
         }
 
         protected virtual void CalculatePaymentTotals(Payment payment)
         {
-            if (payment == null)
-            {
-                throw new ArgumentNullException(nameof(payment));
-            }
+            ArgumentNullException.ThrowIfNull(payment);
+
             var taxFactor = 1 + payment.TaxPercentRate;
             payment.Total = payment.Price - payment.DiscountAmount;
             payment.TotalWithTax = payment.Total * taxFactor;
@@ -158,10 +153,8 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected virtual void CalculateShipmentTotals(Shipment shipment)
         {
-            if (shipment == null)
-            {
-                throw new ArgumentNullException(nameof(shipment));
-            }
+            ArgumentNullException.ThrowIfNull(shipment);
+
             var taxFactor = 1 + shipment.TaxPercentRate;
             shipment.PriceWithTax = shipment.Price * taxFactor;
             shipment.DiscountAmountWithTax = shipment.DiscountAmount * taxFactor;
@@ -173,22 +166,23 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected virtual void CalculateLineItemTotals(LineItem lineItem)
         {
-            if (lineItem == null)
-            {
-                throw new ArgumentNullException(nameof(lineItem));
-            }
+            ArgumentNullException.ThrowIfNull(lineItem);
+
             var taxFactor = 1 + lineItem.TaxPercentRate;
+            var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Code == lineItem.Currency);
+
+            lineItem.PlacedPrice = lineItem.ListPrice - lineItem.DiscountAmount;
+            lineItem.DiscountTotal = lineItem.DiscountAmount * Math.Max(1, lineItem.Quantity);
+            lineItem.DiscountTotal = currency.RoundingPolicy.RoundMoney(lineItem.DiscountTotal, currency);
+            lineItem.ExtendedPrice = lineItem.ListPrice * Math.Max(1, lineItem.Quantity) - lineItem.DiscountTotal;
+
             lineItem.ListPriceWithTax = lineItem.ListPrice * taxFactor;
             lineItem.SalePriceWithTax = lineItem.SalePrice * taxFactor;
-            lineItem.PlacedPrice = lineItem.ListPrice - lineItem.DiscountAmount;
             lineItem.PlacedPriceWithTax = lineItem.PlacedPrice * taxFactor;
-            lineItem.ExtendedPrice = lineItem.PlacedPrice * lineItem.Quantity;
+            lineItem.ExtendedPriceWithTax = lineItem.ExtendedPrice * taxFactor;
             lineItem.DiscountAmountWithTax = lineItem.DiscountAmount * taxFactor;
-            lineItem.DiscountTotal = lineItem.DiscountAmount * Math.Max(1, lineItem.Quantity);
+            lineItem.DiscountTotalWithTax = lineItem.DiscountTotal * taxFactor;
             lineItem.FeeWithTax = lineItem.Fee * taxFactor;
-            lineItem.PlacedPriceWithTax = lineItem.PlacedPrice * taxFactor;
-            lineItem.ExtendedPriceWithTax = lineItem.PlacedPriceWithTax * lineItem.Quantity;
-            lineItem.DiscountTotalWithTax = lineItem.DiscountAmountWithTax * Math.Max(1, lineItem.Quantity);
             lineItem.TaxTotal = (lineItem.ExtendedPrice + lineItem.Fee) * lineItem.TaxPercentRate;
         }
     }

@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Moq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Services;
+using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Currency;
 using Xunit;
 
@@ -12,14 +13,70 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
     [Trait("Category", "CI")]
     public class OrderTotalsCalculationTest
     {
-        private DefaultShoppingCartTotalsCalculator GetTotalsCalculator()
+        public static IEnumerable<object[]> Data =>
+        [
+            //                                                                    Expected      Expected       Expected
+            // MidpointRounding,             ListPrice, DiscountAmount, Quantity, CartSubTotal, DiscountTotal, CartTotal
+            [MidpointRounding.AwayFromZero,  49.95m,      4.9950m,       1,         49.95m,        5.00m,        44.95m],
+            [MidpointRounding.ToZero,        49.95m,      4.9950m,       1,         49.95m,        4.99m,        44.96m],
+            [MidpointRounding.AwayFromZero,  26.25m,      1.3125m,       1,         26.25m,        1.31m,        24.94m],
+            [MidpointRounding.ToZero,        26.25m,      1.3125m,       1,         26.25m,        1.31m,        24.94m],
+            [MidpointRounding.AwayFromZero,  26.25m,      1.3125m,       3,         78.75m,        3.94m,        74.81m],
+            [MidpointRounding.ToZero,        26.25m,      1.3125m,       3,         78.75m,        3.93m,        74.82m],
+            [MidpointRounding.AwayFromZero, 422.50m,    190.1250m,       1,        422.50m,      190.13m,       232.37m],
+            [MidpointRounding.ToZero,       422.50m,    190.1250m,       1,        422.50m,      190.12m,       232.38m],
+            [MidpointRounding.AwayFromZero, 422.50m,    190.1250m,      10,       4225.00m,     1901.25m,      2323.75m],
+            [MidpointRounding.ToZero,       422.50m,    190.1250m,      10,       4225.00m,     1901.25m,      2323.75m],
+        ];
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void CalculateTotals_LineItemDiscountTotal_MustBeRounded(
+            MidpointRounding midpointRounding,
+            decimal listPrice,
+            decimal discountAmount,
+            int quantity,
+            decimal expectedCartSubTotal,
+            decimal expectedDiscountTotal,
+            decimal expectedCartTotal)
         {
-            var currency = new Currency
+            // Arrange
+            var lineItem = new LineItem
             {
+                ListPrice = listPrice,
+                SalePrice = listPrice,
+                DiscountAmount = discountAmount,
+                Quantity = quantity,
+            };
+
+            var cart = new ShoppingCart
+            {
+                Items = [lineItem],
+            };
+
+            var totalsCalculator = GetTotalsCalculator(midpointRounding);
+
+            // Act
+            totalsCalculator.CalculateTotals(cart);
+
+            // Assert
+            Assert.Equal(expectedCartSubTotal, cart.SubTotal);
+            Assert.Equal(expectedDiscountTotal, cart.DiscountTotal);
+            Assert.Equal(expectedCartTotal, cart.Total);
+
+            Assert.Equal(expectedDiscountTotal, lineItem.DiscountTotal);
+            Assert.Equal(expectedCartTotal, lineItem.ExtendedPrice);
+        }
+
+        private static DefaultShoppingCartTotalsCalculator GetTotalsCalculator(MidpointRounding midpointRounding = MidpointRounding.AwayFromZero)
+        {
+            var currency = new Currency(new Language("en-US"), code: null)
+            {
+                MidpointRounding = midpointRounding.ToString(),
                 RoundingPolicy = new DefaultMoneyRoundingPolicy()
             };
             var currencyServiceMock = new Mock<ICurrencyService>();
-            currencyServiceMock.Setup(c => c.GetAllCurrenciesAsync()).ReturnsAsync(new List<Currency>() { currency });
+            currencyServiceMock.Setup(c => c.GetAllCurrenciesAsync()).ReturnsAsync([currency]);
             return new DefaultShoppingCartTotalsCalculator(currencyServiceMock.Object);
         }
 
@@ -30,7 +87,7 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
 
             var cart = new ShoppingCart
             {
-                Items = new List<LineItem> { item1 },
+                Items = [item1],
             };
             var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
@@ -52,9 +109,9 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
             var cart = new ShoppingCart
             {
                 TaxPercentRate = 0.12m,
-                Items = new List<LineItem> { item1, item2, item3 },
-                Payments = new List<Payment> { payment },
-                Shipments = new List<Shipment> { shipment }
+                Items = [item1, item2, item3],
+                Payments = [payment],
+                Shipments = [shipment]
             };
             var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
@@ -85,9 +142,9 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
             {
                 TaxPercentRate = 0.12m,
                 Fee = 13.11m,
-                Items = new List<LineItem> { item1, item2, item3, gift1 },
-                Payments = new List<Payment> { payment },
-                Shipments = new List<Shipment> { shipment }
+                Items = [item1, item2, item3, gift1],
+                Payments = [payment],
+                Shipments = [shipment]
             };
             var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
@@ -141,27 +198,27 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
         {
             var originalEntity = new ShoppingCartEntity
             {
-                Coupons = new ObservableCollection<CouponEntity>
-                {
-                    new CouponEntity { Code = "12345", Id = "aa"},
-                    new CouponEntity { Code = "abcde", Id = "ab" },
-                    new CouponEntity { Code = "AA-BB-CC", Id = "ac" },
-                    new CouponEntity { Code = "00-11-22", Id = "ad" },
-                    new CouponEntity { Code = "ABCDE", Id = "ae" },
-                }
+                Coupons =
+                [
+                    new() { Code = "12345", Id = "aa" },
+                    new() { Code = "abcde", Id = "ab" },
+                    new() { Code = "AA-BB-CC", Id = "ac" },
+                    new() { Code = "00-11-22", Id = "ad" },
+                    new() { Code = "ABCDE", Id = "ae" }
+                ]
             };
 
             var modifiedEntity = new ShoppingCartEntity
             {
-                Coupons = new ObservableCollection<CouponEntity>
-                {
-                    new CouponEntity { Code = "abcde", Id = "ba" },
-                    new CouponEntity { Code = "AA-BB-CC", Id = "bb" },
-                    new CouponEntity { Code = "00-11-22", Id = "bc" },
-                    new CouponEntity { Code = "ABCDE", Id = "bd" },
-                    new CouponEntity { Code = "FGHIJ", Id = "be" },
-                    new CouponEntity { Code = "KLMNO", Id = "bf" },
-                }
+                Coupons =
+                [
+                    new() { Code = "abcde", Id = "ba" },
+                    new() { Code = "AA-BB-CC", Id = "bb" },
+                    new() { Code = "00-11-22", Id = "bc" },
+                    new() { Code = "ABCDE", Id = "bd" },
+                    new() { Code = "FGHIJ", Id = "be" },
+                    new() { Code = "KLMNO", Id = "bf" }
+                ]
             };
 
             modifiedEntity.Patch(originalEntity);

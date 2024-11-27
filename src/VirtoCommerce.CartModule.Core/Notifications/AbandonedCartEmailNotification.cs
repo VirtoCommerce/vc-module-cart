@@ -11,4 +11,6 @@ public class AbandonedCartEmailNotification : EmailNotification
     }
 
     public virtual ShoppingCart Cart { get; set; }
+
+    public virtual string StoreUrl { get; set; }
 }

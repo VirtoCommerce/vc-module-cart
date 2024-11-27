@@ -24,5 +24,6 @@
     "discountTotal": 29.5,
     "taxTotal": 192.9,
     "currency": "USD"
-  }
+  },
+  "storeUrl": "https://vcst-dev-storefront.govirto.com"
 }

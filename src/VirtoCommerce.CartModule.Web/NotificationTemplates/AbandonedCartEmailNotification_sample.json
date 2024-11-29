@@ -6,17 +6,17 @@
         "currency": "USD",
         "salePrice": 399,
         "quantity": 1,
-        "sku": "ONHTS3700",
+        "sku": "566903892",
         "name": "Canon Imageclass WiFi MF232W Monochrome Laser Printer/Scanner/Copier",
-        "imageUrl": "https://vcst-dev.govirto.com/cms-content/assets/catalog/5aa50/566903892/mf232w-1_md.jpg"
+        "imageUrl": "https://virtostart-main.govirto.com/cms-content/assets/catalog/5aa50/566903892/mf232w-1_md.jpg"
       },
       {
         "currency": "USD",
         "salePrice": 589.99,
         "quantity": 1,
-        "sku": "SAGN4N910CBK",
+        "sku": "553684135",
         "name": "Epson™ WorkForce WF-3640 All-in-One Printer",
-        "imageUrl": "https://vcst-dev.govirto.com/cms-content/assets/catalog/5aa50/553684135/epson-wf3640-1_md.jpg"
+        "imageUrl": "https://virtostart-main.govirto.com/cms-content/assets/catalog/5aa50/553684135/epson-wf3640-1_md.jpg"
       }
     ],
     "total": 1157.39,
@@ -24,5 +24,6 @@
     "discountTotal": 29.5,
     "taxTotal": 192.9,
     "currency": "USD"
-  }
+  },
+  "storeUrl": "https://virtostart-demo-store.govirto.com"
 }

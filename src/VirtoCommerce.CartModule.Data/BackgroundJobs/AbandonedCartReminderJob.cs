@@ -99,6 +99,7 @@ public class AbandonedCartReminderJob
         var notification = await _notificationSearchService.GetNotificationAsync<AbandonedCartEmailNotification>(new TenantIdentity(cart.StoreId, nameof(Store)));
 
         notification.Cart = cart;
+        notification.StoreUrl = store.Url?.TrimEnd('/');
         notification.LanguageCode = cart.LanguageCode;
         notification.From = store.EmailWithName;
         notification.To = await GetCustomerEmailAsync(cart.CustomerId);

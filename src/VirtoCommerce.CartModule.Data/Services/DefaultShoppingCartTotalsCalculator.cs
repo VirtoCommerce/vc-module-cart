@@ -168,13 +168,14 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             ArgumentNullException.ThrowIfNull(lineItem);
 
-            var taxFactor = 1 + lineItem.TaxPercentRate;
+            var quantity = Math.Max(1, lineItem.Quantity);
             var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Code == lineItem.Currency);
 
             lineItem.PlacedPrice = lineItem.ListPrice - lineItem.DiscountAmount;
-            lineItem.DiscountTotal = lineItem.DiscountAmount * Math.Max(1, lineItem.Quantity);
-            lineItem.DiscountTotal = currency.RoundingPolicy.RoundMoney(lineItem.DiscountTotal, currency);
-            lineItem.ExtendedPrice = lineItem.ListPrice * Math.Max(1, lineItem.Quantity) - lineItem.DiscountTotal;
+            lineItem.DiscountTotal = currency.RoundingPolicy.RoundMoney(lineItem.DiscountAmount * quantity, currency);
+            lineItem.ExtendedPrice = lineItem.ListPrice * quantity - lineItem.DiscountTotal;
+
+            var taxFactor = 1 + lineItem.TaxPercentRate;
 
             lineItem.ListPriceWithTax = lineItem.ListPrice * taxFactor;
             lineItem.SalePriceWithTax = lineItem.SalePrice * taxFactor;
@@ -183,6 +184,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             lineItem.DiscountAmountWithTax = lineItem.DiscountAmount * taxFactor;
             lineItem.DiscountTotalWithTax = lineItem.DiscountTotal * taxFactor;
             lineItem.FeeWithTax = lineItem.Fee * taxFactor;
+
             lineItem.TaxTotal = (lineItem.ExtendedPrice + lineItem.Fee) * lineItem.TaxPercentRate;
         }
     }

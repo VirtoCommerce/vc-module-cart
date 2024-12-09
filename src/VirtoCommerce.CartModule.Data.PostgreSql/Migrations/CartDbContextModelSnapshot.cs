@@ -273,6 +273,10 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SectionId")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
                     b.Property<string>("Sku")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");

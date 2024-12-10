@@ -76,6 +76,9 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public decimal ListPriceWithTax { get; set; }
 
+        public decimal ListTotal { get; set; }
+        public decimal ListTotalWithTax { get; set; }
+
         private decimal? _salePrice;
         public virtual decimal SalePrice
         {

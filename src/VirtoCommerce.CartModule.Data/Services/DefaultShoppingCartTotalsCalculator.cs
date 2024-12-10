@@ -63,8 +63,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
             if (selectedItemsWithoutGifts != null)
             {
-                cart.SubTotal = selectedItemsWithoutGifts.Sum(x => x.ListPrice * x.Quantity);
-                cart.SubTotalWithTax = selectedItemsWithoutGifts.Sum(x => x.ListPriceWithTax * x.Quantity);
+                cart.SubTotal = selectedItemsWithoutGifts.Sum(x => x.ListTotal);
+                cart.SubTotalWithTax = selectedItemsWithoutGifts.Sum(x => x.ListTotalWithTax);
                 cart.SubTotalDiscount = selectedItemsWithoutGifts.Sum(x => x.DiscountTotal);
                 cart.SubTotalDiscountWithTax = selectedItemsWithoutGifts.Sum(x => x.DiscountTotalWithTax);
                 cart.DiscountTotal += selectedItemsWithoutGifts.Sum(x => x.DiscountTotal);
@@ -171,13 +171,15 @@ namespace VirtoCommerce.CartModule.Data.Services
             var quantity = Math.Max(1, lineItem.Quantity);
             var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Code == lineItem.Currency);
 
+            lineItem.ListTotal = lineItem.ListPrice * quantity;
             lineItem.PlacedPrice = lineItem.ListPrice - lineItem.DiscountAmount;
             lineItem.DiscountTotal = currency.RoundingPolicy.RoundMoney(lineItem.DiscountAmount * quantity, currency);
-            lineItem.ExtendedPrice = lineItem.ListPrice * quantity - lineItem.DiscountTotal;
+            lineItem.ExtendedPrice = lineItem.ListTotal - lineItem.DiscountTotal;
 
             var taxFactor = 1 + lineItem.TaxPercentRate;
 
             lineItem.ListPriceWithTax = lineItem.ListPrice * taxFactor;
+            lineItem.ListTotalWithTax = lineItem.ListTotal * taxFactor;
             lineItem.SalePriceWithTax = lineItem.SalePrice * taxFactor;
             lineItem.PlacedPriceWithTax = lineItem.PlacedPrice * taxFactor;
             lineItem.ExtendedPriceWithTax = lineItem.ExtendedPrice * taxFactor;

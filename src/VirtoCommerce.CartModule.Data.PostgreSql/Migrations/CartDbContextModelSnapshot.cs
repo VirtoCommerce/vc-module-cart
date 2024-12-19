@@ -436,6 +436,9 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<bool>("IsConfigured")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsDiscountAmountRounded")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsGift")
                         .HasColumnType("boolean");
 

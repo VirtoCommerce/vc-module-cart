@@ -76,6 +76,9 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public decimal ListPriceWithTax { get; set; }
 
+        public decimal ListTotal { get; set; }
+        public decimal ListTotalWithTax { get; set; }
+
         private decimal? _salePrice;
         public virtual decimal SalePrice
         {
@@ -105,6 +108,13 @@ namespace VirtoCommerce.CartModule.Core.Model
         /// Gets the value of the single qty line item discount amount
         /// </summary>
         public virtual decimal DiscountAmount { get; set; }
+
+        /// <summary>
+        /// Indicates whether the discount amount per item was rounded according to the currency settings.
+        /// If false, DiscountAmount and PlacedPrice should not be visible to the customer, as these values may be incorrect;
+        /// in this case, DiscountTotal and ExtendedPrice should be used.
+        /// </summary>
+        public bool IsDiscountAmountRounded { get; set; }
 
         public virtual decimal DiscountAmountWithTax { get; set; }
 

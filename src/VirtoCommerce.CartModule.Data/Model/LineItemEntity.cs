@@ -115,6 +115,8 @@ namespace VirtoCommerce.CartModule.Data.Model
         [Column(TypeName = "Money")]
         public decimal DiscountAmount { get; set; }
 
+        public bool IsDiscountAmountRounded { get; set; }
+
         [Column(TypeName = "Money")]
         public decimal DiscountAmountWithTax { get; set; }
 
@@ -180,6 +182,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             lineItem.Fee = Fee;
             lineItem.FeeWithTax = FeeWithTax;
             lineItem.DiscountAmount = DiscountAmount;
+            lineItem.IsDiscountAmountRounded = IsDiscountAmountRounded;
             lineItem.DiscountAmountWithTax = DiscountAmountWithTax;
             lineItem.Quantity = Quantity;
             lineItem.TaxTotal = TaxTotal;
@@ -265,6 +268,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             Fee = lineItem.Fee;
             FeeWithTax = lineItem.FeeWithTax;
             DiscountAmount = lineItem.DiscountAmount;
+            IsDiscountAmountRounded = lineItem.IsDiscountAmountRounded;
             DiscountAmountWithTax = lineItem.DiscountAmountWithTax;
             Quantity = lineItem.Quantity;
             TaxTotal = lineItem.TaxTotal;
@@ -343,6 +347,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Fee = Fee;
             target.FeeWithTax = FeeWithTax;
             target.DiscountAmount = DiscountAmount;
+            target.IsDiscountAmountRounded = IsDiscountAmountRounded;
             target.DiscountAmountWithTax = DiscountAmountWithTax;
             target.Quantity = Quantity;
             target.TaxTotal = TaxTotal;

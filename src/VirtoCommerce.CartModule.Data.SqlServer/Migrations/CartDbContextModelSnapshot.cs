@@ -436,6 +436,9 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                     b.Property<bool>("IsConfigured")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDiscountAmountRounded")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsGift")
                         .HasColumnType("bit");
 

@@ -25,6 +25,10 @@ public class ConfigurationItem : AuditableEntity, ICloneable
 
     public string CategoryId { get; set; }
 
+    public ConfigurationSectionType Type { get; set; }
+
+    public string CustomText { get; set; }
+
     public object Clone()
     {
         return MemberwiseClone();

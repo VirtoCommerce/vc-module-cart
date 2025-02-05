@@ -246,6 +246,10 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomText")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(1028)
                         .HasColumnType("character varying(1028)");
@@ -280,6 +284,9 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<string>("Sku")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
+
+                    b.Property<byte>("Type")
+                        .HasColumnType("smallint");
 
                     b.HasKey("Id");
 

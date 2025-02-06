@@ -12,7 +12,7 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    [Migration("20250205153304_AddCartConfigurationSectionType")]
+    [Migration("20250206083403_AddCartConfigurationSectionType")]
     partial class AddCartConfigurationSectionType
     {
         /// <inheritdoc />
@@ -284,12 +284,12 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<byte>("SectionType")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Sku")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint");
 
                     b.HasKey("Id");
 

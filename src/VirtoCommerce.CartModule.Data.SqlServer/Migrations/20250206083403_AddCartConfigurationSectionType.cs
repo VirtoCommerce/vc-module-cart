@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace VirtoCommerce.CartModule.Data.MySql.Migrations
+namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
 {
     /// <inheritdoc />
     public partial class AddCartConfigurationSectionType : Migration
@@ -13,15 +13,14 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "CustomText",
                 table: "CartConfigurationItem",
-                type: "varchar(255)",
+                type: "nvarchar(255)",
                 maxLength: 255,
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
+                nullable: true);
 
             migrationBuilder.AddColumn<byte>(
-                name: "Type",
+                name: "SectionType",
                 table: "CartConfigurationItem",
-                type: "tinyint unsigned",
+                type: "tinyint",
                 nullable: false,
                 defaultValue: (byte)0);
         }
@@ -34,7 +33,7 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                 table: "CartConfigurationItem");
 
             migrationBuilder.DropColumn(
-                name: "Type",
+                name: "SectionType",
                 table: "CartConfigurationItem");
         }
     }

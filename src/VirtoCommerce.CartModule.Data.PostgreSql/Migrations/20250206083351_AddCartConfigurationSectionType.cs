@@ -18,7 +18,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<byte>(
-                name: "Type",
+                name: "SectionType",
                 table: "CartConfigurationItem",
                 type: "smallint",
                 nullable: false,
@@ -33,7 +33,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                 table: "CartConfigurationItem");
 
             migrationBuilder.DropColumn(
-                name: "Type",
+                name: "SectionType",
                 table: "CartConfigurationItem");
         }
     }

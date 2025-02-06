@@ -281,12 +281,12 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
+                    b.Property<byte>("SectionType")
+                        .HasColumnType("tinyint unsigned");
+
                     b.Property<string>("Sku")
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint unsigned");
 
                     b.HasKey("Id");
 

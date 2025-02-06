@@ -1,6 +1,6 @@
 namespace VirtoCommerce.CartModule.Core.Model;
 
-public enum ConfigurationSectionType
+public enum CartConfigurationSectionType
 {
     Product = 0,
     Text = 1,

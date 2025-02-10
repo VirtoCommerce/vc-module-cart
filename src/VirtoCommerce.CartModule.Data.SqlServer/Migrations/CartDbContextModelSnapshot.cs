@@ -281,12 +281,12 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<byte>("SectionType")
-                        .HasColumnType("tinyint");
-
                     b.Property<string>("Sku")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
+
+                    b.Property<byte>("Type")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("Id");
 

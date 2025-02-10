@@ -25,7 +25,7 @@ public class ConfigurationItem : AuditableEntity, ICloneable
 
     public string CategoryId { get; set; }
 
-    public CartConfigurationSectionType SectionType { get; set; }
+    public ConfigurationItemType Type { get; set; }
 
     public string CustomText { get; set; }
 

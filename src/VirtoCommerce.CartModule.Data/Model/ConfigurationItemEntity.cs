@@ -34,7 +34,7 @@ public class ConfigurationItemEntity : AuditableEntity
     public string CategoryId { get; set; }
 
     [Required]
-    public byte SectionType { get; set; }
+    public byte Type { get; set; }
 
     [StringLength(255)]
     public string CustomText { get; set; }
@@ -58,7 +58,7 @@ public class ConfigurationItemEntity : AuditableEntity
         configurationItem.ImageUrl = ImageUrl;
         configurationItem.CatalogId = CatalogId;
         configurationItem.CategoryId = CategoryId;
-        configurationItem.SectionType = EnumUtility.SafeParse(SectionType.ToString(), CartConfigurationSectionType.Product);
+        configurationItem.Type = EnumUtility.SafeParse(Type.ToString(), ConfigurationItemType.Product);
         configurationItem.CustomText = CustomText;
 
         return configurationItem;
@@ -85,7 +85,7 @@ public class ConfigurationItemEntity : AuditableEntity
         ImageUrl = configurationItem.ImageUrl;
         CatalogId = configurationItem.CatalogId;
         CategoryId = configurationItem.CategoryId;
-        SectionType = (byte)configurationItem.SectionType;
+        Type = (byte)configurationItem.Type;
         CustomText = configurationItem.CustomText;
 
         return this;
@@ -102,7 +102,7 @@ public class ConfigurationItemEntity : AuditableEntity
         target.ImageUrl = ImageUrl;
         target.CatalogId = CatalogId;
         target.CategoryId = CategoryId;
-        target.SectionType = SectionType;
+        target.Type = Type;
         target.CustomText = CustomText;
     }
 }

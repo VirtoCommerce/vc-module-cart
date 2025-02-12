@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
+namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCartConfigurationSectionType : Migration
+    public partial class AddCartConfigurationItemTypeAndText : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -13,16 +13,17 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "CustomText",
                 table: "CartConfigurationItem",
-                type: "nvarchar(255)",
+                type: "character varying(255)",
                 maxLength: 255,
                 nullable: true);
 
-            migrationBuilder.AddColumn<byte>(
-                name: "SectionType",
+            migrationBuilder.AddColumn<string>(
+                name: "Type",
                 table: "CartConfigurationItem",
-                type: "tinyint",
+                type: "character varying(64)",
+                maxLength: 64,
                 nullable: false,
-                defaultValue: (byte)0);
+                defaultValue: "Product");
         }
 
         /// <inheritdoc />
@@ -33,7 +34,7 @@ namespace VirtoCommerce.CartModule.Data.SqlServer.Migrations
                 table: "CartConfigurationItem");
 
             migrationBuilder.DropColumn(
-                name: "SectionType",
+                name: "Type",
                 table: "CartConfigurationItem");
         }
     }

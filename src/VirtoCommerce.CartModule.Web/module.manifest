@@ -26,7 +26,7 @@
   <iconUrl>Modules/$(VirtoCommerce.Cart)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2011-2024 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011-2025 Virto Commerce. All rights reserved</copyright>
   <tags>shopping cart</tags>
   <assemblyFile>VirtoCommerce.CartModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.CartModule.Web.Module, VirtoCommerce.CartModule.Web</moduleType>

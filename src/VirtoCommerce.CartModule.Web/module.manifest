@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Cart</id>
-  <version>3.823.0</version>
+  <version>3.824.0</version>
   <version-tag />
 
   <platformVersion>3.867.0</platformVersion>
@@ -26,7 +26,7 @@
   <iconUrl>Modules/$(VirtoCommerce.Cart)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2011-2024 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011-2025 Virto Commerce. All rights reserved</copyright>
   <tags>shopping cart</tags>
   <assemblyFile>VirtoCommerce.CartModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.CartModule.Web.Module, VirtoCommerce.CartModule.Web</moduleType>

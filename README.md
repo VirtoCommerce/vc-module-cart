@@ -23,14 +23,14 @@ VirtoCommerce.Cart module manages customers accumulated list of items, calculate
 
 ## Documentation
 
-* [Cart Module Document](/docs/index.md)
+* [Cart Module Document](https://docs.virtocommerce.org/platform/user-guide/cart/overview/)
 
 * [View on GitHub](https://github.com/VirtoCommerce/vc-module-cart/tree/dev)
 
 ## References
 
-* Deploy: https://virtocommerce.com/docs/latest/developer-guide/deploy-module-from-source-code/
-* Installation: https://www.virtocommerce.com/docs/latest/user-guide/modules/
+* Deploy: https://docs.virtocommerce.org/platform/developer-guide/Tutorials-and-How-tos/Tutorials/deploy-module-from-source-code/
+* Installation: https://docs.virtocommerce.org/platform/user-guide/modules-installation/
 * Home: https://virtocommerce.com
 * Community: https://www.virtocommerce.org
 * [Download Latest Release](https://github.com/VirtoCommerce/vc-module-cart/releases/)

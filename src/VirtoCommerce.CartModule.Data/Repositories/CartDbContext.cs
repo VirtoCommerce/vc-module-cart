@@ -180,6 +180,15 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                         .HasForeignKey(x => x.LineItemId).IsRequired().OnDelete(DeleteBehavior.ClientCascade);
             #endregion
 
+            #region ConfigurationItemImage
+
+            modelBuilder.Entity<ConfigurationItemFileEntity>().ToTable("CartConfigurationItemFile").HasKey(x => x.Id);
+            modelBuilder.Entity<ConfigurationItemFileEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ConfigurationItemFileEntity>().HasOne(x => x.ConfigurationItem).WithMany(x => x.Files)
+                .HasForeignKey(x => x.ConfigurationItemId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+
+            #endregion ConfigurationItemImage
+
             modelBuilder.Entity<ProductWishlistEntity>().HasNoKey().ToView("empty");
 
             base.OnModelCreating(modelBuilder);

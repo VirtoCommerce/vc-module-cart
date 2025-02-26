@@ -30,6 +30,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         protected IQueryable<CouponEntity> Coupons => DbContext.Set<CouponEntity>();
         protected IQueryable<ConfigurationItemEntity> ConfigurationItems => DbContext.Set<ConfigurationItemEntity>();
         protected IQueryable<CartDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues => DbContext.Set<CartDynamicPropertyObjectValueEntity>();
+        protected IQueryable<ConfigurationItemFileEntity> ConfigurationItemFiles => DbContext.Set<ConfigurationItemFileEntity>();
 
         public virtual async Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsAsync(IList<string> ids, string responseGroup = null)
         {
@@ -142,12 +143,20 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                             .LoadAsync();
                     }
 
-                    var configurationItemIds = lineItems.Where(x => x.IsConfigured).Select(x => x.Id).ToArray();
-                    if (configurationItemIds.Any())
+                    var configurationItemIds = lineItems.Where(x => x.IsConfigured).Select(x => x.Id).ToList();
+                    if (configurationItemIds.Count > 0)
                     {
-                        await ConfigurationItems
+                        var configurationItems = await ConfigurationItems
                             .Where(x => configurationItemIds.Contains(x.LineItemId))
-                            .LoadAsync();
+                            .ToListAsync();
+
+                        if (configurationItems.Count > 0)
+                        {
+                            var configurationItemExistIds = configurationItems.Select(x => x.Id).ToList();
+                            await ConfigurationItemFiles
+                                .Where(x => configurationItemExistIds.Contains(x.ConfigurationItemId))
+                                .LoadAsync();
+                        }
                     }
                 }
             }

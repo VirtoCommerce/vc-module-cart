@@ -129,7 +129,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                     .Where(x => ids.Contains(x.ShoppingCartId))
                     .ToListAsync();
 
-                if (lineItems.Any())
+                if (lineItems.Count > 0)
                 {
                     var lineItemIds = lineItems.Select(x => x.Id).ToArray();
                     await TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();

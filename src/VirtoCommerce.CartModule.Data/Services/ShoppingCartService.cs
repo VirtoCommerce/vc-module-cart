@@ -112,11 +112,14 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         private void ResolveFileUrls(ShoppingCart cart)
         {
-            var files = cart.Items.SelectMany(x => x.ConfigurationItems.Where(y => y.Files != null).SelectMany(y => y.Files));
-
-            foreach (var file in files.Where(x => !string.IsNullOrEmpty(x.Url)))
+            if (cart.Items != null)
             {
-                file.Url = file.Url.StartsWith("/api") ? file.Url : _blobUrlResolver.GetAbsoluteUrl(file.Url);
+                var files = cart.Items.Where(x => x.ConfigurationItems != null).SelectMany(x => x.ConfigurationItems.Where(y => y.Files != null).SelectMany(y => y.Files));
+
+                foreach (var file in files.Where(x => !string.IsNullOrEmpty(x.Url)))
+                {
+                    file.Url = file.Url.StartsWith("/api") ? file.Url : _blobUrlResolver.GetAbsoluteUrl(file.Url);
+                }
             }
         }
     }

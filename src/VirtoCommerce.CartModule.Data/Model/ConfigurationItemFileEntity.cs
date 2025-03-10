@@ -8,8 +8,8 @@ namespace VirtoCommerce.CartModule.Data.Model;
 
 public class ConfigurationItemFileEntity : AuditableEntity, IDataEntity<ConfigurationItemFileEntity, ConfigurationItemFile>
 {
-    [StringLength(2083)]
     [Required]
+    [StringLength(2083)]
     public string Url { get; set; }
 
     [StringLength(1024)]

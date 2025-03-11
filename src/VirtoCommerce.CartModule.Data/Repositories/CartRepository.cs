@@ -146,11 +146,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                     var configurationItemIds = lineItems.Where(x => x.IsConfigured).Select(x => x.Id).ToList();
                     if (configurationItemIds.Count > 0)
                     {
-                        var configurationItems = await ConfigurationItems
+                        await ConfigurationItems
                             .Where(x => configurationItemIds.Contains(x.LineItemId))
                             .Include(x => x.Files)
                             .AsSplitQuery()
-                            .ToListAsync();
+                            .LoadAsync();
                     }
                 }
             }

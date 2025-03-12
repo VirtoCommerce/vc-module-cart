@@ -53,7 +53,7 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected override async Task BeforeSaveChanges(IList<ShoppingCart> models)
         {
-            new ShoppingCartsValidator().ValidateAndThrow(models);
+            await new ShoppingCartsValidator().ValidateAndThrowAsync(models);
 
             using var repository = _repositoryFactory();
 
@@ -112,14 +112,21 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         private void ResolveFileUrls(ShoppingCart cart)
         {
-            if (cart.Items != null)
+            if (cart.Items is null)
             {
-                var files = cart.Items.Where(x => x.ConfigurationItems != null).SelectMany(x => x.ConfigurationItems.Where(y => y.Files != null).SelectMany(y => y.Files));
+                return;
+            }
 
-                foreach (var file in files.Where(x => !string.IsNullOrEmpty(x.Url)))
-                {
-                    file.Url = file.Url.StartsWith("/api") ? file.Url : _blobUrlResolver.GetAbsoluteUrl(file.Url);
-                }
+            var files = cart.Items
+                .Where(i => i.ConfigurationItems != null)
+                .SelectMany(i => i.ConfigurationItems
+                    .Where(c => c.Files != null)
+                    .SelectMany(c => c.Files
+                        .Where(f => !string.IsNullOrEmpty(f.Url))));
+
+            foreach (var file in files)
+            {
+                file.Url = file.Url.StartsWith("/api") ? file.Url : _blobUrlResolver.GetAbsoluteUrl(file.Url);
             }
         }
     }

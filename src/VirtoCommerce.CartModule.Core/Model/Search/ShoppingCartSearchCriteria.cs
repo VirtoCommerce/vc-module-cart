@@ -32,5 +32,7 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public bool? HasAbandonmentNotification { get; set; }
         public DateTime? AbandonmentNotificationStartDate { get; set; }
         public DateTime? AbandonmentNotificationEndDate { get; set; }
+
+        public string[] ConfigurationItemIds { get; set; }
     }
 }

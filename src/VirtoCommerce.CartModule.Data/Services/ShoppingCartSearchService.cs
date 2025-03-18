@@ -150,6 +150,16 @@ namespace VirtoCommerce.CartModule.Data.Services
                 query = query.Where(x => x.AbandonmentNotificationDate <= criteria.AbandonmentNotificationEndDate.Value);
             }
 
+            if (!criteria.ConfigurationItemIds.IsNullOrEmpty())
+            {
+                query = query
+                    .Where(x => x.Items.Where(x => x.IsConfigured)
+                        .Any(x => x.ConfigurationItems
+                            .Any(x => criteria.ConfigurationItemIds.Contains(x.Id))
+                        )
+                    );
+            }
+
             return query;
         }
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
@@ -28,6 +29,7 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
         private readonly Mock<ICartRepository> _cartRepositoryMock;
         private readonly Func<ICartRepository> _repositoryFactory;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
+        private readonly Mock<IBlobUrlResolver> _blobUrlResolverMock;
 
         public ShoppingCartServiceImplUnitTests()
         {
@@ -38,6 +40,8 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
             _cartRepositoryMock.Setup(ss => ss.UnitOfWork).Returns(_mockUnitOfWork.Object);
             _eventPublisherMock = new Mock<IEventPublisher>();
             FluentValidation.ValidatorOptions.Global.LanguageManager.Enabled = false;
+            _blobUrlResolverMock = new Mock<IBlobUrlResolver>();
+            _blobUrlResolverMock.Setup(x => x.GetAbsoluteUrl(It.IsAny<string>())).Returns<string>(x => x);
         }
 
         [Fact]
@@ -185,7 +189,7 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
 
         private ShoppingCartService GetShoppingCartService(IPlatformMemoryCache platformMemoryCache)
         {
-            return new ShoppingCartService(_repositoryFactory, platformMemoryCache, _eventPublisherMock.Object, _calculatorMock.Object);
+            return new ShoppingCartService(_repositoryFactory, platformMemoryCache, _eventPublisherMock.Object, _calculatorMock.Object, _blobUrlResolverMock.Object);
         }
     }
 }

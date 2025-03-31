@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Swagger;
 
@@ -29,8 +31,14 @@ public class ConfigurationItem : AuditableEntity, ICloneable
 
     public string CustomText { get; set; }
 
+    public IList<ConfigurationItemFile> Files { get; set; }
+
     public object Clone()
     {
-        return MemberwiseClone();
+        var result = (ConfigurationItem)MemberwiseClone();
+
+        result.Files = Files?.Select(x => x.CloneTyped()).ToList();
+
+        return result;
     }
 }

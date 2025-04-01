@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
@@ -23,16 +24,19 @@ namespace VirtoCommerce.CartModule.Data.Services
     {
         private readonly Func<ICartRepository> _repositoryFactory;
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
+        private readonly IBlobUrlResolver _blobUrlResolver;
 
         public ShoppingCartService(
             Func<ICartRepository> repositoryFactory,
             IPlatformMemoryCache platformMemoryCache,
             IEventPublisher eventPublisher,
-            IShoppingCartTotalsCalculator totalsCalculator)
+            IShoppingCartTotalsCalculator totalsCalculator,
+            IBlobUrlResolver blobUrlResolver)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
             _repositoryFactory = repositoryFactory;
             _totalsCalculator = totalsCalculator;
+            _blobUrlResolver = blobUrlResolver;
         }
 
         protected override ShoppingCart ProcessModel(string responseGroup, ShoppingCartEntity entity, ShoppingCart model)
@@ -43,12 +47,13 @@ namespace VirtoCommerce.CartModule.Data.Services
                 _totalsCalculator.CalculateTotals(model);
             }
             model.ReduceDetails(responseGroup);
+            ResolveFileUrls(model);
             return model;
         }
 
         protected override async Task BeforeSaveChanges(IList<ShoppingCart> models)
         {
-            new ShoppingCartsValidator().ValidateAndThrow(models);
+            await new ShoppingCartsValidator().ValidateAndThrowAsync(models);
 
             using var repository = _repositoryFactory();
 
@@ -102,6 +107,26 @@ namespace VirtoCommerce.CartModule.Data.Services
             foreach (var id in ids)
             {
                 GenericSearchCachingRegion<ShoppingCart>.ExpireTokenForKey(id);
+            }
+        }
+
+        private void ResolveFileUrls(ShoppingCart cart)
+        {
+            if (cart.Items is null)
+            {
+                return;
+            }
+
+            var files = cart.Items
+                .Where(i => i.ConfigurationItems != null)
+                .SelectMany(i => i.ConfigurationItems
+                    .Where(c => c.Files != null)
+                    .SelectMany(c => c.Files
+                        .Where(f => !string.IsNullOrEmpty(f.Url))));
+
+            foreach (var file in files)
+            {
+                file.Url = file.Url.StartsWith("/api") ? file.Url : _blobUrlResolver.GetAbsoluteUrl(file.Url);
             }
         }
     }

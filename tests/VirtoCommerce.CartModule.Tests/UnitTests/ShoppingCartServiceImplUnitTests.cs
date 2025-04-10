@@ -50,12 +50,12 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
             _blobUrlResolverMock.Setup(x => x.GetAbsoluteUrl(It.IsAny<string>())).Returns<string>(x => x);
             _paymentMethodsSearchService = new Mock<IPaymentMethodsSearchService>();
             _paymentMethodsSearchService
-                .Setup(x => x.SearchAllNoCloneAsync(It.IsAny<PaymentMethodsSearchCriteria>()))
-                .ReturnsAsync([]);
+                .Setup(x => x.SearchAsync(It.IsAny<PaymentMethodsSearchCriteria>(), It.IsAny<bool>()))
+                .ReturnsAsync(new PaymentMethodsSearchResult());
             _shippingMethodSearchService = new Mock<IShippingMethodsSearchService>();
             _shippingMethodSearchService
-                .Setup(x => x.SearchAllNoCloneAsync(It.IsAny<ShippingMethodsSearchCriteria>()))
-                .ReturnsAsync([]);
+                .Setup(x => x.SearchAsync(It.IsAny<ShippingMethodsSearchCriteria>(), It.IsAny<bool>()))
+                .ReturnsAsync(new ShippingMethodsSearchResult());
         }
 
         [Fact]

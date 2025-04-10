@@ -59,12 +59,8 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
             model.ReduceDetails(responseGroup);
             ResolveFileUrls(model);
-
-            var paymentMethodCodes = GetPaymentMethodCodesAsync(model.StoreId);
-            var shippingMethodCodes = GetShippingMethodCodesAsync(model.StoreId);
-
-            model.Payments = model.Payments.Where(x => paymentMethodCodes.Contains(x.PaymentGatewayCode)).ToList();
-            model.Shipments = model.Shipments.Where(x => shippingMethodCodes.Contains(x.ShipmentMethodCode)).ToList();
+            ResolvePayments(model);
+            ResolveShipments(model);
 
             return model;
         }
@@ -148,15 +144,36 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
+        private void ResolvePayments(ShoppingCart cart)
+        {
+            if (cart.Payments == null)
+            {
+                return;
+            }
+
+            var paymentMethodCodes = GetPaymentMethodCodesAsync(cart.StoreId);
+            cart.Payments = cart.Payments.Where(x => paymentMethodCodes.Contains(x.PaymentGatewayCode)).ToList();
+        }
+
+        private void ResolveShipments(ShoppingCart cart)
+        {
+            if (cart.Shipments == null)
+            {
+                return;
+            }
+            var shippingMethodCodes = GetShippingMethodCodesAsync(cart.StoreId);
+            cart.Shipments = cart.Shipments.Where(x => shippingMethodCodes.Contains(x.ShipmentMethodCode)).ToList();
+        }
+
         private string[] GetPaymentMethodCodesAsync(string storeId)
         {
             var criteria = AbstractTypeFactory<PaymentMethodsSearchCriteria>.TryCreateInstance();
             criteria.StoreId = storeId;
             criteria.IsActive = true;
 
-            var paymentMethods = _paymentMethodsSearchService.SearchAsync(criteria).GetAwaiter().GetResult();
+            var paymentMethods = _paymentMethodsSearchService.SearchAllNoCloneAsync(criteria).GetAwaiter().GetResult();
 
-            return paymentMethods.Results.Select(x => x.Code).ToArray();
+            return paymentMethods.Select(x => x.Code).ToArray();
         }
 
         private string[] GetShippingMethodCodesAsync(string storeId)
@@ -165,11 +182,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             criteria.StoreId = storeId;
             criteria.IsActive = true;
 
-            var shippingMethods = _shippingMethodSearchService.SearchAsync(criteria).GetAwaiter().GetResult();
+            var shippingMethods = _shippingMethodSearchService.SearchAllNoCloneAsync(criteria).GetAwaiter().GetResult();
 
-            return shippingMethods.Results.Select(x => x.Code).ToArray();
+            return shippingMethods.Select(x => x.Code).ToArray();
         }
-
-
     }
 }

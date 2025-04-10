@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using VirtoCommerce.CartModule.Core.Model;
@@ -171,12 +170,6 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
 
             return sortInfos;
-        }
-
-        protected override async Task<ShoppingCartSearchResult> ProcessSearchResultAsync(ShoppingCartSearchResult result, ShoppingCartSearchCriteria criteria)
-        {
-
-            return await base.ProcessSearchResultAsync(result, criteria);
         }
 
         protected override IChangeToken CreateCacheToken(ShoppingCartSearchCriteria criteria)

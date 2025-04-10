@@ -9,34 +9,23 @@ using VirtoCommerce.CartModule.Core.Model.Search;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
-using VirtoCommerce.PaymentModule.Core.Model.Search;
-using VirtoCommerce.PaymentModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Data.GenericCrud;
-using VirtoCommerce.ShippingModule.Core.Model.Search;
-using VirtoCommerce.ShippingModule.Core.Services;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
     public class ShoppingCartSearchService : SearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart, ShoppingCartEntity>, IShoppingCartSearchService
     {
-        private readonly IPaymentMethodsSearchService _paymentMethodsSearchService;
-        private readonly IShippingMethodsSearchService _shippingMethodSearchService;
-
         public ShoppingCartSearchService(
             Func<ICartRepository> repositoryFactory,
             IPlatformMemoryCache platformMemoryCache,
             IShoppingCartService crudService,
-            IOptions<CrudOptions> crudOptions,
-            IPaymentMethodsSearchService paymentMethodsSearchService,
-            IShippingMethodsSearchService shippingMethodSearchService)
+            IOptions<CrudOptions> crudOptions)
             : base(repositoryFactory, platformMemoryCache, crudService, crudOptions)
         {
-            _paymentMethodsSearchService = paymentMethodsSearchService;
-            _shippingMethodSearchService = shippingMethodSearchService;
         }
 
         protected override IQueryable<ShoppingCartEntity> BuildQuery(IRepository repository, ShoppingCartSearchCriteria criteria)
@@ -186,38 +175,8 @@ namespace VirtoCommerce.CartModule.Data.Services
 
         protected override async Task<ShoppingCartSearchResult> ProcessSearchResultAsync(ShoppingCartSearchResult result, ShoppingCartSearchCriteria criteria)
         {
-            var paymentMethodCodes = await GetPaymentMethodCodesAsync(criteria.StoreId);
-            var shippingMethodCodes = await GetShippingMethodCodesAsync(criteria.StoreId);
-
-            foreach (var cart in result.Results)
-            {
-                cart.Payments = cart.Payments.Where(x => paymentMethodCodes.Contains(x.PaymentGatewayCode)).ToList();
-                cart.Shipments = cart.Shipments.Where(x => shippingMethodCodes.Contains(x.ShipmentMethodCode)).ToList();
-            }
 
             return await base.ProcessSearchResultAsync(result, criteria);
-        }
-
-        private async Task<string[]> GetPaymentMethodCodesAsync(string storeId)
-        {
-            var criteria = AbstractTypeFactory<PaymentMethodsSearchCriteria>.TryCreateInstance();
-            criteria.StoreId = storeId;
-            criteria.IsActive = true;
-
-            var paymentMethods = await _paymentMethodsSearchService.SearchAsync(criteria);
-
-            return paymentMethods.Results.Select(x => x.Code).ToArray();
-        }
-
-        private async Task<string[]> GetShippingMethodCodesAsync(string storeId)
-        {
-            var criteria = AbstractTypeFactory<ShippingMethodsSearchCriteria>.TryCreateInstance();
-            criteria.StoreId = storeId;
-            criteria.IsActive = true;
-
-            var shippingMethods = await _shippingMethodSearchService.SearchAsync(criteria);
-
-            return shippingMethods.Results.Select(x => x.Code).ToArray();
         }
 
         protected override IChangeToken CreateCacheToken(ShoppingCartSearchCriteria criteria)

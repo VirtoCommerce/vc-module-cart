@@ -13,11 +13,15 @@ using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Services;
 using VirtoCommerce.CartModule.Data.Validation;
+using VirtoCommerce.PaymentModule.Core.Model.Search;
+using VirtoCommerce.PaymentModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.ShippingModule.Core.Model.Search;
+using VirtoCommerce.ShippingModule.Core.Services;
 using Xunit;
 
 namespace VirtoCommerce.CartModule.Tests.UnitTests
@@ -30,6 +34,8 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
         private readonly Func<ICartRepository> _repositoryFactory;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
         private readonly Mock<IBlobUrlResolver> _blobUrlResolverMock;
+        private readonly Mock<IPaymentMethodsSearchService> _paymentMethodsSearchService;
+        private readonly Mock<IShippingMethodsSearchService> _shippingMethodSearchService;
 
         public ShoppingCartServiceImplUnitTests()
         {
@@ -42,6 +48,14 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
             FluentValidation.ValidatorOptions.Global.LanguageManager.Enabled = false;
             _blobUrlResolverMock = new Mock<IBlobUrlResolver>();
             _blobUrlResolverMock.Setup(x => x.GetAbsoluteUrl(It.IsAny<string>())).Returns<string>(x => x);
+            _paymentMethodsSearchService = new Mock<IPaymentMethodsSearchService>();
+            _paymentMethodsSearchService
+                .Setup(x => x.SearchAsync(It.IsAny<PaymentMethodsSearchCriteria>(), It.IsAny<bool>()))
+                .ReturnsAsync(new PaymentMethodsSearchResult());
+            _shippingMethodSearchService = new Mock<IShippingMethodsSearchService>();
+            _shippingMethodSearchService
+                .Setup(x => x.SearchAsync(It.IsAny<ShippingMethodsSearchCriteria>(), It.IsAny<bool>()))
+                .ReturnsAsync(new ShippingMethodsSearchResult());
         }
 
         [Fact]
@@ -189,7 +203,7 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
 
         private ShoppingCartService GetShoppingCartService(IPlatformMemoryCache platformMemoryCache)
         {
-            return new ShoppingCartService(_repositoryFactory, platformMemoryCache, _eventPublisherMock.Object, _calculatorMock.Object, _blobUrlResolverMock.Object);
+            return new ShoppingCartService(_repositoryFactory, platformMemoryCache, _eventPublisherMock.Object, _calculatorMock.Object, _blobUrlResolverMock.Object, _paymentMethodsSearchService.Object, _shippingMethodSearchService.Object);
         }
     }
 }

@@ -12,11 +12,15 @@ using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.CartModule.Data.Validation;
+using VirtoCommerce.PaymentModule.Core.Model.Search;
+using VirtoCommerce.PaymentModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Data.GenericCrud;
+using VirtoCommerce.ShippingModule.Core.Model.Search;
+using VirtoCommerce.ShippingModule.Core.Services;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
@@ -25,18 +29,25 @@ namespace VirtoCommerce.CartModule.Data.Services
         private readonly Func<ICartRepository> _repositoryFactory;
         private readonly IShoppingCartTotalsCalculator _totalsCalculator;
         private readonly IBlobUrlResolver _blobUrlResolver;
+        private readonly IPaymentMethodsSearchService _paymentMethodsSearchService;
+        private readonly IShippingMethodsSearchService _shippingMethodSearchService;
+
 
         public ShoppingCartService(
             Func<ICartRepository> repositoryFactory,
             IPlatformMemoryCache platformMemoryCache,
             IEventPublisher eventPublisher,
             IShoppingCartTotalsCalculator totalsCalculator,
-            IBlobUrlResolver blobUrlResolver)
+            IBlobUrlResolver blobUrlResolver,
+            IPaymentMethodsSearchService paymentMethodsSearchService,
+            IShippingMethodsSearchService shippingMethodSearchService)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
             _repositoryFactory = repositoryFactory;
             _totalsCalculator = totalsCalculator;
             _blobUrlResolver = blobUrlResolver;
+            _paymentMethodsSearchService = paymentMethodsSearchService;
+            _shippingMethodSearchService = shippingMethodSearchService;
         }
 
         protected override ShoppingCart ProcessModel(string responseGroup, ShoppingCartEntity entity, ShoppingCart model)
@@ -48,6 +59,9 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
             model.ReduceDetails(responseGroup);
             ResolveFileUrls(model);
+            ResolvePayments(model);
+            ResolveShipments(model);
+
             return model;
         }
 
@@ -128,6 +142,49 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 file.Url = file.Url.StartsWith("/api") ? file.Url : _blobUrlResolver.GetAbsoluteUrl(file.Url);
             }
+        }
+
+        private void ResolvePayments(ShoppingCart cart)
+        {
+            if (cart.Payments == null)
+            {
+                return;
+            }
+
+            var paymentMethodCodes = GetPaymentMethodCodesAsync(cart.StoreId);
+            cart.Payments = cart.Payments.Where(x => paymentMethodCodes.Contains(x.PaymentGatewayCode)).ToList();
+        }
+
+        private void ResolveShipments(ShoppingCart cart)
+        {
+            if (cart.Shipments == null)
+            {
+                return;
+            }
+            var shippingMethodCodes = GetShippingMethodCodesAsync(cart.StoreId);
+            cart.Shipments = cart.Shipments.Where(x => shippingMethodCodes.Contains(x.ShipmentMethodCode)).ToList();
+        }
+
+        private string[] GetPaymentMethodCodesAsync(string storeId)
+        {
+            var criteria = AbstractTypeFactory<PaymentMethodsSearchCriteria>.TryCreateInstance();
+            criteria.StoreId = storeId;
+            criteria.IsActive = true;
+
+            var paymentMethods = _paymentMethodsSearchService.SearchAllNoCloneAsync(criteria).GetAwaiter().GetResult();
+
+            return paymentMethods.Select(x => x.Code).ToArray();
+        }
+
+        private string[] GetShippingMethodCodesAsync(string storeId)
+        {
+            var criteria = AbstractTypeFactory<ShippingMethodsSearchCriteria>.TryCreateInstance();
+            criteria.StoreId = storeId;
+            criteria.IsActive = true;
+
+            var shippingMethods = _shippingMethodSearchService.SearchAllNoCloneAsync(criteria).GetAwaiter().GetResult();
+
+            return shippingMethods.Select(x => x.Code).ToArray();
         }
     }
 }

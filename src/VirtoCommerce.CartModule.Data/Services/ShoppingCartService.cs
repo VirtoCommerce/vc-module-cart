@@ -32,7 +32,6 @@ namespace VirtoCommerce.CartModule.Data.Services
         private readonly IPaymentMethodsSearchService _paymentMethodsSearchService;
         private readonly IShippingMethodsSearchService _shippingMethodSearchService;
 
-
         public ShoppingCartService(
             Func<ICartRepository> repositoryFactory,
             IPlatformMemoryCache platformMemoryCache,
@@ -152,7 +151,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
 
             var paymentMethodCodes = GetPaymentMethodCodesAsync(cart.StoreId);
-            cart.Payments = cart.Payments.Where(x => paymentMethodCodes.Contains(x.PaymentGatewayCode)).ToList();
+            cart.Payments = cart.Payments.Where(x => x.PaymentGatewayCode == null || paymentMethodCodes.Contains(x.PaymentGatewayCode)).ToList();
         }
 
         private void ResolveShipments(ShoppingCart cart)
@@ -162,7 +161,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 return;
             }
             var shippingMethodCodes = GetShippingMethodCodesAsync(cart.StoreId);
-            cart.Shipments = cart.Shipments.Where(x => shippingMethodCodes.Contains(x.ShipmentMethodCode)).ToList();
+            cart.Shipments = cart.Shipments.Where(x => x.ShipmentMethodCode == null || shippingMethodCodes.Contains(x.ShipmentMethodCode)).ToList();
         }
 
         private string[] GetPaymentMethodCodesAsync(string storeId)

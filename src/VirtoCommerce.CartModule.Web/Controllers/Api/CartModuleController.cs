@@ -292,6 +292,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return Ok(cart);
         }
 
+        /// <summary>
+        /// Partial update for the specified ShoppingCart by id
+        /// </summary>
+        /// <param name="id">ShoppingCart id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
         [HttpPatch]
         [Route("patch/{id}")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
@@ -331,6 +336,12 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return NoContent();
         }
 
+        /// <summary>
+        /// Partial update for the specified ShoppingCart LineItem by id
+        /// </summary>
+        /// <param name="cartId">ShoppingCart id</param>
+        /// <param name="lineItemId">LineItem id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
         [HttpPatch]
         [Route("patch/{cartId}/items/{lineItemId}")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
@@ -371,6 +382,12 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return NoContent();
         }
 
+        /// <summary>
+        /// Partial update for the specified ShoppingCart Shipment by id
+        /// </summary>
+        /// <param name="cartId">ShoppingCart id</param>
+        /// <param name="shipmentId">Shipment id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
         [HttpPatch]
         [Route("patch/{cartId}/shipments/{shipmentId}")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
@@ -405,6 +422,12 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return NoContent();
         }
 
+        /// <summary>
+        /// Partial update for the specified ShoppingCart Payment by id
+        /// </summary>
+        /// <param name="cartId">ShoppingCart id</param>
+        /// <param name="paymentId">Payment id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
         [HttpPatch]
         [Route("patch/{cartId}/payments/{paymentId}")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]

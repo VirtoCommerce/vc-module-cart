@@ -348,6 +348,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> PatchCartItem(string cartId, string lineItemId, [FromBody] JsonPatchDocument<LineItem> patchDocument)
         {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await shoppingCartService.GetByIdAsync(cartId);
@@ -394,6 +399,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> PatchCartShipment(string cartId, string shipmentId, [FromBody] JsonPatchDocument<Shipment> patchDocument)
         {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.WithShipments.ToString());
@@ -434,6 +444,11 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> PatchCartPayment(string cartId, string paymentId, [FromBody] JsonPatchDocument<Payment> patchDocument)
         {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
                 var cart = await shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.WithPayments.ToString());

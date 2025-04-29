@@ -385,6 +385,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPatch]
         [Route("patch/{cartId}/shipments/{shipmentId}")]
+        [Authorize(ModuleConstants.Security.Permissions.Update)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> PatchCartShipment(string cartId, string shipmentId, [FromBody] JsonPatchDocument<Shipment> patchDocument)
         {
@@ -418,6 +419,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
 
         [HttpPatch]
         [Route("patch/{cartId}/payments/{paymentId}")]
+        [Authorize(ModuleConstants.Security.Permissions.Update)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> PatchCartPayment(string cartId, string paymentId, [FromBody] JsonPatchDocument<Payment> patchDocument)
         {

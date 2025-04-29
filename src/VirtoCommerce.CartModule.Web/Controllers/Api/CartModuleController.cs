@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
@@ -303,5 +304,150 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
             return Ok(cart);
         }
 
+        [HttpPatch]
+        [Route("patch/{id}")]
+        [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> PatchCart(string id, [FromBody] JsonPatchDocument<ShoppingCart> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), id)).LockAsync())
+            {
+                var cart = await _shoppingCartService.GetByIdAsync(id);
+                if (cart == null)
+                {
+                    return NotFound();
+                }
+
+                patchDocument.ApplyTo(cart, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                try
+                {
+                    await _shoppingCartService.SaveChangesAsync([cart]);
+                }
+                catch (FluentValidation.ValidationException ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("patch/{cartId}/items/{lineItemId}")]
+        [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> PatchCartItem(string cartId, string lineItemId, [FromBody] JsonPatchDocument<LineItem> patchDocument)
+        {
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
+            {
+                var cart = await _shoppingCartService.GetByIdAsync(cartId);
+                if (cart == null)
+                {
+                    return NotFound();
+                }
+
+                var lineItem = cart.Items.FirstOrDefault(i => i.Id == lineItemId);
+                if (lineItem == null)
+                {
+                    return NotFound();
+                }
+
+                patchDocument.ApplyTo(lineItem, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                try
+                {
+                    await _shoppingCartService.SaveChangesAsync([cart]);
+                }
+                catch (FluentValidation.ValidationException ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("patch/{cartId}/shipments/{shipmentId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> AddOrUpdateCartShipment(string cartId, string shipmentId, [FromBody] JsonPatchDocument<Shipment> patchDocument)
+        {
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
+            {
+                var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.WithShipments.ToString());
+                if (cart == null)
+                {
+                    return NotFound();
+                }
+
+                _cartBuilder.TakeCart(cart);
+
+                var shipment = _cartBuilder.Cart.Shipments.FirstOrDefault(i => i.Id == shipmentId);
+                if (shipment == null)
+                {
+                    return NotFound();
+                }
+
+                patchDocument.ApplyTo(shipment, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                await (await _cartBuilder.AddOrUpdateShipmentAsync(shipment)).SaveAsync();
+            }
+            return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("patch/{cartId}/payments/{paymentId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> AddOrUpdateCartPayment(string cartId, string paymentId, [FromBody] JsonPatchDocument<Payment> patchDocument)
+        {
+            using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
+            {
+                var cart = await _shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.WithPayments.ToString());
+                if (cart == null)
+                {
+                    return NotFound();
+                }
+
+                _cartBuilder.TakeCart(cart);
+
+                var payment = _cartBuilder.Cart.Payments.FirstOrDefault(i => i.Id == paymentId);
+                if (payment == null)
+                {
+                    return NotFound();
+                }
+
+                patchDocument.ApplyTo(payment, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                await (await _cartBuilder.AddOrUpdatePaymentAsync(payment)).SaveAsync();
+            }
+
+            return NoContent();
+        }
     }
 }

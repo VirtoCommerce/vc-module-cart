@@ -386,7 +386,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [HttpPatch]
         [Route("patch/{cartId}/shipments/{shipmentId}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> AddOrUpdateCartShipment(string cartId, string shipmentId, [FromBody] JsonPatchDocument<Shipment> patchDocument)
+        public async Task<ActionResult> PatchCartShipment(string cartId, string shipmentId, [FromBody] JsonPatchDocument<Shipment> patchDocument)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {
@@ -419,7 +419,7 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [HttpPatch]
         [Route("patch/{cartId}/payments/{paymentId}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> AddOrUpdateCartPayment(string cartId, string paymentId, [FromBody] JsonPatchDocument<Payment> patchDocument)
+        public async Task<ActionResult> PatchCartPayment(string cartId, string paymentId, [FromBody] JsonPatchDocument<Payment> patchDocument)
         {
             using (await AsyncLock.GetLockByKey(CacheKey.With(typeof(ShoppingCart), cartId)).LockAsync())
             {

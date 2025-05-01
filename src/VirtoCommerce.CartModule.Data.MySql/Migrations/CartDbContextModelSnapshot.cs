@@ -67,6 +67,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("varchar(2048)");
 
+                    b.Property<string>("MiddleName")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
                     b.Property<string>("Name")
                         .HasMaxLength(2048)
                         .HasColumnType("varchar(2048)");

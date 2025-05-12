@@ -123,7 +123,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-        private void ResolveFileUrls(ShoppingCart cart)
+        protected virtual void ResolveFileUrls(ShoppingCart cart)
         {
             if (cart.Items is null)
             {
@@ -143,7 +143,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
         }
 
-        private void ResolvePayments(ShoppingCart cart)
+        protected virtual void ResolvePayments(ShoppingCart cart)
         {
             if (cart.Payments == null)
             {
@@ -154,7 +154,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.Payments = cart.Payments.Where(x => x.PaymentGatewayCode == null || paymentMethodCodes.Contains(x.PaymentGatewayCode)).ToList();
         }
 
-        private void ResolveShipments(ShoppingCart cart)
+        protected virtual void ResolveShipments(ShoppingCart cart)
         {
             if (cart.Shipments == null)
             {
@@ -164,7 +164,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.Shipments = cart.Shipments.Where(x => x.ShipmentMethodCode == null || shippingMethodCodes.Contains(x.ShipmentMethodCode)).ToList();
         }
 
-        private string[] GetPaymentMethodCodesAsync(string storeId)
+        protected string[] GetPaymentMethodCodesAsync(string storeId)
         {
             var criteria = AbstractTypeFactory<PaymentMethodsSearchCriteria>.TryCreateInstance();
             criteria.StoreId = storeId;
@@ -175,7 +175,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             return paymentMethods.Select(x => x.Code).ToArray();
         }
 
-        private string[] GetShippingMethodCodesAsync(string storeId)
+        protected string[] GetShippingMethodCodesAsync(string storeId)
         {
             var criteria = AbstractTypeFactory<ShippingMethodsSearchCriteria>.TryCreateInstance();
             criteria.StoreId = storeId;

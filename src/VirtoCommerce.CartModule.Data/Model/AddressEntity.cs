@@ -46,6 +46,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         public string FirstName { get; set; }
 
         [StringLength(128)]
+        public string MiddleName { get; set; }
+
+        [StringLength(128)]
         public string LastName { get; set; }
 
         [StringLength(64)]
@@ -81,6 +84,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             address.CountryName = CountryName;
             address.Email = Email;
             address.FirstName = FirstName;
+            address.MiddleName = MiddleName;
             address.LastName = LastName;
             address.Line1 = Line1;
             address.Line2 = Line2;
@@ -111,6 +115,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             CountryName = address.CountryName;
             Email = address.Email;
             FirstName = address.FirstName;
+            MiddleName = address.MiddleName;
             LastName = address.LastName;
             Line1 = address.Line1;
             Line2 = address.Line2;
@@ -140,6 +145,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.City = City;
             target.Email = Email;
             target.FirstName = FirstName;
+            target.MiddleName = MiddleName;
             target.LastName = LastName;
             target.Line1 = Line1;
             target.Line2 = Line2;

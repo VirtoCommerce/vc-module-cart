@@ -12,19 +12,29 @@ using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.GenericCrud;
+using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Data.GenericCrud;
+using VirtoCommerce.SearchModule.Core.Extensions;
+using VirtoCommerce.SearchModule.Core.Services;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
     public class ShoppingCartSearchService : SearchService<ShoppingCartSearchCriteria, ShoppingCartSearchResult, ShoppingCart, ShoppingCartEntity>, IShoppingCartSearchService
     {
+        private readonly ISearchPhraseParser _searchPhraseParser;
+
         public ShoppingCartSearchService(
             Func<ICartRepository> repositoryFactory,
             IPlatformMemoryCache platformMemoryCache,
             IShoppingCartService crudService,
-            IOptions<CrudOptions> crudOptions)
+            IOptions<CrudOptions> crudOptions,
+            IOptionalDependency<ISearchPhraseParser> searchPhraseParser)
             : base(repositoryFactory, platformMemoryCache, crudService, crudOptions)
         {
+            if (searchPhraseParser.HasValue)
+            {
+                _searchPhraseParser = searchPhraseParser.Value;
+            }
         }
 
         protected override IQueryable<ShoppingCartEntity> BuildQuery(IRepository repository, ShoppingCartSearchCriteria criteria)
@@ -148,6 +158,25 @@ namespace VirtoCommerce.CartModule.Data.Services
             if (criteria.AbandonmentNotificationEndDate != null)
             {
                 query = query.Where(x => x.AbandonmentNotificationDate <= criteria.AbandonmentNotificationEndDate.Value);
+            }
+
+            if (!string.IsNullOrEmpty(criteria.Keyword))
+            {
+                var keyword = criteria.Keyword;
+
+                if (_searchPhraseParser != null)
+                {
+                    var searchPhrase = _searchPhraseParser.Parse(keyword);
+                    query = query.ApplyFilters(searchPhrase.Filters);
+                    keyword = searchPhrase.Keyword;
+                }
+
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    query = query.Where(x =>
+                        x.Name.Contains(keyword) ||
+                        x.OrganizationName.Contains(keyword));
+                }
             }
 
             return query;

@@ -11,3 +11,11 @@ public class ShoppingCartEntityConfiguration : IEntityTypeConfiguration<Shopping
         builder.ToTable(tb => tb.UseSqlOutputClause(false));
     }
 }
+
+public class LineItemEntityConfiguration : IEntityTypeConfiguration<LineItemEntity>
+{
+    public void Configure(EntityTypeBuilder<LineItemEntity> builder)
+    {
+        builder.ToTable(tb => tb.UseSqlOutputClause(false));
+    }
+}

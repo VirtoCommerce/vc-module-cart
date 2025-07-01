@@ -8,6 +8,7 @@ using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Tax;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
+using VirtoCommerce.Platform.Data.Infrastructure;
 using Address = VirtoCommerce.CartModule.Core.Model.Address;
 
 namespace VirtoCommerce.CartModule.Data.Model
@@ -86,7 +87,7 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(2048)]
         public string Comment { get; set; }
 
-        [StringLength(64)]
+        [StringLength(DbContextBase.IdLength)]
         public string PickupLocationId { get; set; }
 
         #region NavigationProperties

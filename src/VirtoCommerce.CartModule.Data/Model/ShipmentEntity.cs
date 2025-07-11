@@ -8,6 +8,7 @@ using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Tax;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
+using VirtoCommerce.Platform.Data.Infrastructure;
 using Address = VirtoCommerce.CartModule.Core.Model.Address;
 
 namespace VirtoCommerce.CartModule.Data.Model
@@ -86,6 +87,9 @@ namespace VirtoCommerce.CartModule.Data.Model
         [StringLength(2048)]
         public string Comment { get; set; }
 
+        [StringLength(DbContextBase.IdLength)]
+        public string PickupLocationId { get; set; }
+
         #region NavigationProperties
 
         public string ShoppingCartId { get; set; }
@@ -135,6 +139,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             shipment.ShipmentMethodOption = ShipmentMethodOption;
             shipment.VendorId = VendorId;
             shipment.Comment = Comment;
+            shipment.PickupLocationId = PickupLocationId;
             //TODO
             //shipment.TaxIncluded = TaxIncluded;
             //shipment.MeasureUnit =
@@ -208,6 +213,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             ShipmentMethodOption = shipment.ShipmentMethodOption;
             VendorId = shipment.VendorId;
             Comment = shipment.Comment;
+            PickupLocationId = shipment.PickupLocationId;
             //TODO
             //TaxIncluded = shipment.TaxIncluded;
             //MeasureUnit =
@@ -277,6 +283,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.ShipmentMethodOption = ShipmentMethodOption;
             target.VendorId = VendorId;
             target.Comment = Comment;
+            target.PickupLocationId = PickupLocationId;
 
             if (!Addresses.IsNullCollection())
             {

@@ -56,7 +56,6 @@ public class ConfigurationItemEntity : AuditableEntity
         configurationItem.ModifiedBy = ModifiedBy;
         configurationItem.ModifiedDate = ModifiedDate;
 
-        configurationItem.LineItemId = LineItemId;
         configurationItem.ProductId = ProductId;
         configurationItem.SectionId = SectionId;
         configurationItem.Name = Name;
@@ -85,7 +84,6 @@ public class ConfigurationItemEntity : AuditableEntity
         ModifiedBy = configurationItem.ModifiedBy;
         ModifiedDate = configurationItem.ModifiedDate;
 
-        LineItemId = configurationItem.LineItemId;
         ProductId = configurationItem.ProductId;
         SectionId = configurationItem.SectionId;
         Name = configurationItem.Name;
@@ -107,7 +105,6 @@ public class ConfigurationItemEntity : AuditableEntity
 
     public virtual void Patch(ConfigurationItemEntity target)
     {
-        target.LineItemId = LineItemId;
         target.ProductId = ProductId;
         target.SectionId = SectionId;
         target.Name = Name;

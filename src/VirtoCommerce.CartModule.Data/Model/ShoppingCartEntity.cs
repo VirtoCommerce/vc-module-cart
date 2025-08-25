@@ -138,7 +138,7 @@ namespace VirtoCommerce.CartModule.Data.Model
         public virtual ObservableCollection<CouponEntity> Coupons { get; set; } = new NullCollection<CouponEntity>();
         public virtual ObservableCollection<CartDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues { get; set; }
             = new NullCollection<CartDynamicPropertyObjectValueEntity>();
-
+        public virtual ObservableCollection<CartSharingSettingEntity> SharingSettings { get; set; } = new NullCollection<CartSharingSettingEntity>();
         #endregion
 
         [Timestamp]
@@ -211,6 +211,8 @@ namespace VirtoCommerce.CartModule.Data.Model
                 property.Values = x.Select(v => v.ToModel(AbstractTypeFactory<DynamicPropertyObjectValue>.TryCreateInstance())).ToArray();
                 return property;
             }).ToArray();
+
+            model.SharingSettings = SharingSettings.Select(x => x.ToModel(AbstractTypeFactory<CartSharingSetting>.TryCreateInstance())).ToList();
 
             return model;
         }

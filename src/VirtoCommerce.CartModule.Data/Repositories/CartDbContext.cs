@@ -189,6 +189,13 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
             #endregion ConfigurationItemFile
 
+            #region CartSharingSetting
+            modelBuilder.Entity<CartSharingSettingEntity>().ToTable("CartSharingSetting").HasKey(x => x.Id);
+            modelBuilder.Entity<CartSharingSettingEntity>().Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CartSharingSettingEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.SharingSettings).IsRequired()
+                        .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
+            #endregion
+
             modelBuilder.Entity<ProductWishlistEntity>().HasNoKey().ToView("empty");
 
             base.OnModelCreating(modelBuilder);

@@ -237,7 +237,8 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 
                     b.Property<string>("Access")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(64)
@@ -249,10 +250,6 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Mode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
@@ -260,8 +257,14 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
                     b.Property<string>("ShoppingCartId")
                         .IsRequired()
+                        .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
                     b.HasKey("Id");

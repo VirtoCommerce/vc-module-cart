@@ -1,6 +1,6 @@
 namespace VirtoCommerce.CartModule.Core.Model;
 
-public static class CartSharingModes
+public static class CartSharingScope
 {
     public const string Private = "Private";
     public const string Anyone = "Anyone";//TODO: AnyoneAnonymous & AnyoneAuthorized ?

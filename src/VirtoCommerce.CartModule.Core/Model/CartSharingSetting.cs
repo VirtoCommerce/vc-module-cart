@@ -7,7 +7,7 @@ public class CartSharingSetting : AuditableEntity, ICloneable
 {
     public string ShoppingCartId { get; set; }
 
-    public string Mode { get; set; }
+    public string Scope { get; set; }
 
     public string Access { get; set; }
 

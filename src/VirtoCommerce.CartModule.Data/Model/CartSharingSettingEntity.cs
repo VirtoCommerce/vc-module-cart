@@ -3,17 +3,21 @@ using System.ComponentModel.DataAnnotations;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
+using static VirtoCommerce.Platform.Data.Infrastructure.DbContextBase;
 
 namespace VirtoCommerce.CartModule.Data.Model;
 
 public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharingSettingEntity, CartSharingSetting>
 {
+    [StringLength(IdLength)]
     public string ShoppingCartId { get; set; }
 
     [Required]
-    public string Mode { get; set; }
+    [StringLength(Length32)]
+    public string Scope { get; set; }
 
     [Required]
+    [StringLength(Length32)]
     public string Access { get; set; }
 
     public bool IsActive { get; set; }
@@ -31,7 +35,7 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         model.ModifiedBy = ModifiedBy;
 
         model.ShoppingCartId = ShoppingCartId;
-        model.Mode = Mode;
+        model.Scope = Scope;
         model.Access = Access;
         model.IsActive = IsActive;
 
@@ -51,7 +55,7 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         ModifiedBy = model.ModifiedBy;
 
         ShoppingCartId = model.ShoppingCartId;
-        Mode = model.Mode;
+        Scope = model.Scope;
         Access = model.Access;
         IsActive = model.IsActive;
 
@@ -63,7 +67,7 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         ArgumentNullException.ThrowIfNull(target);
 
         target.ShoppingCartId = ShoppingCartId;
-        target.Mode = Mode;
+        target.Scope = Scope;
         target.Access = Access;
         target.IsActive = IsActive;
     }

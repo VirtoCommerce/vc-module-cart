@@ -16,9 +16,9 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    ShoppingCartId = table.Column<string>(type: "character varying(128)", nullable: false),
-                    Mode = table.Column<string>(type: "text", nullable: false),
-                    Access = table.Column<string>(type: "text", nullable: false),
+                    ShoppingCartId = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    Scope = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    Access = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),

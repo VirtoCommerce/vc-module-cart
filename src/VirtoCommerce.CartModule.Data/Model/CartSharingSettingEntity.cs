@@ -20,8 +20,6 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
     [StringLength(Length32)]
     public string Access { get; set; }
 
-    public bool IsActive { get; set; }
-
     public virtual ShoppingCartEntity ShoppingCart { get; set; }
 
     public CartSharingSetting ToModel(CartSharingSetting model)
@@ -37,7 +35,6 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         model.ShoppingCartId = ShoppingCartId;
         model.Scope = Scope;
         model.Access = Access;
-        model.IsActive = IsActive;
 
         return model;
     }
@@ -57,7 +54,6 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         ShoppingCartId = model.ShoppingCartId;
         Scope = model.Scope;
         Access = model.Access;
-        IsActive = model.IsActive;
 
         return this;
     }
@@ -69,6 +65,5 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         target.ShoppingCartId = ShoppingCartId;
         target.Scope = Scope;
         target.Access = Access;
-        target.IsActive = IsActive;
     }
 }

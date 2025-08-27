@@ -12,7 +12,7 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    [Migration("20250826131407_Cart_AddSharingSetting")]
+    [Migration("20250827140102_Cart_AddSharingSetting")]
     partial class Cart_AddSharingSetting
     {
         /// <inheritdoc />
@@ -249,9 +249,6 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(64)

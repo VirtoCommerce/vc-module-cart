@@ -11,7 +11,5 @@ public class CartSharingSetting : AuditableEntity, ICloneable
 
     public string Access { get; set; }
 
-    public bool IsActive { get; set; }
-
     public object Clone() => MemberwiseClone();
 }

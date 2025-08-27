@@ -319,6 +319,11 @@ namespace VirtoCommerce.CartModule.Data.Model
                     .Select(v => AbstractTypeFactory<CartDynamicPropertyObjectValueEntity>.TryCreateInstance().FromModel(v, model, p))).OfType<CartDynamicPropertyObjectValueEntity>());
             }
 
+            if (model.SharingSettings != null)
+            {
+                SharingSettings = new ObservableCollection<CartSharingSettingEntity>(model.SharingSettings.Select(x => AbstractTypeFactory<CartSharingSettingEntity>.TryCreateInstance().FromModel(x, pkMap)));
+            }
+
             return this;
         }
 
@@ -427,6 +432,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (!DynamicPropertyObjectValues.IsNullCollection())
             {
                 DynamicPropertyObjectValues.Patch(target.DynamicPropertyObjectValues, (sourceDynamicPropertyObjectValues, targetDynamicPropertyObjectValues) => sourceDynamicPropertyObjectValues.Patch(targetDynamicPropertyObjectValues));
+            }
+
+            if (!SharingSettings.IsNullCollection())
+            {
+                SharingSettings.Patch(target.SharingSettings, (sourceSharingSettings, targetSharingSettings) => sourceSharingSettings.Patch(targetSharingSettings));
             }
         }
     }

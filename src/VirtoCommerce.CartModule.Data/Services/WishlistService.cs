@@ -102,8 +102,8 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             var query = repository.ShoppingCarts.Where(cart =>
                                cart.StoreId == storeId &&
-                               cart.Type == CartType.Wishlist &&
-                               !cart.IsDeleted);//TODO #SavedToLater add SavedToLater 
+                               (cart.Type == CartType.Wishlist || cart.Type == CartType.SavedForLater) &&
+                               !cart.IsDeleted);
 
             var predicate = PredicateBuilder.False<ShoppingCartEntity>();
 

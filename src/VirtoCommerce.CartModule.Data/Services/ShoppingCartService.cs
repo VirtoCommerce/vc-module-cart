@@ -74,7 +74,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 //Calculate cart totals before save
                 _totalsCalculator.CalculateTotals(cart);
-                if (cart.Type == CartType.Wishlist)//TODO #SavedToLater add SavedToLater 
+                if (cart.Type == CartType.Wishlist || cart.Type == CartType.SavedForLater)//TODO #Q do we need number suffixes for SavedForLater list names?
                 {
                     await ValidateName(cart, repository);
                 }

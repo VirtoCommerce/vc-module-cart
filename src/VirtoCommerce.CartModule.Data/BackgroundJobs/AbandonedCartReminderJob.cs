@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
@@ -75,7 +76,7 @@ public class AbandonedCartReminderJob
         cartSearchCriteria.StoreId = store.Id;
         cartSearchCriteria.IsAnonymous = false;
         cartSearchCriteria.HasLineItems = true;
-        cartSearchCriteria.NotType = CartType.Wishlist;//TODO #SavedToLater add SavedToLater 
+        cartSearchCriteria.NotTypes = new List<string> { CartType.Wishlist, CartType.SavedForLater };
         cartSearchCriteria.Name = ModuleConstants.DefaultCartName;
         cartSearchCriteria.HasAbandonmentNotification = false;
 

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.AssetsModule.Core.Assets;
-using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Events;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
@@ -21,6 +20,7 @@ using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Data.GenericCrud;
 using VirtoCommerce.ShippingModule.Core.Model.Search;
 using VirtoCommerce.ShippingModule.Core.Services;
+using CartType = VirtoCommerce.CartModule.Core.ModuleConstants.CartType;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
@@ -74,7 +74,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             {
                 //Calculate cart totals before save
                 _totalsCalculator.CalculateTotals(cart);
-                if (cart.Type == ModuleConstants.WishlistCartType)
+                if (cart.Type == CartType.Wishlist)//TODO #SavedToLater add SavedToLater 
                 {
                     await ValidateName(cart, repository);
                 }

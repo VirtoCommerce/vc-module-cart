@@ -18,6 +18,7 @@ using VirtoCommerce.StoreModule.Core.Model;
 using VirtoCommerce.StoreModule.Core.Model.Search;
 using VirtoCommerce.StoreModule.Core.Services;
 using CartSettings = VirtoCommerce.CartModule.Core.ModuleConstants.Settings.General;
+using CartType = VirtoCommerce.CartModule.Core.ModuleConstants.CartType;
 
 namespace VirtoCommerce.CartModule.Data.BackgroundJobs;
 
@@ -74,7 +75,7 @@ public class AbandonedCartReminderJob
         cartSearchCriteria.StoreId = store.Id;
         cartSearchCriteria.IsAnonymous = false;
         cartSearchCriteria.HasLineItems = true;
-        cartSearchCriteria.NotType = ModuleConstants.WishlistCartType;
+        cartSearchCriteria.NotType = CartType.Wishlist;//TODO #SavedToLater add SavedToLater 
         cartSearchCriteria.Name = ModuleConstants.DefaultCartName;
         cartSearchCriteria.HasAbandonmentNotification = false;
 

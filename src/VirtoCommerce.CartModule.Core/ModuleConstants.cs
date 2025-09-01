@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using VirtoCommerce.Platform.Core.Settings;
@@ -7,7 +8,14 @@ namespace VirtoCommerce.CartModule.Core
     [ExcludeFromCodeCoverage]
     public static class ModuleConstants
     {
-        public const string WishlistCartType = "Wishlist";
+        public static class CartType
+        {
+            public const string Wishlist = "Wishlist";
+            public const string SavedForLater = "SavedForLater";
+        }
+
+        [Obsolete("Use CartTypes.Wishlist instead", DiagnosticId = "VC0011", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+        public const string WishlistCartType = CartType.Wishlist;
         public const string DefaultCartName = "default";
 
         public static class Security

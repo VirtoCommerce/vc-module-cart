@@ -191,7 +191,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #endregion ConfigurationItemFile
 
             #region CartSharingSetting
-            modelBuilder.Entity<CartSharingSettingEntity>().ToAuditableEntityTable("CartSharingSetting").HasKey(x => x.Id);
+            modelBuilder.Entity<CartSharingSettingEntity>().ToAuditableEntityTable("CartSharingSetting");
             modelBuilder.Entity<CartSharingSettingEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.SharingSettings).IsRequired()
                         .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
             #endregion

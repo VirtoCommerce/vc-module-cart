@@ -195,7 +195,7 @@ namespace VirtoCommerce.CartModule.Core.Model
             result.Shipments = Shipments?.Select(x => x.Clone()).OfType<Shipment>().ToList();
             result.TaxDetails = TaxDetails?.Select(x => x.Clone()).OfType<TaxDetail>().ToList();
             result.DynamicProperties = DynamicProperties?.Select(x => x.Clone()).OfType<DynamicObjectProperty>().ToList();
-            result.SharingSettings = SharingSettings?.Select(x => x.Clone()).OfType<CartSharingSetting>().ToList();
+            result.SharingSettings = SharingSettings?.Select(x => x.CloneTyped()).ToList();
 
             return result;
         }

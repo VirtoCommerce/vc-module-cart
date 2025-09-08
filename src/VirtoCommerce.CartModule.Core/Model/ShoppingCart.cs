@@ -157,7 +157,7 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         #endregion
 
-        public virtual ICollection<CartSharingSetting> SharingSettings { get; set; }
+        public virtual IList<CartSharingSetting> SharingSettings { get; set; }
 
         public virtual void ReduceDetails(string responseGroup)
         {

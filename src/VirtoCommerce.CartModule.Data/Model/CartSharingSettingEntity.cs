@@ -22,7 +22,7 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
 
     public virtual ShoppingCartEntity ShoppingCart { get; set; }
 
-    public CartSharingSetting ToModel(CartSharingSetting model)
+    public virtual CartSharingSetting ToModel(CartSharingSetting model)
     {
         ArgumentNullException.ThrowIfNull(model);
 
@@ -39,7 +39,7 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         return model;
     }
 
-    public CartSharingSettingEntity FromModel(CartSharingSetting model, PrimaryKeyResolvingMap pkMap)
+    public virtual CartSharingSettingEntity FromModel(CartSharingSetting model, PrimaryKeyResolvingMap pkMap)
     {
         ArgumentNullException.ThrowIfNull(model);
 
@@ -58,7 +58,7 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         return this;
     }
 
-    public void Patch(CartSharingSettingEntity target)
+    public virtual void Patch(CartSharingSettingEntity target)
     {
         ArgumentNullException.ThrowIfNull(target);
 

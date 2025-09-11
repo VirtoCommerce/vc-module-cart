@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
-using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
 using VirtoCommerce.CartModule.Data.Model;
@@ -13,6 +12,7 @@ using VirtoCommerce.CartModule.Data.Repositories;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
+using CartType = VirtoCommerce.CartModule.Core.ModuleConstants.CartType;
 
 namespace VirtoCommerce.CartModule.Data.Services
 {
@@ -102,7 +102,7 @@ namespace VirtoCommerce.CartModule.Data.Services
         {
             var query = repository.ShoppingCarts.Where(cart =>
                                cart.StoreId == storeId &&
-                               cart.Type == ModuleConstants.WishlistCartType &&
+                               (cart.Type == CartType.Wishlist || cart.Type == CartType.SavedForLater) &&
                                !cart.IsDeleted);
 
             var predicate = PredicateBuilder.False<ShoppingCartEntity>();

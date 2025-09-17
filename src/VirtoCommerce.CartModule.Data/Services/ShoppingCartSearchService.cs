@@ -101,11 +101,6 @@ namespace VirtoCommerce.CartModule.Data.Services
                 query = query.Where(x => x.Currency == criteria.Currency);
             }
 
-            if (!string.IsNullOrEmpty(criteria.Type))
-            {
-                query = query.Where(x => x.Type == criteria.Type);
-            }
-
             if (criteria.CreatedStartDate != null)
             {
                 query = query.Where(x => x.CreatedDate >= criteria.CreatedStartDate.Value);
@@ -138,9 +133,14 @@ namespace VirtoCommerce.CartModule.Data.Services
                     : query.Where(x => x.LineItemsCount <= 0);
             }
 
-            if (!string.IsNullOrEmpty(criteria.NotType))
+            if (!criteria.Types.IsNullOrEmpty())
             {
-                query = query.Where(x => x.Type != criteria.NotType);
+                query = query.Where(x => criteria.Types.Contains(x.Type));
+            }
+
+            if (!criteria.NotTypes.IsNullOrEmpty())
+            {
+                query = query.Where(x => !criteria.NotTypes.Contains(x.Type));
             }
 
             if (criteria.HasAbandonmentNotification != null)

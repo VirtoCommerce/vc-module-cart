@@ -171,7 +171,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 var shippingRates = await GetShippingRatesAsync(shipment.ShipmentMethodCode);
 
                 var shippingRate = shippingRates
-                    .FirstOrDefault(sm => shipment.ShipmentMethodOption.EqualsInvariant(sm.OptionName));
+                    .FirstOrDefault(sm => shipment.ShipmentMethodOption.EqualsIgnoreCase(sm.OptionName));
 
                 if (shippingRate == null)
                 {

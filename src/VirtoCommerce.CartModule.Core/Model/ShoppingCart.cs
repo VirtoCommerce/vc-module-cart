@@ -157,6 +157,8 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         #endregion
 
+        public virtual IList<CartSharingSetting> SharingSettings { get; set; }
+
         public virtual void ReduceDetails(string responseGroup)
         {
             //Reduce details according to response group
@@ -193,6 +195,7 @@ namespace VirtoCommerce.CartModule.Core.Model
             result.Shipments = Shipments?.Select(x => x.Clone()).OfType<Shipment>().ToList();
             result.TaxDetails = TaxDetails?.Select(x => x.Clone()).OfType<TaxDetail>().ToList();
             result.DynamicProperties = DynamicProperties?.Select(x => x.Clone()).OfType<DynamicObjectProperty>().ToList();
+            result.SharingSettings = SharingSettings?.Select(x => x.CloneTyped()).ToList();
 
             return result;
         }

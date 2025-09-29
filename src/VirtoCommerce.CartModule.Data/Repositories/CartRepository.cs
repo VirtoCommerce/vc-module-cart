@@ -31,6 +31,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         protected IQueryable<ConfigurationItemEntity> ConfigurationItems => DbContext.Set<ConfigurationItemEntity>();
         protected IQueryable<CartDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues => DbContext.Set<CartDynamicPropertyObjectValueEntity>();
         protected IQueryable<ConfigurationItemFileEntity> ConfigurationItemFiles => DbContext.Set<ConfigurationItemFileEntity>();
+        protected IQueryable<CartSharingSettingEntity> CartSharingSettings => DbContext.Set<CartSharingSettingEntity>();
 
         public virtual async Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsAsync(IList<string> ids, string responseGroup = null)
         {
@@ -82,6 +83,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 await Discounts.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
                 await Addresses.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
                 await Coupons.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
+                await CartSharingSettings.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
 
                 var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
 

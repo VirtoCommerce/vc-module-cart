@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "Ostoskorit",
+    "blades": {
+      "carts-list": {
+        "title": "Ostoskorit",
+        "labels": {
+          "customer": "Asiakas",
+          "items-count": "Tuotteiden määrä",
+          "created": "Luotu",
+          "modified": "Muokattu",
+          "total": "Yhteensä"
+        }
+      },
+      "cart-detail": {
+        "title": "{{name}} ostoskori",
+        "labels": {
+          "name": "Nimi",
+          "price": "Hinta",
+          "quantity": "Määrä",
+          "total": "Yhteensä"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "Poiston vahvistus",
+        "message": "Oletko varma, että haluat poistaa valitut ostoskorit?"
+      },
+      "cart-save": {
+        "title": "Tallenna muutokset",
+        "message": "Ostoskoria on muokattu. Haluatko tallentaa muutokset?"
+      }
+    },
+    "commands": {
+      "open-in-store": "Avaa kaupassa"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "Ota käyttöön aiemmin pehmeästi poistettujen ostoskorien lopullinen poisto",
+        "description": "Poista vanhentuneet ostoskorit säännöllisesti tietokannasta"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "Kuinka monta ostoskoria poistetaan kerralla",
+        "description": "Ostoskorien poistoprosessi tapahtuu osissa, tämä on yhden osan koko. Suuret arvot voivat hidastaa tietokantaa."
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "Kuinka monta ostoskoria poistetaan yhdessä tehtävän suorituksessa",
+        "description": "Suurin määrä ostoskoreja, jotka poistetaan yhdessä tehtävän suorituksessa. Mitä suurempi luku, sitä kauemmin tehtävä kestää."
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "Cron-ilmaus ostoskorien lopulliselle poistotehtävälle",
+        "description": "Milloin ostoskorien poistotehtävä tulisi aloittaa"
+      },
+      "HardDeleteDelayDays": {
+        "title": "Pehmeästi poistettujen ostoskorien säilytysaika (päiviä)",
+        "description": "Tehtävä poistaa ostoskorit, jotka on merkitty poistettaviksi yli tämän päivien määrän ajan"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Ota käyttöön ilmoitukset hylätyistä ostoskoreista",
+          "description": "Muistuta asiakkaita sähköpostitse hylätyistä ostoskoreissa olevista tuotteista"
+        },
+        "CronExpression": {
+          "title": "Cron-ilmaus säännölliselle ilmoitusten lähettämiselle",
+          "description": "Milloin aloittaa ilmoitusten lähettäminen hylätyistä ostoskoreista"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "Tuntien määrä, jonka jälkeen ostoskori katsotaan hylätyksi",
+          "description": "Ostoskori katsotaan hylätyksi määritetyn tuntimäärän jälkeen, jos sitä ei ole tyhjennetty tai ostettu tänä aikana"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "Lue ostoskoriin liittyviä tietoja",
+    "cart:create": "Luo ostoskoriin liittyviä tietoja",
+    "cart:update": "Päivitä ostoskoriin liittyviä tietoja",
+    "cart:delete": "Poista ostoskoriin liittyviä tietoja",
+    "cart:access": "Pääsy ostoskoriin liittyviin tietoihin"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Ilmoitus hylätyistä ostoskoreista",
+      "description": "Asiakas saa sähköposti-ilmoituksen ostoskorissa hylätyistä tuotteista."
+    }
+  }
+}

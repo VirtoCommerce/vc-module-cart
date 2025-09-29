@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CartModule.Data.Model;
+using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CartModule.Data.Repositories
@@ -188,6 +189,12 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 .HasForeignKey(x => x.ConfigurationItemId).IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             #endregion ConfigurationItemFile
+
+            #region CartSharingSetting
+            modelBuilder.Entity<CartSharingSettingEntity>().ToAuditableEntityTable("CartSharingSetting");
+            modelBuilder.Entity<CartSharingSettingEntity>().HasOne(x => x.ShoppingCart).WithMany(x => x.SharingSettings).IsRequired()
+                        .HasForeignKey(x => x.ShoppingCartId).OnDelete(DeleteBehavior.Cascade);
+            #endregion
 
             modelBuilder.Entity<ProductWishlistEntity>().HasNoKey().ToView("empty");
 

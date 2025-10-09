@@ -71,26 +71,34 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 return Array.Empty<ShoppingCartEntity>();
             }
 
-            var carts = await ShoppingCarts
-                .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
-                .ToListAsync();
+            var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
 
-            if (carts.Any())
+            var cartsQurable = ShoppingCarts
+                .Include(x => x.TaxDetails)
+                .Include(x => x.Discounts)
+                .Include(x => x.Addresses)
+                .Include(x => x.Coupons)
+                .Include(x => x.SharingSettings)
+                .AsQueryable();
+
+            if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
+            {
+                cartsQurable = cartsQurable.Include(x => x.DynamicPropertyObjectValues);
+            }
+
+            var carts = await cartsQurable
+               .AsSingleQuery()
+               .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
+               .ToListAsync();
+
+            if (carts.Count != 0)
             {
                 var cartIds = carts.Select(x => x.Id).ToArray();
 
-                await TaxDetails.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
-                await Discounts.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
-                await Addresses.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
-                await Coupons.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
-                await CartSharingSettings.Where(x => cartIds.Contains(x.ShoppingCartId)).LoadAsync();
-
-                var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
-
-                await LoadPayments(cartIds, cartResponseGroup);
                 await LoadLineItems(cartIds, cartResponseGroup);
+                await LoadPayments(cartIds, cartResponseGroup);
                 await LoadShipments(cartIds, cartResponseGroup);
-                await LoadDynamicProperties(cartIds, cartResponseGroup);
+                //await LoadDynamicProperties(cartIds, cartResponseGroup);
             }
 
             return carts;
@@ -127,23 +135,24 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             if (cartResponseGroup.HasFlag(CartResponseGroup.WithLineItems))
             {
-                var lineItems = await LineItems
+                var lineItemsQueryable = LineItems
+                    .Include(x => x.TaxDetails)
+                    .Include(x => x.Discounts)
+                    .AsQueryable();
+
+                if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
+                {
+                    lineItemsQueryable = lineItemsQueryable.Include(x => x.DynamicPropertyObjectValues);
+                }
+
+                var lineItems = await lineItemsQueryable
+                    .AsSingleQuery()
                     .Where(x => ids.Contains(x.ShoppingCartId))
                     .ToListAsync();
 
                 if (lineItems.Count > 0)
                 {
                     var lineItemIds = lineItems.Select(x => x.Id).ToArray();
-                    await TaxDetails.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();
-                    await Discounts.Where(x => lineItemIds.Contains(x.LineItemId)).LoadAsync();
-
-                    if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
-                    {
-                        var lineItemTypeFullName = typeof(LineItem).FullName;
-                        await DynamicPropertyObjectValues
-                            .Where(x => x.ObjectType == lineItemTypeFullName && lineItemIds.Contains(x.LineItemId))
-                            .LoadAsync();
-                    }
 
                     var configurationItemIds = lineItems.Where(x => x.IsConfigured).Select(x => x.Id).ToList();
                     if (configurationItemIds.Count > 0)
@@ -151,9 +160,17 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                         await ConfigurationItems
                             .Where(x => configurationItemIds.Contains(x.LineItemId))
                             .Include(x => x.Files)
-                            .AsSplitQuery()
+                            .AsSingleQuery()
                             .LoadAsync();
                     }
+
+                    //if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
+                    //{
+                    //    var lineItemTypeFullName = typeof(LineItem).FullName;
+                    //    await DynamicPropertyObjectValues
+                    //        .Where(x => x.ObjectType == lineItemTypeFullName && lineItemIds.Contains(x.LineItemId))
+                    //        .LoadAsync();
+                    //}
                 }
             }
         }

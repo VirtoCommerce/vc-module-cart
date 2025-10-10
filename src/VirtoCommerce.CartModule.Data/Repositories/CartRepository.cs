@@ -108,26 +108,21 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             if (cartResponseGroup.HasFlag(CartResponseGroup.WithPayments))
             {
-                var payments = await Payments
+                var paymentsQueryable = Payments
                     .Include(x => x.Addresses)
-                    .Where(x => ids.Contains(x.ShoppingCartId))
-                    .AsSplitQuery()
-                    .ToListAsync();
+                    .Include(x => x.TaxDetails)
+                    .Include(x => x.Discounts)
+                    .AsQueryable();
 
-                if (payments.Any())
+                if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
                 {
-                    var paymentIds = payments.Select(x => x.Id).ToArray();
-                    await TaxDetails.Where(x => paymentIds.Contains(x.PaymentId)).LoadAsync();
-                    await Discounts.Where(x => paymentIds.Contains(x.PaymentId)).LoadAsync();
-
-                    if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
-                    {
-                        var paymentTypeFullName = typeof(Payment).FullName;
-                        await DynamicPropertyObjectValues
-                            .Where(x => x.ObjectType == paymentTypeFullName && paymentIds.Contains(x.PaymentId))
-                            .LoadAsync();
-                    }
+                    paymentsQueryable = paymentsQueryable.Include(x => x.DynamicPropertyObjectValues);
                 }
+
+                await paymentsQueryable
+                    .Where(x => ids.Contains(x.ShoppingCartId))
+                    .AsSingleQuery()
+                    .LoadAsync();
             }
         }
 
@@ -163,14 +158,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                             .AsSingleQuery()
                             .LoadAsync();
                     }
-
-                    //if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
-                    //{
-                    //    var lineItemTypeFullName = typeof(LineItem).FullName;
-                    //    await DynamicPropertyObjectValues
-                    //        .Where(x => x.ObjectType == lineItemTypeFullName && lineItemIds.Contains(x.LineItemId))
-                    //        .LoadAsync();
-                    //}
                 }
             }
         }
@@ -179,27 +166,22 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             if (cartResponseGroup.HasFlag(CartResponseGroup.WithShipments))
             {
-                var shipments = await Shipments
+                var shipmentsQueryable = Shipments
                     .Include(x => x.Items)
-                    .Where(x => ids.Contains(x.ShoppingCartId))
-                    .AsSplitQuery()
-                    .ToListAsync();
+                    .Include(x => x.Addresses)
+                    .Include(x => x.Discounts)
+                    .Include(x => x.TaxDetails)
+                    .AsQueryable();
 
-                if (shipments.Any())
+                if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
                 {
-                    var shipmentIds = shipments.Select(x => x.Id).ToArray();
-                    await TaxDetails.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
-                    await Discounts.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
-                    await Addresses.Where(x => shipmentIds.Contains(x.ShipmentId)).LoadAsync();
-
-                    if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
-                    {
-                        var shipmentTypeFullName = typeof(Shipment).FullName;
-                        await DynamicPropertyObjectValues
-                            .Where(x => x.ObjectType == shipmentTypeFullName && shipmentIds.Contains(x.ShipmentId))
-                            .LoadAsync();
-                    }
+                    shipmentsQueryable = shipmentsQueryable.Include(x => x.DynamicPropertyObjectValues);
                 }
+
+                await shipmentsQueryable
+                    .Where(x => ids.Contains(x.ShoppingCartId))
+                    .AsSingleQuery()
+                    .LoadAsync();
             }
         }
 

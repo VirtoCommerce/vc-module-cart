@@ -7,11 +7,12 @@ using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CoreModule.Core.Tax;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 
 namespace VirtoCommerce.CartModule.Data.Model
 {
-    public class LineItemEntity : AuditableEntity
+    public class LineItemEntity : AuditableEntity, IDataEntity<LineItemEntity, LineItem>
     {
         [Required]
         [StringLength(3)]

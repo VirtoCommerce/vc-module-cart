@@ -38,41 +38,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             return await GetShoppingCartsByIdsInternalAsync(ids, responseGroup, false);
         }
 
-        public virtual async Task<IList<LineItemEntity>> GetLineItemsByIdsAsync(IList<string> ids, string responseGroup = null)
-        {
-            if (ids.IsNullOrEmpty())
-            {
-                return Array.Empty<LineItemEntity>();
-            }
-
-            var lineItemResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
-
-            var lineItems = await LineItems
-                .Include(x => x.TaxDetails)
-                .Include(x => x.Discounts)
-                .Include(x => x.DynamicPropertyObjectValues)
-                .AsSingleQuery()
-                .Where(x => ids.Contains(x.Id))
-                .ToListAsync();
-
-            if (lineItems.Count > 0)
-            {
-                var lineItemIds = lineItems.Select(x => x.Id).ToArray();
-
-                var configurationItemIds = lineItems.Where(x => x.IsConfigured).Select(x => x.Id).ToList();
-                if (configurationItemIds.Count > 0)
-                {
-                    await ConfigurationItems
-                        .Where(x => configurationItemIds.Contains(x.LineItemId))
-                        .Include(x => x.Files)
-                        .AsSingleQuery()
-                        .LoadAsync();
-                }
-            }
-
-            return lineItems;
-        }
-
         public virtual async Task RemoveCartsAsync(IList<string> ids)
         {
             var carts = await GetShoppingCartsByIdsInternalAsync(ids, responseGroup: null, isDeleted: true);

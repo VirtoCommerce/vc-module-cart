@@ -9,13 +9,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
     public interface ICartRepository : IRepository
     {
         IQueryable<ShoppingCartEntity> ShoppingCarts { get; }
-        IQueryable<LineItemEntity> LineItems { get; }
 
         Task<IList<ShoppingCartEntity>> GetShoppingCartsByIdsAsync(IList<string> ids, string responseGroup = null);
         Task RemoveCartsAsync(IList<string> ids);
         Task SoftRemoveCartsAsync(IList<string> ids);
         Task<IList<ProductWishlistEntity>> FindWishlistsByProductsAsync(string customerId, string organizationId, string storeId, IList<string> productIds);
-
-        Task<IList<LineItemEntity>> GetLineItemsByIdsAsync(IList<string> ids, string responseGroup = null);
     }
 }

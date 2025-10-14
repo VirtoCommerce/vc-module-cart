@@ -71,27 +71,24 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 return Array.Empty<ShoppingCartEntity>();
             }
 
-            var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
-
-            var cartsQurable = ShoppingCarts
+            var carts = await ShoppingCarts
                 .Include(x => x.TaxDetails)
                 .Include(x => x.Discounts)
                 .Include(x => x.Addresses)
                 .Include(x => x.Coupons)
                 .Include(x => x.SharingSettings)
-                .AsQueryable();
+                .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
+                .AsSingleQuery()
+                .ToListAsync();
 
-            var carts = await cartsQurable
-               .AsSingleQuery()
-               .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
-               .ToListAsync();
-
-            if (carts.Count != 0)
+            if (carts.Any())
             {
                 var cartIds = carts.Select(x => x.Id).ToArray();
 
-                await LoadLineItems(cartIds, cartResponseGroup);
+                var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
+
                 await LoadPayments(cartIds, cartResponseGroup);
+                await LoadLineItems(cartIds, cartResponseGroup);
                 await LoadShipments(cartIds, cartResponseGroup);
                 await LoadDynamicProperties(cartIds, cartResponseGroup);
             }
@@ -136,20 +133,18 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 }
 
                 var lineItems = await lineItemsQueryable
-                    .AsSingleQuery()
                     .Where(x => ids.Contains(x.ShoppingCartId))
+                    .AsSingleQuery()
                     .ToListAsync();
 
                 if (lineItems.Count > 0)
                 {
-                    var lineItemIds = lineItems.Select(x => x.Id).ToArray();
-
                     var configurationItemIds = lineItems.Where(x => x.IsConfigured).Select(x => x.Id).ToList();
                     if (configurationItemIds.Count > 0)
                     {
                         await ConfigurationItems
-                            .Where(x => configurationItemIds.Contains(x.LineItemId))
                             .Include(x => x.Files)
+                            .Where(x => configurationItemIds.Contains(x.LineItemId))
                             .AsSingleQuery()
                             .LoadAsync();
                     }

@@ -14,7 +14,7 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public string Status { get; set; }
         public string[] CustomerIds { get; set; }
         public string OrganizationId { get; set; }
-
+        public bool OrganizationIdIsEmpty { get; set; }
         public DateTime? CreatedStartDate { get; set; }
         public DateTime? CreatedEndDate { get; set; }
 
@@ -22,9 +22,6 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public DateTime? ModifiedEndDate { get; set; }
 
         public bool CustomerOrOrganization { get; set; }
-
-        [Obsolete("Not being used", DiagnosticId = "VC0008", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
-        public bool NoOrganization { get; set; }
 
         public bool? IsAnonymous { get; set; }
         public bool? HasLineItems { get; set; }

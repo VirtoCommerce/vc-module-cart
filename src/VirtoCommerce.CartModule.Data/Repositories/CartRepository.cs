@@ -108,7 +108,9 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                 if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
                 {
-                    paymentsQueryable = paymentsQueryable.Include(x => x.DynamicPropertyObjectValues);
+                    var paymentTypeFullName = typeof(Payment).FullName;
+                    paymentsQueryable = paymentsQueryable
+                        .Include(x => x.DynamicPropertyObjectValues.Where(x => x.ObjectType == paymentTypeFullName));
                 }
 
                 await paymentsQueryable
@@ -129,7 +131,9 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                 if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
                 {
-                    lineItemsQueryable = lineItemsQueryable.Include(x => x.DynamicPropertyObjectValues);
+                    var lineItemTypeFullName = typeof(LineItem).FullName;
+                    lineItemsQueryable = lineItemsQueryable
+                        .Include(x => x.DynamicPropertyObjectValues.Where(x => x.ObjectType == lineItemTypeFullName));
                 }
 
                 var lineItems = await lineItemsQueryable
@@ -165,7 +169,9 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                 if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
                 {
-                    shipmentsQueryable = shipmentsQueryable.Include(x => x.DynamicPropertyObjectValues);
+                    var shipmentTypeFullName = typeof(Shipment).FullName;
+                    shipmentsQueryable = shipmentsQueryable
+                        .Include(x => x.DynamicPropertyObjectValues.Where(x => x.ObjectType == shipmentTypeFullName));
                 }
 
                 await shipmentsQueryable

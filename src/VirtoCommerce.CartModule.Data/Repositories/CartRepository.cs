@@ -81,11 +81,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 .Include(x => x.SharingSettings)
                 .AsQueryable();
 
-            if (cartResponseGroup.HasFlag(CartResponseGroup.WithDynamicProperties))
-            {
-                cartsQurable = cartsQurable.Include(x => x.DynamicPropertyObjectValues);
-            }
-
             var carts = await cartsQurable
                .AsSingleQuery()
                .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
@@ -98,7 +93,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 await LoadLineItems(cartIds, cartResponseGroup);
                 await LoadPayments(cartIds, cartResponseGroup);
                 await LoadShipments(cartIds, cartResponseGroup);
-                //await LoadDynamicProperties(cartIds, cartResponseGroup);
+                await LoadDynamicProperties(cartIds, cartResponseGroup);
             }
 
             return carts;

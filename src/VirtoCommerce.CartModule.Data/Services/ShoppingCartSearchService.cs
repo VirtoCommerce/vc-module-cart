@@ -81,6 +81,11 @@ namespace VirtoCommerce.CartModule.Data.Services
                 }
             }
 
+            if (criteria.OrganizationIdIsEmpty)
+            {
+                query = query.Where(x => x.OrganizationId == null);
+            }
+
             if (!string.IsNullOrEmpty(criteria.Status))
             {
                 query = query.Where(x => x.Status == criteria.Status);

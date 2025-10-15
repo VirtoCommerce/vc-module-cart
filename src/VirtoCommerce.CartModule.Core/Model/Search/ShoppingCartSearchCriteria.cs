@@ -30,24 +30,11 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         {
             get
             {
-                if (Types.IsNullOrEmpty())
-                {
-                    return null;
-                }
-
-                return Types.First();
+                return Types?.FirstOrDefault();
             }
             set
             {
-                if (Types == null)
-                {
-                    Types = new List<string>();
-                }
-
-                if (!Types.Contains(value))
-                {
-                    Types.Insert(0, value);
-                }
+                Types = !value.IsNullOrEmpty() ? [value] : null;
             }
         }
         public IList<string> Types { get; set; }
@@ -56,24 +43,11 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         {
             get
             {
-                if (NotTypes.IsNullOrEmpty())
-                {
-                    return null;
-                }
-
-                return NotTypes.First();
+                return NotTypes?.FirstOrDefault();
             }
             set
             {
-                if (NotTypes == null)
-                {
-                    NotTypes = new List<string>();
-                }
-
-                if (!NotTypes.Contains(value))
-                {
-                    NotTypes.Insert(0, value);
-                }
+                NotTypes = !value.IsNullOrEmpty() ? [value] : null;
             }
         }
         public IList<string> NotTypes { get; set; }

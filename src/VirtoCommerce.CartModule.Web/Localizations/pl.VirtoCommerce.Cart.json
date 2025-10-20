@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "Koszyki zakupowe",
+    "blades": {
+      "carts-list": {
+        "title": "Koszyki zakupowe",
+        "labels": {
+          "customer": "Klient",
+          "items-count": "Liczba pozycji",
+          "created": "Utworzono",
+          "modified": "Zmodyfikowano",
+          "total": "Suma"
+        }
+      },
+      "cart-detail": {
+        "title": "Koszyk zakupowy {{name}}",
+        "labels": {
+          "name": "Nazwa",
+          "price": "Cena",
+          "quantity": "Ilość",
+          "total": "Suma"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "Potwierdzenie usunięcia",
+        "message": "Czy na pewno chcesz usunąć wybrane koszyki?"
+      },
+      "cart-save": {
+        "title": "Zapisz zmiany",
+        "message": "Koszyk został zmodyfikowany. Czy chcesz zapisać zmiany?"
+      }
+    },
+    "commands": {
+      "open-in-store": "Otwórz w sklepie"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "Włącz trwałe usuwanie wcześniej miękko usuniętych koszyków",
+        "description": "Okresowo usuwaj przestarzałe koszyki z bazy danych"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "Ile koszyków powinno zostać usuniętych w jednej transakcji",
+        "description": "Proces usuwania koszyków odbywa się partiami, to jest rozmiar jednej partii. Duże wartości mogą spowolnić bazę danych."
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "Ile koszyków powinno zostać usuniętych w jednym wykonaniu zadania",
+        "description": "Maksymalna liczba koszyków, które zostaną usunięte w jednym uruchomieniu zadania. Im większa liczba, tym dłużej trwa zadanie."
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "Wyrażenie cron dla zadania trwałego usuwania koszyków",
+        "description": "Kiedy powinno rozpocząć się zadanie usuwania koszyków"
+      },
+      "HardDeleteDelayDays": {
+        "title": "Czas przechowywania miękko usuniętych koszyków (dni)",
+        "description": "Zadanie usuwa koszyki oznaczone do usunięcia wcześniej niż podana liczba dni temu"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Włącz powiadomienia o porzuconych koszykach",
+          "description": "Przypominaj klientom przez e-mail o porzuconych pozycjach w koszyku"
+        },
+        "CronExpression": {
+          "title": "Wyrażenie cron dla okresowego wysyłania powiadomień",
+          "description": "Kiedy rozpocząć wysyłanie powiadomień o porzuconych koszykach"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "Liczba godzin, po której koszyk jest uznawany za porzucony",
+          "description": "Koszyk jest uznawany za porzucony po określonej liczbie godzin, jeśli nie został opróżniony lub zakupiony w tym czasie"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "Przeglądanie danych związanych z koszykiem",
+    "cart:create": "Tworzenie danych związanych z koszykiem",
+    "cart:update": "Aktualizacja danych związanych z koszykiem",
+    "cart:delete": "Usuwanie danych związanych z koszykiem",
+    "cart:access": "Dostęp do danych związanych z koszykiem"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Powiadomienie o porzuconych koszykach",
+      "description": "Klient otrzyma powiadomienie e-mail o porzuconych pozycjach w koszyku."
+    }
+  }
+}

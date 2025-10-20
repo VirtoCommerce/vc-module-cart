@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "Handlekurver",
+    "blades": {
+      "carts-list": {
+        "title": "Handlekurver",
+        "labels": {
+          "customer": "Kunde",
+          "items-count": "Antall varer",
+          "created": "Opprettet",
+          "modified": "Endret",
+          "total": "Totalt"
+        }
+      },
+      "cart-detail": {
+        "title": "{{name}} sin handlekurv",
+        "labels": {
+          "name": "Navn",
+          "price": "Pris",
+          "quantity": "Ant.",
+          "total": "Totalt"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette de valgte handlekurvene?"
+      },
+      "cart-save": {
+        "title": "Lagre endringer",
+        "message": "Handlekurven har blitt endret. Vil du lagre endringene?"
+      }
+    },
+    "commands": {
+      "open-in-store": "Åpne i butikken"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "Aktiver permanent sletting av tidligere mykt slettede handlekurver",
+        "description": "Slett foreldede handlekurver fra databasen med jevne mellomrom"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "Hvor mange handlekurver skal slettes per transaksjon",
+        "description": "Prosessen for sletting av handlekurver skjer i porsjoner, dette er størrelsen på en porsjon. Store verdier kan føre til at databasen går tregere."
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "Hvor mange handlekurver skal slettes per jobbkjøring",
+        "description": "Maksimalt antall handlekurver som slettes i en jobbkjøring. Jo høyere tall, desto lenger tid tar jobben."
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "Cron-uttrykk for permanent sletting av handlekurver",
+        "description": "Når jobben for sletting av handlekurver skal starte"
+      },
+      "HardDeleteDelayDays": {
+        "title": "Levetid for mykt slettede handlekurver (dager)",
+        "description": "Jobben sletter handlekurver som ble markert for sletting for mer enn dette antall dager siden"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Aktiver varsler om forlatte handlekurver",
+          "description": "Minn kunder på via e-post om varer som er forlatt i handlekurven"
+        },
+        "CronExpression": {
+          "title": "Cron-uttrykk for periodisk sending av varsler",
+          "description": "Når sending av varsler om forlatte handlekurver skal starte"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "Antall timer før handlekurven anses som forlatt",
+          "description": "Handlekurven anses som forlatt etter det angitte antall timer hvis den ikke har blitt tømt eller kjøpt i denne perioden"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "Les data relatert til handlekurv",
+    "cart:create": "Opprett data relatert til handlekurv",
+    "cart:update": "Oppdater data relatert til handlekurv",
+    "cart:delete": "Slett data relatert til handlekurv",
+    "cart:access": "Få tilgang til data relatert til handlekurv"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Varsel om forlatte handlekurver",
+      "description": "Kunden vil motta et e-postvarsel om varer som er forlatt i handlekurven."
+    }
+  }
+}

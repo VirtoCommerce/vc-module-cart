@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "Paniers d'achat",
+    "blades": {
+      "carts-list": {
+        "title": "Paniers d'achat",
+        "labels": {
+          "customer": "Client",
+          "items-count": "Nombre d'articles",
+          "created": "Créé",
+          "modified": "Modifié",
+          "total": "Total"
+        }
+      },
+      "cart-detail": {
+        "title": "Panier d'achat de {{name}}",
+        "labels": {
+          "name": "Nom",
+          "price": "Prix",
+          "quantity": "Qté",
+          "total": "Total"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "Confirmation de suppression",
+        "message": "Êtes-vous sûr de vouloir supprimer les paniers sélectionnés ?"
+      },
+      "cart-save": {
+        "title": "Enregistrer les modifications",
+        "message": "Le panier a été modifié. Voulez-vous enregistrer les modifications ?"
+      }
+    },
+    "commands": {
+      "open-in-store": "Ouvrir dans la boutique"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "Activer la suppression définitive des paniers précédemment supprimés de manière douce",
+        "description": "Supprimer périodiquement les paniers obsolètes de la base de données"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "Combien de paniers doivent être supprimés par transaction",
+        "description": "Le processus de suppression des paniers se fait par lots, ceci est la taille d'un lot. Des valeurs élevées peuvent ralentir la base de données."
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "Combien de paniers doivent être supprimés par exécution du processus",
+        "description": "Le nombre maximum de paniers qui seront supprimés lors d'une exécution du processus. Plus le nombre est élevé, plus le processus prend du temps."
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "Expression cron pour le processus de suppression définitive des paniers",
+        "description": "Quand le processus de suppression des paniers doit commencer"
+      },
+      "HardDeleteDelayDays": {
+        "title": "Durée de vie des paniers supprimés de manière douce (jours)",
+        "description": "Le processus supprime les paniers marqués pour suppression depuis plus de ce nombre de jours"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Activer les notifications sur les paniers abandonnés",
+          "description": "Rappeler aux clients par e-mail les articles abandonnés dans le panier"
+        },
+        "CronExpression": {
+          "title": "Expression cron pour l'envoi périodique de notifications",
+          "description": "Quand commencer à envoyer des notifications sur les paniers abandonnés"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "Nombre d'heures après lesquelles le panier est considéré comme abandonné",
+          "description": "Le panier est considéré comme abandonné après le nombre d'heures spécifié s'il n'a pas été vidé ou acheté pendant ce temps"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "Lire les données liées au panier",
+    "cart:create": "Créer des données liées au panier",
+    "cart:update": "Mettre à jour les données liées au panier",
+    "cart:delete": "Supprimer les données liées au panier",
+    "cart:access": "Accéder aux données liées au panier"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Notification sur les paniers abandonnés",
+      "description": "Le client recevra une notification par e-mail concernant les articles abandonnés dans le panier."
+    }
+  }
+}

@@ -138,7 +138,7 @@ namespace VirtoCommerce.CartModule.Data.Model
         public virtual ObservableCollection<CouponEntity> Coupons { get; set; } = new NullCollection<CouponEntity>();
         public virtual ObservableCollection<CartDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues { get; set; }
             = new NullCollection<CartDynamicPropertyObjectValueEntity>();
-
+        public virtual ObservableCollection<CartSharingSettingEntity> SharingSettings { get; set; } = new NullCollection<CartSharingSettingEntity>();
         #endregion
 
         [Timestamp]
@@ -211,6 +211,8 @@ namespace VirtoCommerce.CartModule.Data.Model
                 property.Values = x.Select(v => v.ToModel(AbstractTypeFactory<DynamicPropertyObjectValue>.TryCreateInstance())).ToArray();
                 return property;
             }).ToArray();
+
+            model.SharingSettings = SharingSettings.Select(x => x.ToModel(AbstractTypeFactory<CartSharingSetting>.TryCreateInstance())).ToList();
 
             return model;
         }
@@ -315,6 +317,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             {
                 DynamicPropertyObjectValues = new ObservableCollection<CartDynamicPropertyObjectValueEntity>(model.DynamicProperties.SelectMany(p => p.Values
                     .Select(v => AbstractTypeFactory<CartDynamicPropertyObjectValueEntity>.TryCreateInstance().FromModel(v, model, p))).OfType<CartDynamicPropertyObjectValueEntity>());
+            }
+
+            if (model.SharingSettings != null)
+            {
+                SharingSettings = new ObservableCollection<CartSharingSettingEntity>(model.SharingSettings.Select(x => AbstractTypeFactory<CartSharingSettingEntity>.TryCreateInstance().FromModel(x, pkMap)));
             }
 
             return this;
@@ -425,6 +432,11 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (!DynamicPropertyObjectValues.IsNullCollection())
             {
                 DynamicPropertyObjectValues.Patch(target.DynamicPropertyObjectValues, (sourceDynamicPropertyObjectValues, targetDynamicPropertyObjectValues) => sourceDynamicPropertyObjectValues.Patch(targetDynamicPropertyObjectValues));
+            }
+
+            if (!SharingSettings.IsNullCollection())
+            {
+                SharingSettings.Patch(target.SharingSettings, (sourceSharingSettings, targetSharingSettings) => sourceSharingSettings.Patch(targetSharingSettings));
             }
         }
     }

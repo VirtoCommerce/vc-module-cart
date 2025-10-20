@@ -81,6 +81,11 @@ namespace VirtoCommerce.CartModule.Data.Services
                 }
             }
 
+            if (criteria.OrganizationIdIsEmpty)
+            {
+                query = query.Where(x => x.OrganizationId == null);
+            }
+
             if (!string.IsNullOrEmpty(criteria.Status))
             {
                 query = query.Where(x => x.Status == criteria.Status);
@@ -177,6 +182,11 @@ namespace VirtoCommerce.CartModule.Data.Services
                         x.Name.Contains(keyword) ||
                         x.OrganizationName.Contains(keyword));
                 }
+            }
+
+            if (!criteria.SharingKey.IsNullOrEmpty())
+            {
+                query = query.Where(cart => cart.SharingSettings.Any(setting => setting.Id == criteria.SharingKey && setting.Scope != CartSharingScope.Private));
             }
 
             return query;

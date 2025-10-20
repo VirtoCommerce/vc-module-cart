@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "Carritos de compra",
+    "blades": {
+      "carts-list": {
+        "title": "Carritos de compra",
+        "labels": {
+          "customer": "Cliente",
+          "items-count": "Cantidad de artículos",
+          "created": "Creado",
+          "modified": "Modificado",
+          "total": "Total"
+        }
+      },
+      "cart-detail": {
+        "title": "Carrito de compra de {{name}}",
+        "labels": {
+          "name": "Nombre",
+          "price": "Precio",
+          "quantity": "Cant.",
+          "total": "Total"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "Confirmación de eliminación",
+        "message": "¿Estás seguro de que quieres eliminar los carritos seleccionados?"
+      },
+      "cart-save": {
+        "title": "Guardar cambios",
+        "message": "El carrito ha sido modificado. ¿Quieres guardar los cambios?"
+      }
+    },
+    "commands": {
+      "open-in-store": "Abrir en la tienda"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "Habilitar la eliminación permanente de carritos previamente eliminados de forma suave",
+        "description": "Eliminar periódicamente los carritos obsoletos de la base de datos"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "Cuántos carritos deben eliminarse por transacción",
+        "description": "El proceso de eliminación de carritos se realiza por lotes, este es el tamaño de un lote. Valores altos pueden ralentizar la base de datos."
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "Cuántos carritos deben eliminarse por ejecución del proceso",
+        "description": "El número máximo de carritos que se eliminarán en una ejecución del proceso. Cuanto mayor sea el número, más tiempo tomará el proceso."
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "Expresión cron para el proceso de eliminación permanente de carritos",
+        "description": "Cuándo debe comenzar el proceso de eliminación de carritos"
+      },
+      "HardDeleteDelayDays": {
+        "title": "Tiempo de vida de los carritos eliminados de forma suave (días)",
+        "description": "El proceso elimina los carritos marcados para eliminación hace más de este número de días"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Habilitar notificaciones sobre carritos abandonados",
+          "description": "Recordar a los clientes por correo electrónico los artículos abandonados en el carrito"
+        },
+        "CronExpression": {
+          "title": "Expresión cron para el envío periódico de notificaciones",
+          "description": "Cuándo comenzar a enviar notificaciones sobre carritos abandonados"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "Número de horas tras las cuales el carrito se considera abandonado",
+          "description": "El carrito se considera abandonado después del número especificado de horas si no ha sido vaciado o comprado durante este tiempo"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "Leer datos relacionados con el carrito",
+    "cart:create": "Crear datos relacionados con el carrito",
+    "cart:update": "Actualizar datos relacionados con el carrito",
+    "cart:delete": "Eliminar datos relacionados con el carrito",
+    "cart:access": "Acceder a datos relacionados con el carrito"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Notificación sobre carritos abandonados",
+      "description": "El cliente recibirá una notificación por correo electrónico sobre los artículos abandonados en el carrito."
+    }
+  }
+}

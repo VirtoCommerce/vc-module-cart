@@ -25,7 +25,7 @@
     "dialogs": {
       "carts-delete": {
         "title": "Delete confirmation",
-        "message": "Are you sure you want to delete selected Carts?"
+        "message": "Are you sure you want to delete selected carts?"
       },
       "cart-save": {
         "title": "Save changes",
@@ -39,37 +39,37 @@
   "settings": {
     "Cart": {
       "EnableDeleteObsoleteCarts": {
-        "title": "Enable hard delete for previously soft deleted carts",
-        "description": "Periodically delete obsolete carts from the database"
+        "title": "Hard delete for previously soft deleted carts",
+        "description": "Enable/ disable periodic deletion of obsolete carts from the database"
       },
       "PortionDeleteObsoleteCarts": {
-        "title": "How many carts should be deleted per one transaction",
-        "description": "The delete carts job do removal by portions, this is the size of one. Big values cause database to slow."
+        "title": "Number of carts deleted per transaction",
+        "description": "Specify how many carts are deleted in a single transaction. Larger values may slow down the database"
       },
       "MaximumCountPerDeleteObsoleteCartsJobExecution": {
-        "title": "How many carts should be deleted per one job execution",
-        "description": "The maximum number of carts that will be deleted in one job run. The higher the number, the longer the job takes."
+        "title": "Maximum carts deleted per job execution",
+        "description": "Specify the maximum number of carts deleted during one job run. Higher values increase job duration"
       },
       "CronDeleteObsoleteCarts": {
         "title": "Cron expression for cart hard delete job",
-        "description": "When carts removal job should start"
+        "description": "Specify when the cart deletion job should run"
       },
       "HardDeleteDelayDays": {
-        "title": "Time to live for soft deleted carts (days)",
-        "description": "Job deletes carts that were marked to remove more than this number of days ago"
+        "title": "Time-to-live for soft-deleted carts (days)",
+        "description": "Deletion of carts marked for removal more than the specified number of days ago"
       },
       "AbandonedCartReminder": {
         "Enable": {
-          "title": "Enable notifications about abandoned carts",
-          "description": "Remind customers by email about the items abandoned in the cart"
+          "title": "Notifications about abandoned carts",
+          "description": "Enable/ disable email notifications about the items abandoned in the cart"
         },
         "CronExpression": {
           "title": "Cron expression for periodic notification sending",
-          "description": "When to start sending notifications about the abandoned carts"
+          "description": "Specify when to send notifications about abandoned carts"
         },
         "HoursUntilCartAbandoned": {
-          "title": "Number of hours after which the cart is considered abandoned",
-          "description": "The cart is considered abandoned after the specified number of hours if it has not been cleared or purchased during this time"
+          "title": "Abandonment threshold (hours)",
+          "description": "Number of hours after which the cart is considered abandoned if it has not been cleared or purchased during this time"
         }
       }
     }

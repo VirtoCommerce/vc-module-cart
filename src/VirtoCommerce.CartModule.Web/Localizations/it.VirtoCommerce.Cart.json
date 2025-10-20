@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "Carrelli della spesa",
+    "blades": {
+      "carts-list": {
+        "title": "Carrelli della spesa",
+        "labels": {
+          "customer": "Cliente",
+          "items-count": "Numero di articoli",
+          "created": "Creato",
+          "modified": "Modificato",
+          "total": "Totale"
+        }
+      },
+      "cart-detail": {
+        "title": "Carrello della spesa di {{name}}",
+        "labels": {
+          "name": "Nome",
+          "price": "Prezzo",
+          "quantity": "Qtà",
+          "total": "Totale"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler eliminare i carrelli selezionati?"
+      },
+      "cart-save": {
+        "title": "Salva modifiche",
+        "message": "Il carrello è stato modificato. Vuoi salvare le modifiche?"
+      }
+    },
+    "commands": {
+      "open-in-store": "Apri nel negozio"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "Abilita eliminazione definitiva per i carrelli precedentemente eliminati in modo soft",
+        "description": "Elimina periodicamente i carrelli obsoleti dal database"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "Quanti carrelli devono essere eliminati per transazione",
+        "description": "Il processo di eliminazione dei carrelli avviene per porzioni, questa è la dimensione di una porzione. Valori elevati possono rallentare il database."
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "Quanti carrelli devono essere eliminati per esecuzione del processo",
+        "description": "Il numero massimo di carrelli che verranno eliminati in un'esecuzione del processo. Maggiore è il numero, più lungo sarà il tempo del processo."
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "Espressione cron per il processo di eliminazione definitiva dei carrelli",
+        "description": "Quando deve iniziare il processo di rimozione dei carrelli"
+      },
+      "HardDeleteDelayDays": {
+        "title": "Tempo di conservazione per i carrelli eliminati in modo soft (giorni)",
+        "description": "Il processo elimina i carrelli contrassegnati per la rimozione da più di questo numero di giorni"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Abilita notifiche sui carrelli abbandonati",
+          "description": "Ricorda ai clienti tramite e-mail gli articoli abbandonati nel carrello"
+        },
+        "CronExpression": {
+          "title": "Espressione cron per l'invio periodico di notifiche",
+          "description": "Quando iniziare a inviare notifiche sui carrelli abbandonati"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "Numero di ore dopo le quali il carrello è considerato abbandonato",
+          "description": "Il carrello è considerato abbandonato dopo il numero specificato di ore se non è stato svuotato o acquistato durante questo tempo"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "Leggi dati relativi al carrello",
+    "cart:create": "Crea dati relativi al carrello",
+    "cart:update": "Aggiorna dati relativi al carrello",
+    "cart:delete": "Elimina dati relativi al carrello",
+    "cart:access": "Accedi ai dati relativi al carrello"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Notifica sui carrelli abbandonati",
+      "description": "Il cliente riceverà una notifica via e-mail sugli articoli abbandonati nel carrello."
+    }
+  }
+}

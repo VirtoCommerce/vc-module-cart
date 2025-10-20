@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "购物车",
+    "blades": {
+      "carts-list": {
+        "title": "购物车",
+        "labels": {
+          "customer": "客户",
+          "items-count": "商品数量",
+          "created": "创建时间",
+          "modified": "修改时间",
+          "total": "总计"
+        }
+      },
+      "cart-detail": {
+        "title": "{{name}} 的购物车",
+        "labels": {
+          "name": "名称",
+          "price": "价格",
+          "quantity": "数量",
+          "total": "总计"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "删除确认",
+        "message": "您确定要删除选中的购物车吗？"
+      },
+      "cart-save": {
+        "title": "保存更改",
+        "message": "购物车已修改。您想保存更改吗？"
+      }
+    },
+    "commands": {
+      "open-in-store": "在商店中打开"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "启用对之前软删除的购物车的永久删除",
+        "description": "定期从数据库中删除过期的购物车"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "每次事务删除的购物车数量",
+        "description": "购物车删除过程分批进行，这是每批的大小。较大的值可能会导致数据库变慢。"
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "每次任务执行删除的购物车最大数量",
+        "description": "在一次任务运行中删除的购物车的最大数量。数量越多，任务耗时越长。"
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "购物车永久删除任务的Cron表达式",
+        "description": "购物车删除任务的开始时间"
+      },
+      "HardDeleteDelayDays": {
+        "title": "软删除购物车的存活时间（天）",
+        "description": "任务会删除超过此天数标记为删除的购物车"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "启用关于废弃购物车的通知",
+          "description": "通过电子邮件提醒客户关于购物车中废弃的商品"
+        },
+        "CronExpression": {
+          "title": "定期发送通知的Cron表达式",
+          "description": "何时开始发送关于废弃购物车的通知"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "购物车被视为废弃的小时数",
+          "description": "如果在此指定小时数内购物车未被清空或购买，则视为废弃"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "查看购物车相关数据",
+    "cart:create": "创建购物车相关数据",
+    "cart:update": "更新购物车相关数据",
+    "cart:delete": "删除购物车相关数据",
+    "cart:access": "访问购物车相关数据"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "关于废弃购物车的通知",
+      "description": "客户将收到关于购物车中废弃商品的电子邮件通知。"
+    }
+  }
+}

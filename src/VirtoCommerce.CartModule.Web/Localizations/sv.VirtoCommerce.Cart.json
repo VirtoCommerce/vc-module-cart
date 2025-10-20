@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "Kundvagnar",
+    "blades": {
+      "carts-list": {
+        "title": "Kundvagnar",
+        "labels": {
+          "customer": "Kund",
+          "items-count": "Antal artiklar",
+          "created": "Skapad",
+          "modified": "Ändrad",
+          "total": "Totalt"
+        }
+      },
+      "cart-detail": {
+        "title": "{{name}}s kundvagn",
+        "labels": {
+          "name": "Namn",
+          "price": "Pris",
+          "quantity": "Antal",
+          "total": "Totalt"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "Bekräfta radering",
+        "message": "Är du säker på att du vill radera de valda kundvagnarna?"
+      },
+      "cart-save": {
+        "title": "Spara ändringar",
+        "message": "Kundvagnen har ändrats. Vill du spara ändringarna?"
+      }
+    },
+    "commands": {
+      "open-in-store": "Öppna i butiken"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "Aktivera permanent radering av tidigare mjukt raderade kundvagnar",
+        "description": "Radera periodiskt föråldrade kundvagnar från databasen"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "Hur många kundvagnar ska raderas per transaktion",
+        "description": "Raderingsprocessen för kundvagnar sker i omgångar, detta är storleken på en omgång. Höga värden kan sakta ner databasen."
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "Hur många kundvagnar ska raderas per körning av jobbet",
+        "description": "Det maximala antalet kundvagnar som raderas i en körning av jobbet. Ju högre antal, desto längre tid tar jobbet."
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "Cron-uttryck för permanent raderingsjobb för kundvagnar",
+        "description": "När raderingsjobbet för kundvagnar ska starta"
+      },
+      "HardDeleteDelayDays": {
+        "title": "Livslängd för mjukt raderade kundvagnar (dagar)",
+        "description": "Jobbet raderar kundvagnar som markerats för radering för mer än detta antal dagar sedan"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "Aktivera notiser om övergivna kundvagnar",
+          "description": "Påminn kunder via e-post om artiklar som övergivits i kundvagnen"
+        },
+        "CronExpression": {
+          "title": "Cron-uttryck för periodisk sändning av notiser",
+          "description": "När sändning av notiser om övergivna kundvagnar ska starta"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "Antal timmar innan kundvagnen anses övergiven",
+          "description": "Kundvagnen anses övergiven efter det angivna antalet timmar om den inte har tömts eller köpts under denna tid"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "Läs data relaterade till kundvagnen",
+    "cart:create": "Skapa data relaterade till kundvagnen",
+    "cart:update": "Uppdatera data relaterade till kundvagnen",
+    "cart:delete": "Radera data relaterade till kundvagnen",
+    "cart:access": "Få åtkomst till data relaterade till kundvagnen"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "Notis om övergivna kundvagnar",
+      "description": "Kunden kommer att få en e-postnotis om artiklar som övergivits i kundvagnen."
+    }
+  }
+}

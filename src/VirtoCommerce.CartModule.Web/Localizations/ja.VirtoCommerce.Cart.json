@@ -1,0 +1,90 @@
+{
+  "cart": {
+    "main-menu-title": "ショッピングカート",
+    "blades": {
+      "carts-list": {
+        "title": "ショッピングカート",
+        "labels": {
+          "customer": "顧客",
+          "items-count": "アイテム数",
+          "created": "作成日",
+          "modified": "更新日",
+          "total": "合計"
+        }
+      },
+      "cart-detail": {
+        "title": "{{name}} のショッピングカート",
+        "labels": {
+          "name": "名前",
+          "price": "価格",
+          "quantity": "数量",
+          "total": "合計"
+        }
+      }
+    },
+    "dialogs": {
+      "carts-delete": {
+        "title": "削除の確認",
+        "message": "選択したカートを削除してもよろしいですか？"
+      },
+      "cart-save": {
+        "title": "変更を保存",
+        "message": "カートが変更されました。変更を保存しますか？"
+      }
+    },
+    "commands": {
+      "open-in-store": "ストアで開く"
+    }
+  },
+  "settings": {
+    "Cart": {
+      "EnableDeleteObsoleteCarts": {
+        "title": "ソフト削除されたカートの完全削除を有効にする",
+        "description": "データベースから定期的に古いカートを削除します"
+      },
+      "PortionDeleteObsoleteCarts": {
+        "title": "1回のトランザクションで削除するカートの数",
+        "description": "カート削除プロセスは部分的に行われ、これが1つの部分のサイズです。大きな値はデータベースの動作を遅くする可能性があります。"
+      },
+      "MaximumCountPerDeleteObsoleteCartsJobExecution": {
+        "title": "1回のジョブ実行で削除するカートの最大数",
+        "description": "1回のジョブ実行で削除されるカートの最大数。数が多ければ多いほど、ジョブの実行に時間がかかります。"
+      },
+      "CronDeleteObsoleteCarts": {
+        "title": "カート完全削除ジョブのCron式",
+        "description": "カート削除ジョブが開始されるタイミング"
+      },
+      "HardDeleteDelayDays": {
+        "title": "ソフト削除されたカートの存続期間（日数）",
+        "description": "この日数以上前に削除マークされたカートをジョブが削除します"
+      },
+      "AbandonedCartReminder": {
+        "Enable": {
+          "title": "放棄されたカートに関する通知を有効にする",
+          "description": "カートに放棄されたアイテムについて、顧客にメールで通知します"
+        },
+        "CronExpression": {
+          "title": "定期的な通知送信のためのCron式",
+          "description": "放棄されたカートに関する通知の送信を開始するタイミング"
+        },
+        "HoursUntilCartAbandoned": {
+          "title": "カートが放棄されたとみなされるまでの時間（時間）",
+          "description": "指定された時間内にカートが空にされなかったり購入されなかった場合、カートは放棄されたとみなされます"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "cart:read": "カート関連データの閲覧",
+    "cart:create": "カート関連データの作成",
+    "cart:update": "カート関連データの更新",
+    "cart:delete": "カート関連データの削除",
+    "cart:access": "カート関連データへのアクセス"
+  },
+  "notificationTypes": {
+    "AbandonedCartEmailNotification": {
+      "displayName": "放棄されたカートに関する通知",
+      "description": "顧客はカートに放棄されたアイテムについてメール通知を受け取ります。"
+    }
+  }
+}

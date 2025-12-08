@@ -306,6 +306,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
+                    b.Property<decimal>("ListPrice")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
@@ -323,6 +327,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("SalePrice")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal");
 
                     b.Property<string>("SectionId")
                         .HasMaxLength(128)

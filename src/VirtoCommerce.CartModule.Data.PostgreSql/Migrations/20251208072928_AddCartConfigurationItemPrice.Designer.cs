@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VirtoCommerce.CartModule.Data.Repositories;
@@ -11,13 +12,15 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    partial class CartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251208072928_AddCartConfigurationItemPrice")]
+    partial class AddCartConfigurationItemPrice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.1")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -1051,8 +1054,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 
                     b.Property<string>("Name")
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .UseCollation("case_insensitive");
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("OrganizationId")
                         .HasMaxLength(64)
@@ -1060,8 +1062,7 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 
                     b.Property<string>("OrganizationName")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .UseCollation("case_insensitive");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<decimal>("PaymentTotal")
                         .HasColumnType("Money");

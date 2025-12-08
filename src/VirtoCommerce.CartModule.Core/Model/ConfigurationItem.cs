@@ -19,6 +19,12 @@ public class ConfigurationItem : AuditableEntity, ICloneable
 
     public int Quantity { get; set; }
 
+    public decimal ListPrice { get; set; }
+
+    public decimal SalePrice { get; set; }
+
+    public virtual decimal ExtendedPrice => SalePrice * Quantity;
+
     public string ImageUrl { get; set; }
 
     public string CatalogId { get; set; }

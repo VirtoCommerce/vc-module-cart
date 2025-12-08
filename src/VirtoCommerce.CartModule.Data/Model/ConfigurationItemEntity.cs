@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -25,6 +26,12 @@ public class ConfigurationItemEntity : AuditableEntity
     public string Sku { get; set; }
 
     public int Quantity { get; set; }
+
+    [Column(TypeName = "Money")]
+    public decimal ListPrice { get; set; }
+
+    [Column(TypeName = "Money")]
+    public decimal SalePrice { get; set; }
 
     [StringLength(1028)]
     public string ImageUrl { get; set; }
@@ -61,6 +68,8 @@ public class ConfigurationItemEntity : AuditableEntity
         configurationItem.Name = Name;
         configurationItem.Sku = Sku;
         configurationItem.Quantity = Quantity;
+        configurationItem.ListPrice = ListPrice;
+        configurationItem.SalePrice = SalePrice;
         configurationItem.ImageUrl = ImageUrl;
         configurationItem.CatalogId = CatalogId;
         configurationItem.CategoryId = CategoryId;
@@ -89,6 +98,8 @@ public class ConfigurationItemEntity : AuditableEntity
         Name = configurationItem.Name;
         Sku = configurationItem.Sku;
         Quantity = configurationItem.Quantity;
+        ListPrice = configurationItem.ListPrice;
+        SalePrice = configurationItem.SalePrice;
         ImageUrl = configurationItem.ImageUrl;
         CatalogId = configurationItem.CatalogId;
         CategoryId = configurationItem.CategoryId;
@@ -110,6 +121,8 @@ public class ConfigurationItemEntity : AuditableEntity
         target.Name = Name;
         target.Sku = Sku;
         target.Quantity = Quantity;
+        target.ListPrice = ListPrice;
+        target.SalePrice = SalePrice;
         target.ImageUrl = ImageUrl;
         target.CatalogId = CatalogId;
         target.CategoryId = CategoryId;

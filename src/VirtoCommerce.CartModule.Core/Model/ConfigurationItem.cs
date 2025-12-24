@@ -21,7 +21,12 @@ public class ConfigurationItem : AuditableEntity, ICloneable
 
     public decimal ListPrice { get; set; }
 
-    public decimal SalePrice { get; set; }
+    private decimal? _salePrice;
+    public virtual decimal SalePrice
+    {
+        get => _salePrice ?? ListPrice;
+        set => _salePrice = value;
+    }
 
     public virtual decimal ExtendedPrice => SalePrice * Quantity;
 

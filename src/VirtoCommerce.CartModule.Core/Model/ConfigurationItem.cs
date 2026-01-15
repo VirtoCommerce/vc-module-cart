@@ -42,6 +42,8 @@ public class ConfigurationItem : AuditableEntity, ICloneable
 
     public IList<ConfigurationItemFile> Files { get; set; }
 
+    public bool SelectedForCheckout { get; set; } = true;
+
     public object Clone()
     {
         var result = (ConfigurationItem)MemberwiseClone();

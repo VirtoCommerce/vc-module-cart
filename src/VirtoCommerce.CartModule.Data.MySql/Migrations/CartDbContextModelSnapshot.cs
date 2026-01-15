@@ -336,6 +336,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
+                    b.Property<bool>("SelectedForCheckout")
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Sku")
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");

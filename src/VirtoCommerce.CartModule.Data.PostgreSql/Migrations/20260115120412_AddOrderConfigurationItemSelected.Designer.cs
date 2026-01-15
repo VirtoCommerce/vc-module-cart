@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VirtoCommerce.CartModule.Data.Repositories;
@@ -11,9 +12,11 @@ using VirtoCommerce.CartModule.Data.Repositories;
 namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    partial class CartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260115120412_AddOrderConfigurationItemSelected")]
+    partial class AddOrderConfigurationItemSelected
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

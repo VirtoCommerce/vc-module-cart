@@ -49,6 +49,8 @@ public class ConfigurationItemEntity : AuditableEntity
     [StringLength(255)]
     public string CustomText { get; set; }
 
+    public bool SelectedForCheckout { get; set; }
+
     #region Navigation Properties
     public virtual ObservableCollection<ConfigurationItemFileEntity> Files { get; set; } = new NullCollection<ConfigurationItemFileEntity>();
     #endregion
@@ -75,6 +77,7 @@ public class ConfigurationItemEntity : AuditableEntity
         configurationItem.CategoryId = CategoryId;
         configurationItem.Type = Type;
         configurationItem.CustomText = CustomText;
+        configurationItem.SelectedForCheckout = SelectedForCheckout;
 
         configurationItem.Files = Files.Select(x => x.ToModel(AbstractTypeFactory<ConfigurationItemFile>.TryCreateInstance())).ToList();
 
@@ -105,6 +108,7 @@ public class ConfigurationItemEntity : AuditableEntity
         CategoryId = configurationItem.CategoryId;
         Type = configurationItem.Type;
         CustomText = configurationItem.CustomText;
+        SelectedForCheckout = configurationItem.SelectedForCheckout;
 
         if (configurationItem.Files != null)
         {
@@ -128,6 +132,7 @@ public class ConfigurationItemEntity : AuditableEntity
         target.CategoryId = CategoryId;
         target.Type = Type;
         target.CustomText = CustomText;
+        target.SelectedForCheckout = SelectedForCheckout;
 
         if (!Files.IsNullCollection())
         {

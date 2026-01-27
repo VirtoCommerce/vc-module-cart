@@ -65,6 +65,7 @@ public class ConfigurationItemEntity : AuditableEntity
         configurationItem.ModifiedBy = ModifiedBy;
         configurationItem.ModifiedDate = ModifiedDate;
 
+        configurationItem.LineItemId = LineItemId;
         configurationItem.ProductId = ProductId;
         configurationItem.SectionId = SectionId;
         configurationItem.Name = Name;

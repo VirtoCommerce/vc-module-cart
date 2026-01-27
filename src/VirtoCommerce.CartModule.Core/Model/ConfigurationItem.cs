@@ -9,6 +9,8 @@ namespace VirtoCommerce.CartModule.Core.Model;
 [SwaggerSchemaId("CartConfigurationItem")]
 public class ConfigurationItem : AuditableEntity, ICloneable
 {
+    public string LineItemId { get; set; }
+
     public string ProductId { get; set; }
 
     public string SectionId { get; set; }

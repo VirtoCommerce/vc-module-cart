@@ -1,24 +1,19 @@
+# Generate Migrations
 
-## Package manager 
-Add-Migration Initial -Context VirtoCommerce.CartModule.Data.Repositories.CartDbContext  -Verbose -OutputDir Migrations -Project VirtoCommerce.CartModule.Data.PostgreSql -StartupProject VirtoCommerce.CartModule.Data.PostgreSql  -Debug
-
-
-
-### Entity Framework Core Commands
-```
-dotnet tool install --global dotnet-ef --version 6.*
+## Install CLI tools for Entity Framework Core
+```cmd
+dotnet tool install --global dotnet-ef --version 10.0.1
 ```
 
-**Generate Migrations**
+or update
 
-```
-dotnet ef migrations add Initial
-dotnet ef migrations add Update1
-dotnet ef migrations add Update2
+```cmd
+dotnet tool update --global dotnet-ef --version 10.0.1
 ```
 
-etc..
+## Add Migration
+Select Data.<Provider> folder and run following command for each provider:
 
-**Apply Migrations**
-
-`dotnet ef database update`
+```cmd
+dotnet ef migrations add <migration-name>
+```

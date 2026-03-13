@@ -6,7 +6,7 @@ using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CartModule.Data.Repositories
 {
-#pragma warning disable S109 
+#pragma warning disable S109
     public class CartDbContext : DbContextBase
     {
         public CartDbContext(DbContextOptions<CartDbContext> options)
@@ -177,6 +177,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region ConfigurationItem
             modelBuilder.Entity<ConfigurationItemEntity>().ToTable("CartConfigurationItem").HasKey(x => x.Id);
             modelBuilder.Entity<ConfigurationItemEntity>().Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ConfigurationItemEntity>().Property(x => x.SelectedForCheckout).HasDefaultValue(true).ValueGeneratedNever();
             modelBuilder.Entity<ConfigurationItemEntity>().HasOne(x => x.LineItem).WithMany(x => x.ConfigurationItems)
                         .HasForeignKey(x => x.LineItemId).IsRequired().OnDelete(DeleteBehavior.ClientCascade);
             #endregion
@@ -201,7 +202,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             base.OnModelCreating(modelBuilder);
 
             // Allows configuration for an entity type for different database types.
-            // Applies configuration from all <see cref="IEntityTypeConfiguration{TEntity}" in VirtoCommerce.CartModule.Data.XXX project. /> 
+            // Applies configuration from all <see cref="IEntityTypeConfiguration{TEntity}" in VirtoCommerce.CartModule.Data.XXX project. />
             switch (Database.ProviderName)
             {
                 case "Pomelo.EntityFrameworkCore.MySql":

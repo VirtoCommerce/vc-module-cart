@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -26,6 +27,12 @@ public class ConfigurationItemEntity : AuditableEntity
 
     public int Quantity { get; set; }
 
+    [Column(TypeName = "Money")]
+    public decimal ListPrice { get; set; }
+
+    [Column(TypeName = "Money")]
+    public decimal SalePrice { get; set; }
+
     [StringLength(1028)]
     public string ImageUrl { get; set; }
 
@@ -42,6 +49,8 @@ public class ConfigurationItemEntity : AuditableEntity
     [StringLength(255)]
     public string CustomText { get; set; }
 
+    public bool SelectedForCheckout { get; set; }
+
     #region Navigation Properties
     public virtual ObservableCollection<ConfigurationItemFileEntity> Files { get; set; } = new NullCollection<ConfigurationItemFileEntity>();
     #endregion
@@ -56,16 +65,20 @@ public class ConfigurationItemEntity : AuditableEntity
         configurationItem.ModifiedBy = ModifiedBy;
         configurationItem.ModifiedDate = ModifiedDate;
 
+        configurationItem.LineItemId = LineItemId;
         configurationItem.ProductId = ProductId;
         configurationItem.SectionId = SectionId;
         configurationItem.Name = Name;
         configurationItem.Sku = Sku;
         configurationItem.Quantity = Quantity;
+        configurationItem.ListPrice = ListPrice;
+        configurationItem.SalePrice = SalePrice;
         configurationItem.ImageUrl = ImageUrl;
         configurationItem.CatalogId = CatalogId;
         configurationItem.CategoryId = CategoryId;
         configurationItem.Type = Type;
         configurationItem.CustomText = CustomText;
+        configurationItem.SelectedForCheckout = SelectedForCheckout;
 
         configurationItem.Files = Files.Select(x => x.ToModel(AbstractTypeFactory<ConfigurationItemFile>.TryCreateInstance())).ToList();
 
@@ -84,16 +97,20 @@ public class ConfigurationItemEntity : AuditableEntity
         ModifiedBy = configurationItem.ModifiedBy;
         ModifiedDate = configurationItem.ModifiedDate;
 
+        LineItemId = configurationItem.LineItemId;
         ProductId = configurationItem.ProductId;
         SectionId = configurationItem.SectionId;
         Name = configurationItem.Name;
         Sku = configurationItem.Sku;
         Quantity = configurationItem.Quantity;
+        ListPrice = configurationItem.ListPrice;
+        SalePrice = configurationItem.SalePrice;
         ImageUrl = configurationItem.ImageUrl;
         CatalogId = configurationItem.CatalogId;
         CategoryId = configurationItem.CategoryId;
         Type = configurationItem.Type;
         CustomText = configurationItem.CustomText;
+        SelectedForCheckout = configurationItem.SelectedForCheckout;
 
         if (configurationItem.Files != null)
         {
@@ -105,16 +122,20 @@ public class ConfigurationItemEntity : AuditableEntity
 
     public virtual void Patch(ConfigurationItemEntity target)
     {
+        target.LineItemId = LineItemId;
         target.ProductId = ProductId;
         target.SectionId = SectionId;
         target.Name = Name;
         target.Sku = Sku;
         target.Quantity = Quantity;
+        target.ListPrice = ListPrice;
+        target.SalePrice = SalePrice;
         target.ImageUrl = ImageUrl;
         target.CatalogId = CatalogId;
         target.CategoryId = CategoryId;
         target.Type = Type;
         target.CustomText = CustomText;
+        target.SelectedForCheckout = SelectedForCheckout;
 
         if (!Files.IsNullCollection())
         {

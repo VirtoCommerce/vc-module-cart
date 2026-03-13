@@ -61,7 +61,7 @@ namespace VirtoCommerce.CartModule.Core.Model
         public decimal? Width { get; set; }
 
         /// <summary>
-        /// Represent any line item validation type (noPriceValidate, noQuantityValidate etc) this value can be used in storefront 
+        /// Represent any line item validation type (noPriceValidate, noQuantityValidate etc) this value can be used in storefront
         /// to select appropriate validation strategy
         /// </summary>
         public string ValidationType { get; set; }
@@ -122,7 +122,7 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public decimal DiscountTotalWithTax { get; set; }
 
-        //Any extra Fee 
+        //Any extra Fee
         public virtual decimal Fee { get; set; }
 
         public virtual decimal FeeWithTax { get; set; }
@@ -165,11 +165,12 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public virtual object Clone()
         {
-            var result = MemberwiseClone() as LineItem;
+            var result = (LineItem)MemberwiseClone();
 
-            result.TaxDetails = TaxDetails?.Select(x => x.Clone()).OfType<TaxDetail>().ToList();
-            result.Discounts = Discounts?.Select(x => x.Clone()).OfType<Discount>().ToList();
-            result.DynamicProperties = DynamicProperties?.Select(x => x.Clone()).OfType<DynamicObjectProperty>().ToList();
+            result.TaxDetails = TaxDetails?.Select(x => x.CloneTyped()).ToList();
+            result.Discounts = Discounts?.Select(x => x.CloneTyped()).ToList();
+            result.DynamicProperties = DynamicProperties?.Select(x => x.CloneTyped()).ToList();
+            result.ConfigurationItems = ConfigurationItems?.Select(x => x.CloneTyped()).ToList();
 
             return result;
         }

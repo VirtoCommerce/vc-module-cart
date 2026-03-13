@@ -9,6 +9,8 @@ namespace VirtoCommerce.CartModule.Core.Model;
 [SwaggerSchemaId("CartConfigurationItem")]
 public class ConfigurationItem : AuditableEntity, ICloneable
 {
+    public string LineItemId { get; set; }
+
     public string ProductId { get; set; }
 
     public string SectionId { get; set; }
@@ -18,6 +20,17 @@ public class ConfigurationItem : AuditableEntity, ICloneable
     public string Sku { get; set; }
 
     public int Quantity { get; set; }
+
+    public decimal ListPrice { get; set; }
+
+    private decimal? _salePrice;
+    public virtual decimal SalePrice
+    {
+        get => _salePrice ?? ListPrice;
+        set => _salePrice = value;
+    }
+
+    public virtual decimal ExtendedPrice => SalePrice * Quantity;
 
     public string ImageUrl { get; set; }
 
@@ -30,6 +43,8 @@ public class ConfigurationItem : AuditableEntity, ICloneable
     public string CustomText { get; set; }
 
     public IList<ConfigurationItemFile> Files { get; set; }
+
+    public bool SelectedForCheckout { get; set; } = true;
 
     public object Clone()
     {

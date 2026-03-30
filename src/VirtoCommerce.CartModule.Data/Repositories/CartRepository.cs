@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -18,6 +19,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             : base(dbContext)
         {
             _rawDatabaseCommand = rawDatabaseCommand;
+
+            // Resolves Breaking changes in EF Core 7.0 (EF7) when EF Core will not automatically delete orphans because all FKs are nullable.
+            // https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-7.0/breaking-changes?tabs=v7#orphaned-dependents-of-optional-relationships-are-not-automatically-deleted
+            dbContext.SavingChanges += OnSavingChanges;
         }
 
         public IQueryable<ShoppingCartEntity> ShoppingCarts => DbContext.Set<ShoppingCartEntity>();
@@ -190,6 +195,39 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                     .Where(x => x.ObjectType == shoppingCartTypeFullName && ids.Contains(x.ShoppingCartId))
                     .LoadAsync();
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && DbContext != null)
+            {
+                DbContext.SavingChanges -= OnSavingChanges;
+            }
+            base.Dispose(disposing);
+        }
+
+        private void OnSavingChanges(object sender, SavingChangesEventArgs args)
+        {
+            var ctx = (DbContext)sender;
+            var entries = ctx.ChangeTracker.Entries();
+
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Modified &&
+                    IsOrphanedEntity(entry))
+                {
+                    entry.State = EntityState.Deleted;
+                }
+            }
+        }
+
+        protected virtual bool IsOrphanedEntity(EntityEntry entry)
+        {
+            return entry.Entity switch
+            {
+                AddressEntity cartAddress when cartAddress.ShoppingCartId == null && cartAddress.ShipmentId == null && cartAddress.PaymentId == null => true,
+                _ => false,
+            };
         }
     }
 }

@@ -12,6 +12,9 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
         {
             migrationBuilder.Sql(@"
                 DELETE FROM ""CartAddress"" WHERE ""ShoppingCartId"" IS NULL AND ""ShipmentId"" IS NULL AND ""PaymentId"" IS NULL;
+                DELETE FROM ""CartDiscount"" WHERE ""ShoppingCartId"" IS NULL AND ""ShipmentId"" IS NULL AND ""LineItemId"" IS NULL AND ""PaymentId"" IS NULL;
+                DELETE FROM ""CartTaxDetail"" WHERE ""ShoppingCartId"" IS NULL AND ""ShipmentId"" IS NULL AND ""LineItemId"" IS NULL AND ""PaymentId"" IS NULL;
+                DELETE FROM ""CartDynamicPropertyObjectValue"" WHERE ""ShoppingCartId"" IS NULL AND ""ShipmentId"" IS NULL AND ""LineItemId"" IS NULL AND ""PaymentId"" IS NULL;
             ");
         }
 

@@ -225,7 +225,10 @@ namespace VirtoCommerce.CartModule.Data.Repositories
         {
             return entry.Entity switch
             {
-                AddressEntity cartAddress when cartAddress.ShoppingCartId == null && cartAddress.ShipmentId == null && cartAddress.PaymentId == null => true,
+                AddressEntity address when address.ShoppingCartId == null && address.ShipmentId == null && address.PaymentId == null => true,
+                DiscountEntity discount when discount.ShoppingCartId == null && discount.ShipmentId == null && discount.LineItemId == null && discount.PaymentId == null => true,
+                TaxDetailEntity taxDetail when taxDetail.ShoppingCartId == null && taxDetail.ShipmentId == null && taxDetail.LineItemId == null && taxDetail.PaymentId == null => true,
+                CartDynamicPropertyObjectValueEntity propertyValue when propertyValue.ShoppingCartId == null && propertyValue.ShipmentId == null && propertyValue.LineItemId == null && propertyValue.PaymentId == null => true,
                 _ => false,
             };
         }

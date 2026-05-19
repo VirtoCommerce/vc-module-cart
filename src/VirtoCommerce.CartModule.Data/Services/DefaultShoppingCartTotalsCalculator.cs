@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Services;
@@ -137,6 +138,53 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
 
             cart.LineItemsCount = cartItemsWithoutGifts?.Count ?? 0;
+
+            CalculateCartTotalsByCurrency(cart, cartItemsWithoutGifts);
+        }
+
+        protected virtual void CalculateCartTotalsByCurrency(ShoppingCart cart, IList<LineItem> cartItemsWithoutGifts)
+        {
+            cart.CartTotals =
+            [
+                new()
+                {
+                    CurrencyCode = cart.Currency,
+                    Total = cart.Total,
+                    SubTotal = cart.SubTotal,
+                    TaxTotal = cart.TaxTotal,
+                    DiscountTotal = cart.DiscountTotal,
+                },
+            ];
+
+            var additionalCurrencyGroups = cartItemsWithoutGifts?
+                .Where(x => x.SelectedForCheckout && !x.Currency.EqualsIgnoreCase(cart.Currency))
+                .GroupBy(x => x.Currency)
+                .ToList();
+
+            if (additionalCurrencyGroups.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            var currencies = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult();
+
+            foreach (var group in additionalCurrencyGroups)
+            {
+                var currency = currencies.FirstOrDefault(x => x.Code.EqualsIgnoreCase(group.Key));
+                if (currency == null)
+                {
+                    continue;
+                }
+
+                var subTotal = currency.RoundingPolicy.RoundMoney(group.Sum(x => x.ListTotal), currency);
+
+                cart.CartTotals.Add(new CartTotal
+                {
+                    CurrencyCode = group.Key,
+                    SubTotal = subTotal,
+                    Total = subTotal,
+                });
+            }
         }
 
         protected virtual void CalculatePaymentTotals(Payment payment)

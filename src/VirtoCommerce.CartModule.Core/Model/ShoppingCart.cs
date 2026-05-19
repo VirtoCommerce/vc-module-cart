@@ -157,6 +157,11 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         #endregion
 
+        /// <summary>
+        /// Runtime only, is not saved into persistent storage  
+        /// </summary>
+        public IList<CartTotal> CartTotals { get; set; } = [];
+
         public virtual IList<CartSharingSetting> SharingSettings { get; set; }
 
         public virtual void ReduceDetails(string responseGroup)

@@ -11,7 +11,7 @@
       <IncludeAssets>runtime; build; native; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     
-    <PackageReference Include="VirtoCommerce.Platform.Data.MySql" Version="3.1007.9" />
+    <PackageReference Include="VirtoCommerce.Platform.Data.MySql" Version="3.1007.10" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CartModule.Data\VirtoCommerce.CartModule.Data.csproj" />

@@ -1,6 +1,8 @@
+using System;
+
 namespace VirtoCommerce.CartModule.Core.Model;
 
-public class CartTotal
+public class CartTotal : ICloneable
 {
     public string CurrencyCode { get; set; }
 
@@ -11,4 +13,9 @@ public class CartTotal
     public decimal TaxTotal { get; set; }
 
     public decimal DiscountTotal { get; set; }
+
+    public object Clone()
+    {
+        return MemberwiseClone();
+    }
 }

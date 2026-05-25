@@ -61,130 +61,117 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.FeeTotal = cart.Fee;
             cart.TaxTotal = 0m;
 
+            var cartsByCurrency = new Dictionary<string, ShoppingCart>
+            {
+                { cart.Currency, cart }
+            };
+
             var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
-            if (selectedItemsWithoutGifts != null)
+            var selectedItemsWithoutGiftsCurrenciesGroups = cartItemsWithoutGifts?.GroupBy(x => x.Currency);
+            foreach (var currencyGroup in selectedItemsWithoutGiftsCurrenciesGroups ?? [])
             {
-                cart.SubTotal = selectedItemsWithoutGifts.Sum(x => x.ListTotal);
-                cart.SubTotalWithTax = selectedItemsWithoutGifts.Sum(x => x.ListTotalWithTax);
-                cart.SubTotalDiscount = selectedItemsWithoutGifts.Sum(x => x.DiscountTotal);
-                cart.SubTotalDiscountWithTax = selectedItemsWithoutGifts.Sum(x => x.DiscountTotalWithTax);
-                cart.DiscountTotal += selectedItemsWithoutGifts.Sum(x => x.DiscountTotal);
-                cart.DiscountTotalWithTax += selectedItemsWithoutGifts.Sum(x => x.DiscountTotalWithTax);
-                cart.FeeTotal += selectedItemsWithoutGifts.Sum(x => x.Fee);
-                cart.FeeTotalWithTax += selectedItemsWithoutGifts.Sum(x => x.FeeWithTax);
-                cart.TaxTotal += selectedItemsWithoutGifts.Sum(x => x.TaxTotal);
+                var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
+
+                currencyCart.SubTotal = currencyGroup.Sum(x => x.ListTotal);
+                currencyCart.SubTotalWithTax = currencyGroup.Sum(x => x.ListTotalWithTax);
+                currencyCart.SubTotalDiscount = currencyGroup.Sum(x => x.DiscountTotal);
+                currencyCart.SubTotalDiscountWithTax = currencyGroup.Sum(x => x.DiscountTotalWithTax);
+                currencyCart.DiscountTotal += currencyGroup.Sum(x => x.DiscountTotal);
+                currencyCart.DiscountTotalWithTax += currencyGroup.Sum(x => x.DiscountTotalWithTax);
+                currencyCart.FeeTotal += currencyGroup.Sum(x => x.Fee);
+                currencyCart.FeeTotalWithTax += currencyGroup.Sum(x => x.FeeWithTax);
+                currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
             }
 
-            if (cart.Shipments != null)
+            var shipmentsCurrenciesGroups = cart.Shipments?.GroupBy(x => x.Currency);
+            foreach (var currencyGroup in shipmentsCurrenciesGroups ?? [])
             {
-                cart.ShippingTotal = cart.Shipments.Sum(x => x.Total);
-                cart.ShippingTotalWithTax = cart.Shipments.Sum(x => x.TotalWithTax);
-                cart.ShippingSubTotal = cart.Shipments.Sum(x => x.Price);
-                cart.ShippingSubTotalWithTax = cart.Shipments.Sum(x => x.PriceWithTax);
-                cart.ShippingDiscountTotal = cart.Shipments.Sum(x => x.DiscountAmount);
-                cart.ShippingDiscountTotalWithTax = cart.Shipments.Sum(x => x.DiscountAmountWithTax);
-                cart.DiscountTotal += cart.Shipments.Sum(x => x.DiscountAmount);
-                cart.DiscountTotalWithTax += cart.Shipments.Sum(x => x.DiscountAmountWithTax);
-                cart.FeeTotal += cart.Shipments.Sum(x => x.Fee);
-                cart.FeeTotalWithTax += cart.Shipments.Sum(x => x.FeeWithTax);
-                cart.TaxTotal += cart.Shipments.Sum(x => x.TaxTotal);
+                var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
+
+                currencyCart.ShippingTotal = currencyGroup.Sum(x => x.Total);
+                currencyCart.ShippingTotalWithTax = currencyGroup.Sum(x => x.TotalWithTax);
+                currencyCart.ShippingSubTotal = currencyGroup.Sum(x => x.Price);
+                currencyCart.ShippingSubTotalWithTax = currencyGroup.Sum(x => x.PriceWithTax);
+                currencyCart.ShippingDiscountTotal = currencyGroup.Sum(x => x.DiscountAmount);
+                currencyCart.ShippingDiscountTotalWithTax = currencyGroup.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.DiscountTotal += currencyGroup.Sum(x => x.DiscountAmount);
+                currencyCart.DiscountTotalWithTax += currencyGroup.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.FeeTotal += currencyGroup.Sum(x => x.Fee);
+                currencyCart.FeeTotalWithTax += currencyGroup.Sum(x => x.FeeWithTax);
+                currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
             }
 
-            if (cart.Payments != null)
+            var paymentsCurrenciesGroups = cart.Payments?.GroupBy(x => x.Currency);
+            foreach (var currencyGroup in paymentsCurrenciesGroups ?? [])
             {
-                cart.PaymentTotal = cart.Payments.Sum(x => x.Total);
-                cart.PaymentTotalWithTax = cart.Payments.Sum(x => x.TotalWithTax);
-                cart.PaymentSubTotal = cart.Payments.Sum(x => x.Price);
-                cart.PaymentSubTotalWithTax = cart.Payments.Sum(x => x.PriceWithTax);
-                cart.PaymentDiscountTotal = cart.Payments.Sum(x => x.DiscountAmount);
-                cart.PaymentDiscountTotalWithTax = cart.Payments.Sum(x => x.DiscountAmountWithTax);
-                cart.DiscountTotal += cart.Payments.Sum(x => x.DiscountAmount);
-                cart.DiscountTotalWithTax += cart.Payments.Sum(x => x.DiscountAmountWithTax);
-                cart.TaxTotal += cart.Payments.Sum(x => x.TaxTotal);
+                var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
+
+                currencyCart.PaymentTotal = currencyGroup.Sum(x => x.Total);
+                currencyCart.PaymentTotalWithTax = currencyGroup.Sum(x => x.TotalWithTax);
+                currencyCart.PaymentSubTotal = currencyGroup.Sum(x => x.Price);
+                currencyCart.PaymentSubTotalWithTax = currencyCart.Payments.Sum(x => x.PriceWithTax);
+                currencyCart.PaymentDiscountTotal = currencyCart.Payments.Sum(x => x.DiscountAmount);
+                currencyCart.PaymentDiscountTotalWithTax = currencyCart.Payments.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.DiscountTotal += currencyCart.Payments.Sum(x => x.DiscountAmount);
+                currencyCart.DiscountTotalWithTax += currencyGroup.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
             }
 
-            var taxFactor = 1 + cart.TaxPercentRate;
-            cart.FeeWithTax = cart.Fee * taxFactor;
-            cart.FeeTotalWithTax = cart.FeeTotal * taxFactor;
-            cart.DiscountTotal += cart.DiscountAmount;
-            cart.DiscountTotalWithTax += cart.DiscountAmount * taxFactor;
-            //Subtract from cart tax total self discount tax amount
-            cart.TaxTotal -= cart.DiscountAmount * cart.TaxPercentRate;
+            var allCurrencies = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().ToList();
 
-            //Need to round all cart totals
-            var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Code == cart.Currency);
-            cart.SubTotal = currency.RoundingPolicy.RoundMoney(cart.SubTotal, currency);
-            cart.SubTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.SubTotalWithTax, currency);
-            cart.SubTotalDiscount = currency.RoundingPolicy.RoundMoney(cart.SubTotalDiscount, currency);
-            cart.SubTotalDiscountWithTax = currency.RoundingPolicy.RoundMoney(cart.SubTotalDiscountWithTax, currency);
-            cart.TaxTotal = currency.RoundingPolicy.RoundMoney(cart.TaxTotal, currency);
-            cart.DiscountTotal = currency.RoundingPolicy.RoundMoney(cart.DiscountTotal, currency);
-            cart.DiscountTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.DiscountTotalWithTax, currency);
-            cart.Fee = currency.RoundingPolicy.RoundMoney(cart.Fee, currency);
-            cart.FeeWithTax = currency.RoundingPolicy.RoundMoney(cart.FeeWithTax, currency);
-            cart.FeeTotal = currency.RoundingPolicy.RoundMoney(cart.FeeTotal, currency);
-            cart.FeeTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.FeeTotalWithTax, currency);
-            cart.ShippingTotal = currency.RoundingPolicy.RoundMoney(cart.ShippingTotal, currency);
-            cart.ShippingTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.ShippingTotalWithTax, currency);
-            cart.ShippingSubTotal = currency.RoundingPolicy.RoundMoney(cart.ShippingSubTotal, currency);
-            cart.ShippingSubTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.ShippingSubTotalWithTax, currency);
-            cart.PaymentTotal = currency.RoundingPolicy.RoundMoney(cart.PaymentTotal, currency);
-            cart.PaymentTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentTotalWithTax, currency);
-            cart.PaymentSubTotal = currency.RoundingPolicy.RoundMoney(cart.PaymentSubTotal, currency);
-            cart.PaymentSubTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentSubTotalWithTax, currency);
-            cart.PaymentDiscountTotal = currency.RoundingPolicy.RoundMoney(cart.PaymentDiscountTotal, currency);
-            cart.PaymentDiscountTotalWithTax = currency.RoundingPolicy.RoundMoney(cart.PaymentDiscountTotalWithTax, currency);
+            foreach (var currencyCartPair in cartsByCurrency)
+            {
+                var currencyCart = currencyCartPair.Value;
 
-            cart.Total = cart.SubTotal + cart.ShippingSubTotal + cart.TaxTotal + cart.PaymentSubTotal + cart.FeeTotal - cart.DiscountTotal;
+                var taxFactor = 1 + currencyCart.TaxPercentRate;
+                currencyCart.FeeWithTax = currencyCart.Fee * taxFactor;
+                currencyCart.FeeTotalWithTax = currencyCart.FeeTotal * taxFactor;
+                currencyCart.DiscountTotal += currencyCart.DiscountAmount;
+                currencyCart.DiscountTotalWithTax += currencyCart.DiscountAmount * taxFactor;
+                //Subtract from cart tax total self discount tax amount
+                currencyCart.TaxTotal -= currencyCart.DiscountAmount * currencyCart.TaxPercentRate;
+
+                //Need to round all cart totals
+                var currency = allCurrencies.First(c => c.Code == currencyCart.Currency);
+                currencyCart.SubTotal = currency.RoundingPolicy.RoundMoney(currencyCart.SubTotal, currency);
+                currencyCart.SubTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.SubTotalWithTax, currency);
+                currencyCart.SubTotalDiscount = currency.RoundingPolicy.RoundMoney(currencyCart.SubTotalDiscount, currency);
+                currencyCart.SubTotalDiscountWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.SubTotalDiscountWithTax, currency);
+                currencyCart.TaxTotal = currency.RoundingPolicy.RoundMoney(currencyCart.TaxTotal, currency);
+                currencyCart.DiscountTotal = currency.RoundingPolicy.RoundMoney(currencyCart.DiscountTotal, currency);
+                currencyCart.DiscountTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.DiscountTotalWithTax, currency);
+                currencyCart.Fee = currency.RoundingPolicy.RoundMoney(currencyCart.Fee, currency);
+                currencyCart.FeeWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.FeeWithTax, currency);
+                currencyCart.FeeTotal = currency.RoundingPolicy.RoundMoney(currencyCart.FeeTotal, currency);
+                currencyCart.FeeTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.FeeTotalWithTax, currency);
+                currencyCart.ShippingTotal = currency.RoundingPolicy.RoundMoney(currencyCart.ShippingTotal, currency);
+                currencyCart.ShippingTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.ShippingTotalWithTax, currency);
+                currencyCart.ShippingSubTotal = currency.RoundingPolicy.RoundMoney(currencyCart.ShippingSubTotal, currency);
+                currencyCart.ShippingSubTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.ShippingSubTotalWithTax, currency);
+                currencyCart.PaymentTotal = currency.RoundingPolicy.RoundMoney(currencyCart.PaymentTotal, currency);
+                currencyCart.PaymentTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.PaymentTotalWithTax, currency);
+                currencyCart.PaymentSubTotal = currency.RoundingPolicy.RoundMoney(currencyCart.PaymentSubTotal, currency);
+                currencyCart.PaymentSubTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.PaymentSubTotalWithTax, currency);
+                currencyCart.PaymentDiscountTotal = currency.RoundingPolicy.RoundMoney(currencyCart.PaymentDiscountTotal, currency);
+                currencyCart.PaymentDiscountTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.PaymentDiscountTotalWithTax, currency);
+
+                currencyCart.Total = currencyCart.SubTotal + currencyCart.ShippingSubTotal + currencyCart.TaxTotal + currencyCart.PaymentSubTotal + currencyCart.FeeTotal - currencyCart.DiscountTotal;
+            }
 
             cart.LineItemsCount = cartItemsWithoutGifts?.Count ?? 0;
 
-            CalculateCartTotalsByCurrency(cart, cartItemsWithoutGifts);
-        }
-
-        protected virtual void CalculateCartTotalsByCurrency(ShoppingCart cart, IList<LineItem> cartItemsWithoutGifts)
-        {
-            cart.CartTotals =
-            [
-                new()
-                {
-                    CurrencyCode = cart.Currency,
-                    Total = cart.Total,
-                    SubTotal = cart.SubTotal,
-                    TaxTotal = cart.TaxTotal,
-                    DiscountTotal = cart.DiscountTotal,
-                },
-            ];
-
-            var additionalCurrencyGroups = cartItemsWithoutGifts?
-                .Where(x => x.SelectedForCheckout && !x.Currency.EqualsIgnoreCase(cart.Currency))
-                .GroupBy(x => x.Currency)
-                .ToList();
-
-            if (additionalCurrencyGroups.IsNullOrEmpty())
+            cart.CartTotals = cartsByCurrency.Select(x =>
             {
-                return;
-            }
+                var cartTotal = AbstractTypeFactory<CartTotal>.TryCreateInstance();
 
-            var currencies = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult();
+                cartTotal.CurrencyCode = x.Value.Currency;
+                cartTotal.Total = x.Value.Total;
+                cartTotal.SubTotal = x.Value.SubTotal;
+                cartTotal.TaxTotal = x.Value.TaxTotal;
+                cartTotal.DiscountTotal = x.Value.DiscountTotal;
 
-            foreach (var group in additionalCurrencyGroups)
-            {
-                var currency = currencies.FirstOrDefault(x => x.Code.EqualsIgnoreCase(group.Key));
-                if (currency == null)
-                {
-                    continue;
-                }
-
-                var subTotal = currency.RoundingPolicy.RoundMoney(group.Sum(x => x.ListTotal), currency);
-
-                cart.CartTotals.Add(new CartTotal
-                {
-                    CurrencyCode = group.Key,
-                    SubTotal = subTotal,
-                    Total = subTotal,
-                });
-            }
+                return cartTotal;
+            }).ToList();
         }
 
         protected virtual void CalculatePaymentTotals(Payment payment)
@@ -236,6 +223,18 @@ namespace VirtoCommerce.CartModule.Data.Services
             lineItem.FeeWithTax = lineItem.Fee * taxFactor;
 
             lineItem.TaxTotal = (lineItem.ExtendedPrice + lineItem.Fee) * lineItem.TaxPercentRate;
+        }
+
+        private static ShoppingCart AddShoppingCartByCurrency(Dictionary<string, ShoppingCart> cartByCurrency, string currencyCode)
+        {
+            if (!cartByCurrency.TryGetValue(currencyCode, out var currencyCart))
+            {
+                currencyCart = AbstractTypeFactory<ShoppingCart>.TryCreateInstance();
+                currencyCart.Currency = currencyCode;
+                cartByCurrency.Add(currencyCode, currencyCart);
+            }
+
+            return currencyCart;
         }
     }
 }

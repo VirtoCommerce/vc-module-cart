@@ -114,10 +114,10 @@ namespace VirtoCommerce.CartModule.Data.Services
                 currencyCart.PaymentTotal = currencyGroup.Sum(x => x.Total);
                 currencyCart.PaymentTotalWithTax = currencyGroup.Sum(x => x.TotalWithTax);
                 currencyCart.PaymentSubTotal = currencyGroup.Sum(x => x.Price);
-                currencyCart.PaymentSubTotalWithTax = currencyCart.Payments.Sum(x => x.PriceWithTax);
-                currencyCart.PaymentDiscountTotal = currencyCart.Payments.Sum(x => x.DiscountAmount);
-                currencyCart.PaymentDiscountTotalWithTax = currencyCart.Payments.Sum(x => x.DiscountAmountWithTax);
-                currencyCart.DiscountTotal += currencyCart.Payments.Sum(x => x.DiscountAmount);
+                currencyCart.PaymentSubTotalWithTax = currencyGroup.Sum(x => x.PriceWithTax);
+                currencyCart.PaymentDiscountTotal = currencyGroup.Sum(x => x.DiscountAmount);
+                currencyCart.PaymentDiscountTotalWithTax = currencyGroup.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.DiscountTotal += currencyGroup.Sum(x => x.DiscountAmount);
                 currencyCart.DiscountTotalWithTax += currencyGroup.Sum(x => x.DiscountAmountWithTax);
                 currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
             }

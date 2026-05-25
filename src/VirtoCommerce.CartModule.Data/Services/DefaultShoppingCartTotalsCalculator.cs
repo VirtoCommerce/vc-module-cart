@@ -66,9 +66,12 @@ namespace VirtoCommerce.CartModule.Data.Services
                 { cart.Currency, cart }
             };
 
-            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
-            var selectedItemsWithoutGiftsCurrenciesGroups = cartItemsWithoutGifts?.GroupBy(x => x.Currency);
-            foreach (var currencyGroup in selectedItemsWithoutGiftsCurrenciesGroups ?? [])
+            var selectedItemsWithoutGifts = !cartItemsWithoutGifts.IsNullOrEmpty()
+                ? cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList()
+                : [new LineItem { Currency = cart.Currency }];
+
+            var selectedItemsWithoutGiftsGroups = selectedItemsWithoutGifts.GroupBy(x => x.Currency);
+            foreach (var currencyGroup in selectedItemsWithoutGiftsGroups)
             {
                 var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
 
@@ -83,8 +86,9 @@ namespace VirtoCommerce.CartModule.Data.Services
                 currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
             }
 
-            var shipmentsCurrenciesGroups = cart.Shipments?.GroupBy(x => x.Currency);
-            foreach (var currencyGroup in shipmentsCurrenciesGroups ?? [])
+            var shimpents = !cart.Shipments.IsNullOrEmpty() ? cart.Shipments : [new Shipment { Currency = cart.Currency }];
+            var shipmentsGroups = shimpents.GroupBy(x => x.Currency);
+            foreach (var currencyGroup in shipmentsGroups)
             {
                 var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
 
@@ -101,8 +105,9 @@ namespace VirtoCommerce.CartModule.Data.Services
                 currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
             }
 
-            var paymentsCurrenciesGroups = cart.Payments?.GroupBy(x => x.Currency);
-            foreach (var currencyGroup in paymentsCurrenciesGroups ?? [])
+            var payments = !cart.Payments.IsNullOrEmpty() ? cart.Payments : [new Payment { Currency = cart.Currency }];
+            var paymentsGroups = payments.GroupBy(x => x.Currency);
+            foreach (var currencyGroup in paymentsGroups)
             {
                 var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
 

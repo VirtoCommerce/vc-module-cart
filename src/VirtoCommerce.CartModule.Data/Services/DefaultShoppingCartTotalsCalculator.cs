@@ -66,10 +66,8 @@ namespace VirtoCommerce.CartModule.Data.Services
                 { cart.Currency, cart }
             };
 
-            var selectedItemsWithoutGifts = !cartItemsWithoutGifts.IsNullOrEmpty()
-                ? cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList()
-                : [new LineItem { Currency = cart.Currency }];
-
+            var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
+            selectedItemsWithoutGifts = !selectedItemsWithoutGifts.IsNullOrEmpty() ? cartItemsWithoutGifts : [new LineItem { Currency = cart.Currency }];
             var selectedItemsWithoutGiftsGroups = selectedItemsWithoutGifts.GroupBy(x => x.Currency);
             foreach (var currencyGroup in selectedItemsWithoutGiftsGroups)
             {
@@ -124,10 +122,8 @@ namespace VirtoCommerce.CartModule.Data.Services
 
             var allCurrencies = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().ToList();
 
-            foreach (var currencyCartPair in cartsByCurrency)
+            foreach (var currencyCart in cartsByCurrency.Select(x => x.Value))
             {
-                var currencyCart = currencyCartPair.Value;
-
                 var taxFactor = 1 + currencyCart.TaxPercentRate;
                 currencyCart.FeeWithTax = currencyCart.Fee * taxFactor;
                 currencyCart.FeeTotalWithTax = currencyCart.FeeTotal * taxFactor;

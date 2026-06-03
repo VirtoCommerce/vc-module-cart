@@ -67,7 +67,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             };
 
             var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
-            selectedItemsWithoutGifts = !selectedItemsWithoutGifts.IsNullOrEmpty() ? cartItemsWithoutGifts : [new LineItem { Currency = cart.Currency }];
+            selectedItemsWithoutGifts = !selectedItemsWithoutGifts.IsNullOrEmpty() ? selectedItemsWithoutGifts : [new LineItem { Currency = cart.Currency }];
             var selectedItemsWithoutGiftsGroups = selectedItemsWithoutGifts.GroupBy(x => x.Currency);
             foreach (var currencyGroup in selectedItemsWithoutGiftsGroups)
             {

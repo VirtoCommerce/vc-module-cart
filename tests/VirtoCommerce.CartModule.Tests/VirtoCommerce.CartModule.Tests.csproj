@@ -27,5 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\VirtoCommerce.CartModule.Core\VirtoCommerce.CartModule.Core.csproj" />
     <ProjectReference Include="..\..\src\VirtoCommerce.CartModule.Data\VirtoCommerce.CartModule.Data.csproj" />
+    <ProjectReference Include="..\..\src\VirtoCommerce.CartModule.Web\VirtoCommerce.CartModule.Web.csproj" />
   </ItemGroup>
 </Project>

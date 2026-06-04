@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -119,6 +120,10 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         public async Task<ActionResult<ICollection<ShippingRate>>> GetAvailableShippingRates(string cartId)
         {
             var cart = await shoppingCartService.GetByIdAsync(cartId, (CartResponseGroup.WithShipments | CartResponseGroup.WithLineItems).ToString());
+            if (cart == null)
+            {
+                return Ok(Array.Empty<ShippingRate>());
+            }
             var builder = cartBuilder.TakeCart(cart);
             var shippingRates = await builder.GetAvailableShippingRatesAsync();
             return Ok(shippingRates);
@@ -128,6 +133,10 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         [Route("availshippingrates")]
         public async Task<ActionResult<ICollection<ShippingRate>>> GetAvailableShippingRatesByContext([FromBody] ShippingEvaluationContext context)
         {
+            if (context?.ShoppingCart == null)
+            {
+                return Ok(Array.Empty<ShippingRate>());
+            }
             var builder = cartBuilder.TakeCart(context.ShoppingCart);
             var shippingRates = await builder.GetAvailableShippingRatesAsync();
             return Ok(shippingRates);
@@ -138,6 +147,10 @@ namespace VirtoCommerce.CartModule.Web.Controllers.Api
         public async Task<ActionResult<ICollection<PaymentMethod>>> GetAvailablePaymentMethods(string cartId)
         {
             var cart = await shoppingCartService.GetByIdAsync(cartId, CartResponseGroup.WithPayments.ToString());
+            if (cart == null)
+            {
+                return Ok(Array.Empty<PaymentMethod>());
+            }
             var paymentMethods = await cartBuilder.TakeCart(cart).GetAvailablePaymentMethodsAsync();
             return Ok(paymentMethods);
         }

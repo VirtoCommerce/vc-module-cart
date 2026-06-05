@@ -59,6 +59,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.DiscountTotal = 0m;
             cart.DiscountTotalWithTax = 0m;
             cart.FeeTotal = cart.Fee;
+            cart.FeeTotalWithTax = 0m;
             cart.TaxTotal = 0m;
 
             var cartsByCurrency = new Dictionary<string, ShoppingCart>
@@ -66,58 +67,54 @@ namespace VirtoCommerce.CartModule.Data.Services
                 { cart.Currency, cart }
             };
 
+            var currencyCodes = (cart.Items?.Select(x => x.Currency) ?? [])
+                .Concat(cart.Shipments?.Select(x => x.Currency) ?? [])
+                .Concat(cart.Payments?.Select(x => x.Currency) ?? [])
+                .Where(x => !string.IsNullOrEmpty(x))
+                .Distinct();
+
+            foreach (var currencyCode in currencyCodes)
+            {
+                AddShoppingCartByCurrency(cartsByCurrency, currencyCode);
+            }
+
             var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
-            selectedItemsWithoutGifts = !selectedItemsWithoutGifts.IsNullOrEmpty() ? selectedItemsWithoutGifts : [new LineItem { Currency = cart.Currency }];
-            var selectedItemsWithoutGiftsGroups = selectedItemsWithoutGifts.GroupBy(x => x.Currency);
-            foreach (var currencyGroup in selectedItemsWithoutGiftsGroups)
+            foreach (var (currencyCode, currencyCart) in cartsByCurrency)
             {
-                var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
+                var currencyItems = selectedItemsWithoutGifts?.Where(x => x.Currency == currencyCode).ToList() ?? [];
+                currencyCart.SubTotal = currencyItems.Sum(x => x.ListTotal);
+                currencyCart.SubTotalWithTax = currencyItems.Sum(x => x.ListTotalWithTax);
+                currencyCart.SubTotalDiscount = currencyItems.Sum(x => x.DiscountTotal);
+                currencyCart.SubTotalDiscountWithTax = currencyItems.Sum(x => x.DiscountTotalWithTax);
+                currencyCart.DiscountTotal += currencyItems.Sum(x => x.DiscountTotal);
+                currencyCart.DiscountTotalWithTax += currencyItems.Sum(x => x.DiscountTotalWithTax);
+                currencyCart.FeeTotal += currencyItems.Sum(x => x.Fee);
+                currencyCart.FeeTotalWithTax += currencyItems.Sum(x => x.FeeWithTax);
+                currencyCart.TaxTotal += currencyItems.Sum(x => x.TaxTotal);
 
-                currencyCart.SubTotal = currencyGroup.Sum(x => x.ListTotal);
-                currencyCart.SubTotalWithTax = currencyGroup.Sum(x => x.ListTotalWithTax);
-                currencyCart.SubTotalDiscount = currencyGroup.Sum(x => x.DiscountTotal);
-                currencyCart.SubTotalDiscountWithTax = currencyGroup.Sum(x => x.DiscountTotalWithTax);
-                currencyCart.DiscountTotal += currencyGroup.Sum(x => x.DiscountTotal);
-                currencyCart.DiscountTotalWithTax += currencyGroup.Sum(x => x.DiscountTotalWithTax);
-                currencyCart.FeeTotal += currencyGroup.Sum(x => x.Fee);
-                currencyCart.FeeTotalWithTax += currencyGroup.Sum(x => x.FeeWithTax);
-                currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
-            }
+                var currencyShipments = currencyCart.Shipments?.Where(x => x.Currency == currencyCode).ToList() ?? [];
+                currencyCart.ShippingTotal = currencyShipments.Sum(x => x.Total);
+                currencyCart.ShippingTotalWithTax = currencyShipments.Sum(x => x.TotalWithTax);
+                currencyCart.ShippingSubTotal = currencyShipments.Sum(x => x.Price);
+                currencyCart.ShippingSubTotalWithTax = currencyShipments.Sum(x => x.PriceWithTax);
+                currencyCart.ShippingDiscountTotal = currencyShipments.Sum(x => x.DiscountAmount);
+                currencyCart.ShippingDiscountTotalWithTax = currencyShipments.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.DiscountTotal += currencyShipments.Sum(x => x.DiscountAmount);
+                currencyCart.DiscountTotalWithTax += currencyShipments.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.FeeTotal += currencyShipments.Sum(x => x.Fee);
+                currencyCart.FeeTotalWithTax += currencyShipments.Sum(x => x.FeeWithTax);
+                currencyCart.TaxTotal += currencyShipments.Sum(x => x.TaxTotal);
 
-            var shimpents = !cart.Shipments.IsNullOrEmpty() ? cart.Shipments : [new Shipment { Currency = cart.Currency }];
-            var shipmentsGroups = shimpents.GroupBy(x => x.Currency);
-            foreach (var currencyGroup in shipmentsGroups)
-            {
-                var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
-
-                currencyCart.ShippingTotal = currencyGroup.Sum(x => x.Total);
-                currencyCart.ShippingTotalWithTax = currencyGroup.Sum(x => x.TotalWithTax);
-                currencyCart.ShippingSubTotal = currencyGroup.Sum(x => x.Price);
-                currencyCart.ShippingSubTotalWithTax = currencyGroup.Sum(x => x.PriceWithTax);
-                currencyCart.ShippingDiscountTotal = currencyGroup.Sum(x => x.DiscountAmount);
-                currencyCart.ShippingDiscountTotalWithTax = currencyGroup.Sum(x => x.DiscountAmountWithTax);
-                currencyCart.DiscountTotal += currencyGroup.Sum(x => x.DiscountAmount);
-                currencyCart.DiscountTotalWithTax += currencyGroup.Sum(x => x.DiscountAmountWithTax);
-                currencyCart.FeeTotal += currencyGroup.Sum(x => x.Fee);
-                currencyCart.FeeTotalWithTax += currencyGroup.Sum(x => x.FeeWithTax);
-                currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
-            }
-
-            var payments = !cart.Payments.IsNullOrEmpty() ? cart.Payments : [new Payment { Currency = cart.Currency }];
-            var paymentsGroups = payments.GroupBy(x => x.Currency);
-            foreach (var currencyGroup in paymentsGroups)
-            {
-                var currencyCart = AddShoppingCartByCurrency(cartsByCurrency, currencyCode: currencyGroup.Key);
-
-                currencyCart.PaymentTotal = currencyGroup.Sum(x => x.Total);
-                currencyCart.PaymentTotalWithTax = currencyGroup.Sum(x => x.TotalWithTax);
-                currencyCart.PaymentSubTotal = currencyGroup.Sum(x => x.Price);
-                currencyCart.PaymentSubTotalWithTax = currencyGroup.Sum(x => x.PriceWithTax);
-                currencyCart.PaymentDiscountTotal = currencyGroup.Sum(x => x.DiscountAmount);
-                currencyCart.PaymentDiscountTotalWithTax = currencyGroup.Sum(x => x.DiscountAmountWithTax);
-                currencyCart.DiscountTotal += currencyGroup.Sum(x => x.DiscountAmount);
-                currencyCart.DiscountTotalWithTax += currencyGroup.Sum(x => x.DiscountAmountWithTax);
-                currencyCart.TaxTotal += currencyGroup.Sum(x => x.TaxTotal);
+                var currencyPayments = currencyCart.Payments?.Where(x => x.Currency == currencyCode).ToList() ?? [];
+                currencyCart.PaymentTotal = currencyPayments.Sum(x => x.Total);
+                currencyCart.PaymentTotalWithTax = currencyPayments.Sum(x => x.TotalWithTax);
+                currencyCart.PaymentSubTotal = currencyPayments.Sum(x => x.Price);
+                currencyCart.PaymentSubTotalWithTax = currencyPayments.Sum(x => x.PriceWithTax);
+                currencyCart.PaymentDiscountTotal = currencyPayments.Sum(x => x.DiscountAmount);
+                currencyCart.PaymentDiscountTotalWithTax = currencyPayments.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.DiscountTotal += currencyPayments.Sum(x => x.DiscountAmount);
+                currencyCart.DiscountTotalWithTax += currencyPayments.Sum(x => x.DiscountAmountWithTax);
+                currencyCart.TaxTotal += currencyPayments.Sum(x => x.TaxTotal);
             }
 
             var allCurrencies = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().ToList();

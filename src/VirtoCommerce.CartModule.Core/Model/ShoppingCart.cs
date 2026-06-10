@@ -157,6 +157,11 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         #endregion
 
+        /// <summary>
+        /// Runtime only, is not saved into persistent storage  
+        /// </summary>
+        public IList<CartTotal> CartTotals { get; set; } = [];
+
         public virtual IList<CartSharingSetting> SharingSettings { get; set; }
 
         public virtual void ReduceDetails(string responseGroup)
@@ -196,6 +201,7 @@ namespace VirtoCommerce.CartModule.Core.Model
             result.TaxDetails = TaxDetails?.Select(x => x.Clone()).OfType<TaxDetail>().ToList();
             result.DynamicProperties = DynamicProperties?.Select(x => x.Clone()).OfType<DynamicObjectProperty>().ToList();
             result.SharingSettings = SharingSettings?.Select(x => x.CloneTyped()).ToList();
+            result.CartTotals = CartTotals?.Select(x => x.Clone()).OfType<CartTotal>().ToList();
 
             return result;
         }

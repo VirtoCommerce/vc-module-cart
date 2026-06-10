@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Cart">
+  <title>Cart</title>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#FFC24D"/>
+      <stop offset="100%" stop-color="#ED8A12"/>
+    </linearGradient>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#7A3D00" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+
+  <g transform="translate(64,61)" filter="url(#lift)">
+    <!-- Products in the basket -->
+    <circle cx="-13" cy="-19" r="10" fill="#E5484D"/>
+    <circle cx="9" cy="-22" r="10" fill="#5FC8F5"/>
+    <circle cx="29" cy="-18" r="9" fill="#3FD8B4"/>
+
+    <!-- Cart outline -->
+    <path d="M-44,-30 H-34 L-27,-12 H40 L30,16 H-17 L-27,-12"
+          fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Wheels -->
+    <circle cx="-10" cy="31" r="7.5" fill="#6A45D9"/>
+    <circle cx="23" cy="31" r="7.5" fill="#6A45D9"/>
+  </g>
+</svg>

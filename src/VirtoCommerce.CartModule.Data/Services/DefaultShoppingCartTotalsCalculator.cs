@@ -130,7 +130,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 currencyCart.TaxTotal -= currencyCart.DiscountAmount * currencyCart.TaxPercentRate;
 
                 //Need to round all cart totals
-                var currency = allCurrencies.First(c => c.Code == currencyCart.Currency);
+                var currency = allCurrencies.First(c => c.Code.EqualsIgnoreCase(currencyCart.Currency));
                 currencyCart.SubTotal = currency.RoundingPolicy.RoundMoney(currencyCart.SubTotal, currency);
                 currencyCart.SubTotalWithTax = currency.RoundingPolicy.RoundMoney(currencyCart.SubTotalWithTax, currency);
                 currencyCart.SubTotalDiscount = currency.RoundingPolicy.RoundMoney(currencyCart.SubTotalDiscount, currency);

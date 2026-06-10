@@ -92,7 +92,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 currencyCart.FeeTotalWithTax += currencyItems.Sum(x => x.FeeWithTax);
                 currencyCart.TaxTotal += currencyItems.Sum(x => x.TaxTotal);
 
-                var currencyShipments = currencyCart.Shipments?.Where(x => x.Currency == currencyCode).ToList() ?? [];
+                var currencyShipments = cart.Shipments?.Where(x => x.Currency == currencyCode).ToList() ?? [];
                 currencyCart.ShippingTotal = currencyShipments.Sum(x => x.Total);
                 currencyCart.ShippingTotalWithTax = currencyShipments.Sum(x => x.TotalWithTax);
                 currencyCart.ShippingSubTotal = currencyShipments.Sum(x => x.Price);
@@ -105,7 +105,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 currencyCart.FeeTotalWithTax += currencyShipments.Sum(x => x.FeeWithTax);
                 currencyCart.TaxTotal += currencyShipments.Sum(x => x.TaxTotal);
 
-                var currencyPayments = currencyCart.Payments?.Where(x => x.Currency == currencyCode).ToList() ?? [];
+                var currencyPayments = cart.Payments?.Where(x => x.Currency == currencyCode).ToList() ?? [];
                 currencyCart.PaymentTotal = currencyPayments.Sum(x => x.Total);
                 currencyCart.PaymentTotalWithTax = currencyPayments.Sum(x => x.TotalWithTax);
                 currencyCart.PaymentSubTotal = currencyPayments.Sum(x => x.Price);

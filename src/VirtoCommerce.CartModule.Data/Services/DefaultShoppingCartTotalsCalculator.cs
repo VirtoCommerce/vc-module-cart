@@ -62,7 +62,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             cart.FeeTotalWithTax = 0m;
             cart.TaxTotal = 0m;
 
-            var cartsByCurrency = new Dictionary<string, ShoppingCart>
+            var cartsByCurrency = new Dictionary<string, ShoppingCart>(StringComparer.OrdinalIgnoreCase)
             {
                 { cart.Currency, cart }
             };

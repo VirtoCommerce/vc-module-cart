@@ -81,7 +81,7 @@ namespace VirtoCommerce.CartModule.Data.Services
             var selectedItemsWithoutGifts = cartItemsWithoutGifts?.Where(x => x.SelectedForCheckout).ToList();
             foreach (var (currencyCode, currencyCart) in cartsByCurrency)
             {
-                var currencyItems = selectedItemsWithoutGifts?.Where(x => x.Currency == currencyCode).ToList() ?? [];
+                var currencyItems = selectedItemsWithoutGifts?.Where(x => NormalizeCurrency(x.Currency, cart).EqualsIgnoreCase(currencyCode)).ToList() ?? [];
                 currencyCart.SubTotal = currencyItems.Sum(x => x.ListTotal);
                 currencyCart.SubTotalWithTax = currencyItems.Sum(x => x.ListTotalWithTax);
                 currencyCart.SubTotalDiscount = currencyItems.Sum(x => x.DiscountTotal);
@@ -92,7 +92,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 currencyCart.FeeTotalWithTax += currencyItems.Sum(x => x.FeeWithTax);
                 currencyCart.TaxTotal += currencyItems.Sum(x => x.TaxTotal);
 
-                var currencyShipments = cart.Shipments?.Where(x => x.Currency == currencyCode).ToList() ?? [];
+                var currencyShipments = cart.Shipments?.Where(x => NormalizeCurrency(x.Currency, cart).EqualsIgnoreCase(currencyCode)).ToList() ?? [];
                 currencyCart.ShippingTotal = currencyShipments.Sum(x => x.Total);
                 currencyCart.ShippingTotalWithTax = currencyShipments.Sum(x => x.TotalWithTax);
                 currencyCart.ShippingSubTotal = currencyShipments.Sum(x => x.Price);
@@ -105,7 +105,7 @@ namespace VirtoCommerce.CartModule.Data.Services
                 currencyCart.FeeTotalWithTax += currencyShipments.Sum(x => x.FeeWithTax);
                 currencyCart.TaxTotal += currencyShipments.Sum(x => x.TaxTotal);
 
-                var currencyPayments = cart.Payments?.Where(x => x.Currency == currencyCode).ToList() ?? [];
+                var currencyPayments = cart.Payments?.Where(x => NormalizeCurrency(x.Currency, cart).EqualsIgnoreCase(currencyCode)).ToList() ?? [];
                 currencyCart.PaymentTotal = currencyPayments.Sum(x => x.Total);
                 currencyCart.PaymentTotalWithTax = currencyPayments.Sum(x => x.TotalWithTax);
                 currencyCart.PaymentSubTotal = currencyPayments.Sum(x => x.Price);
@@ -233,6 +233,12 @@ namespace VirtoCommerce.CartModule.Data.Services
             }
 
             return currencyCart;
+        }
+
+        // Treat null/empty currency as the main cart currency so such entries still roll into totals
+        private static string NormalizeCurrency(string code, ShoppingCart cart)
+        {
+            return !string.IsNullOrEmpty(code) ? code : cart.Currency;
         }
     }
 }

@@ -14,8 +14,6 @@ namespace VirtoCommerce.CartModule.Core
             public const string SavedForLater = "SavedForLater";
         }
 
-        [Obsolete("Use CartTypes.Wishlist instead", DiagnosticId = "VC0011", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
-        public const string WishlistCartType = CartType.Wishlist;
         public const string DefaultCartName = "default";
 
         public static class Security

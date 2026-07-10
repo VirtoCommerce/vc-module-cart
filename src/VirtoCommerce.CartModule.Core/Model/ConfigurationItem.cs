@@ -15,6 +15,8 @@ public class ConfigurationItem : AuditableEntity, ICloneable
 
     public string SectionId { get; set; }
 
+    public string SectionName { get; set; }
+
     public string Name { get; set; }
 
     public string Sku { get; set; }

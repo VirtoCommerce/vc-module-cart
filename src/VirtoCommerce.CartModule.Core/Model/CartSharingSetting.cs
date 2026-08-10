@@ -11,5 +11,7 @@ public class CartSharingSetting : AuditableEntity, ICloneable
 
     public string Access { get; set; }
 
+    public string SharedWithId { get; set; }
+
     public object Clone() => MemberwiseClone();
 }

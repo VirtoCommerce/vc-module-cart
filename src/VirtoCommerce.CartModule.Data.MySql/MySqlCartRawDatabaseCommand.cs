@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using VirtoCommerce.CartModule.Data.Model;
@@ -15,47 +14,83 @@ namespace VirtoCommerce.CartModule.Data.MySql
 
         public async Task<IList<ProductWishlistEntity>> FindWishlistsByProductsAsync(CartDbContext dbContext, string customerId, string organizationId, string storeId, IList<string> productIds)
         {
-            var command = new Command();
-            var commandTemlate = new StringBuilder();
+            var command = BuildFindWishlistsCommand(customerId, organizationId, storeId, productIds);
+            if (command == null)
+            {
+                return Array.Empty<ProductWishlistEntity>();
+            }
 
-            var parameterNames = productIds.Select((x, i) => new { ProductId = x, ParameterName = $"@pId{i}" });
+            return await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
+        }
+
+        /// <summary>
+        /// Builds the wishlist lookup as one seekable branch per owner, combined with UNION ALL.
+        /// Returns null when there is no owner to filter by, meaning the caller must not query.
+        /// </summary>
+        protected virtual Command? BuildFindWishlistsCommand(string customerId, string organizationId, string storeId, IList<string> productIds)
+        {
+            var hasCustomer = !string.IsNullOrEmpty(customerId);
+            var hasOrganization = !string.IsNullOrEmpty(organizationId);
+
+            // Without an owner there is nothing to scope the query to. Returning a command here
+            // would match every wishlist in the database.
+            if (!hasCustomer && !hasOrganization)
+            {
+                return null;
+            }
+
+            var command = new Command();
+
+            var parameterNames = productIds.Select((x, i) => new { ProductId = x, ParameterName = $"@pId{i}" }).ToList();
             var parameterNamesTemplate = string.Join(",", parameterNames.Select(x => x.ParameterName));
 
-            commandTemlate.Append($@"
-                  SELECT c.Id, li.ProductId
-                  FROM Cart c
-                  LEFT JOIN CartLineItem li
-                  ON c.Id = li.ShoppingCartId
-                  WHERE c.IsDeleted = '0' AND c.Type = 'Wishlist'
-                  AND li.IsGift = '0'
-                  AND li.ProductId IN ({parameterNamesTemplate})");
+            var storeFilter = string.Empty;
 
-            if (!string.IsNullOrEmpty(organizationId) && !string.IsNullOrEmpty(customerId))
+            if (!string.IsNullOrEmpty(storeId))
             {
-                commandTemlate.Append(@"
-                    AND (c.CustomerId = @customerId AND c.OrganizationId IS NULL OR c.OrganizationId = @organizationId)
-                ");
+                storeFilter = " AND c.StoreId = @storeId";
+                command.Parameters.Add(new MySqlParameter("@storeId", storeId));
+            }
 
+            var branches = new List<string>();
+
+            // The two branches are mutually exclusive -- one requires OrganizationId to be null,
+            // the other requires it to equal a non-null value -- so UNION ALL cannot duplicate.
+            if (hasCustomer)
+            {
+                branches.Add(BuildWishlistBranch(parameterNamesTemplate, storeFilter, "c.CustomerId = @customerId AND c.OrganizationId IS NULL"));
                 command.Parameters.Add(new MySqlParameter("@customerId", customerId));
+            }
+
+            if (hasOrganization)
+            {
+                branches.Add(BuildWishlistBranch(parameterNamesTemplate, storeFilter, "c.OrganizationId = @organizationId"));
                 command.Parameters.Add(new MySqlParameter("@organizationId", organizationId));
             }
-            else if (!string.IsNullOrEmpty(customerId))
-            {
-                commandTemlate.Append(@"
-                    AND c.CustomerId = @customerId AND c.OrganizationId IS NULL
-                ");
 
-                command.Parameters.Add(new MySqlParameter("@customerId", customerId));
-            }
-
-            command.Text = commandTemlate.ToString();
+            command.Text = string.Join("\nUNION ALL\n", branches);
 
             foreach (var parameterName in parameterNames)
             {
                 command.Parameters.Add(new MySqlParameter(parameterName.ParameterName, parameterName.ProductId));
             }
 
-            return await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
+            return command;
+        }
+
+        private static string BuildWishlistBranch(string productIdParameters, string storeFilter, string ownerFilter)
+        {
+            // INNER JOIN, not LEFT JOIN: the predicates on li.* already discard every
+            // null-extended row, so an outer join only constrains the optimizer's join order.
+            return $@"
+                  SELECT c.Id, li.ProductId
+                  FROM Cart c
+                  INNER JOIN CartLineItem li
+                  ON c.Id = li.ShoppingCartId
+                  WHERE c.IsDeleted = '0' AND c.Type = 'Wishlist'
+                  AND li.IsGift = '0'
+                  AND li.ProductId IN ({productIdParameters}){storeFilter}
+                  AND {ownerFilter}";
         }
 
         protected virtual async Task<int> ExecuteStoreQueryAsync(CartDbContext dbContext, string commandTemplate, IEnumerable<string> parameterValues)

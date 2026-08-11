@@ -83,7 +83,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 .Include(x => x.Coupons)
                 .Include(x => x.SharingSettings)
                 .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
-                .AsSingleQuery()
+                .AsSplitQuery()
                 .ToListAsync();
 
             if (carts.Any())
@@ -120,7 +120,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                 await paymentsQueryable
                     .Where(x => ids.Contains(x.ShoppingCartId))
-                    .AsSingleQuery()
+                    .AsSplitQuery()
                     .LoadAsync();
             }
         }
@@ -143,7 +143,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                 var lineItems = await lineItemsQueryable
                     .Where(x => ids.Contains(x.ShoppingCartId))
-                    .AsSingleQuery()
+                    .AsSplitQuery()
                     .ToListAsync();
 
                 if (lineItems.Count > 0)
@@ -181,7 +181,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
 
                 await shipmentsQueryable
                     .Where(x => ids.Contains(x.ShoppingCartId))
-                    .AsSingleQuery()
+                    .AsSplitQuery()
                     .LoadAsync();
             }
         }

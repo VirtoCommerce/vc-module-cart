@@ -47,11 +47,13 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
                 SalePrice = listPrice,
                 DiscountAmount = discountAmount,
                 Quantity = quantity,
+                Currency = "USD",
             };
 
             var cart = new ShoppingCart
             {
                 Items = [lineItem],
+                Currency = "USD",
             };
 
             var totalsCalculator = GetTotalsCalculator(midpointRounding);
@@ -71,7 +73,7 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
 
         private static DefaultShoppingCartTotalsCalculator GetTotalsCalculator(MidpointRounding midpointRounding = MidpointRounding.AwayFromZero)
         {
-            var currency = new Currency(new Language("en-US"), code: null)
+            var currency = new Currency(new Language("en-US"), code: "USD")
             {
                 MidpointRounding = midpointRounding.ToString(),
                 RoundingPolicy = new DefaultMoneyRoundingPolicy()
@@ -84,11 +86,12 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
         [Fact]
         public void CalculateTotals_CartTotals_MustBe_Sum_Of_Parts_After_Round()
         {
-            var item1 = new LineItem { ListPrice = 49.95m, SalePrice = 49.95m, DiscountAmount = 4.995m, TaxPercentRate = 0m, Fee = 0m, Quantity = 1 };
+            var item1 = new LineItem { ListPrice = 49.95m, SalePrice = 49.95m, DiscountAmount = 4.995m, TaxPercentRate = 0m, Fee = 0m, Quantity = 1, Currency = "USD", };
 
             var cart = new ShoppingCart
             {
                 Items = [item1],
+                Currency = "USD",
             };
             var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
@@ -101,18 +104,19 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
         [Fact]
         public void CalculateTotals_ClearAllItems_TotalsMustBeZero()
         {
-            var item1 = new LineItem { ListPrice = 10.99m, SalePrice = 9.66m, DiscountAmount = 1.33m, TaxPercentRate = 0.12m, Fee = 0.33m, Quantity = 2 };
-            var item2 = new LineItem { ListPrice = 55.22m, SalePrice = 49.33m, DiscountAmount = 5.89m, TaxPercentRate = 0.12m, Fee = 0.12m, Quantity = 5 };
-            var item3 = new LineItem { ListPrice = 88.45m, SalePrice = 77.67m, DiscountAmount = 10.78m, TaxPercentRate = 0.12m, Fee = 0.08m, Quantity = 12 };
-            var payment = new Payment { Price = 44.52m, DiscountAmount = 10, TaxPercentRate = 0.12m };
-            var shipment = new Shipment { Price = 22.0m, DiscountAmount = 5m, TaxPercentRate = 0.12m };
+            var item1 = new LineItem { ListPrice = 10.99m, SalePrice = 9.66m, DiscountAmount = 1.33m, TaxPercentRate = 0.12m, Fee = 0.33m, Quantity = 2, Currency = "USD", };
+            var item2 = new LineItem { ListPrice = 55.22m, SalePrice = 49.33m, DiscountAmount = 5.89m, TaxPercentRate = 0.12m, Fee = 0.12m, Quantity = 5, Currency = "USD", };
+            var item3 = new LineItem { ListPrice = 88.45m, SalePrice = 77.67m, DiscountAmount = 10.78m, TaxPercentRate = 0.12m, Fee = 0.08m, Quantity = 12, Currency = "USD", };
+            var payment = new Payment { Price = 44.52m, DiscountAmount = 10, TaxPercentRate = 0.12m, Currency = "USD", };
+            var shipment = new Shipment { Price = 22.0m, DiscountAmount = 5m, TaxPercentRate = 0.12m, Currency = "USD", };
 
             var cart = new ShoppingCart
             {
                 TaxPercentRate = 0.12m,
                 Items = [item1, item2, item3],
                 Payments = [payment],
-                Shipments = [shipment]
+                Shipments = [shipment],
+                Currency = "USD",
             };
             var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);
@@ -132,12 +136,12 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
         [Fact]
         public void CalculateTotals_Should_Be_RightTotals()
         {
-            var item1 = new LineItem { ListPrice = 10.99m, SalePrice = 9.66m, DiscountAmount = 1.33m, TaxPercentRate = 0.12m, Fee = 0.33m, Quantity = 2 };
-            var item2 = new LineItem { ListPrice = 55.22m, SalePrice = 49.33m, DiscountAmount = 5.89m, TaxPercentRate = 0.12m, Fee = 0.12m, Quantity = 5 };
-            var item3 = new LineItem { ListPrice = 88.45m, SalePrice = 77.67m, DiscountAmount = 10.78m, TaxPercentRate = 0.12m, Fee = 0.08m, Quantity = 12 };
-            var gift1 = new LineItem { ListPrice = 12.32m, SalePrice = 1.23m, DiscountAmount = 0.78m, TaxPercentRate = 0.12m, Fee = 0.05m, Quantity = 16, IsGift = true };
-            var payment = new Payment { Price = 44.52m, DiscountAmount = 10, TaxPercentRate = 0.12m };
-            var shipment = new Shipment { Price = 22.0m, DiscountAmount = 5m, TaxPercentRate = 0.12m };
+            var item1 = new LineItem { ListPrice = 10.99m, SalePrice = 9.66m, DiscountAmount = 1.33m, TaxPercentRate = 0.12m, Fee = 0.33m, Quantity = 2, Currency = "USD", };
+            var item2 = new LineItem { ListPrice = 55.22m, SalePrice = 49.33m, DiscountAmount = 5.89m, TaxPercentRate = 0.12m, Fee = 0.12m, Quantity = 5, Currency = "USD", };
+            var item3 = new LineItem { ListPrice = 88.45m, SalePrice = 77.67m, DiscountAmount = 10.78m, TaxPercentRate = 0.12m, Fee = 0.08m, Quantity = 12, Currency = "USD", };
+            var gift1 = new LineItem { ListPrice = 12.32m, SalePrice = 1.23m, DiscountAmount = 0.78m, TaxPercentRate = 0.12m, Fee = 0.05m, Quantity = 16, IsGift = true, Currency = "USD", };
+            var payment = new Payment { Price = 44.52m, DiscountAmount = 10, TaxPercentRate = 0.12m, Currency = "USD", };
+            var shipment = new Shipment { Price = 22.0m, DiscountAmount = 5m, TaxPercentRate = 0.12m, Currency = "USD", };
 
             var cart = new ShoppingCart
             {
@@ -145,7 +149,8 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
                 Fee = 13.11m,
                 Items = [item1, item2, item3, gift1],
                 Payments = [payment],
-                Shipments = [shipment]
+                Shipments = [shipment],
+                Currency = "USD",
             };
             var totalsCalculator = GetTotalsCalculator();
             totalsCalculator.CalculateTotals(cart);

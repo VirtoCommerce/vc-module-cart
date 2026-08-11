@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using VirtoCommerce.CartModule.Data.Model;
@@ -15,40 +14,76 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql
 
         public async Task<IList<ProductWishlistEntity>> FindWishlistsByProductsAsync(CartDbContext dbContext, string customerId, string organizationId, string storeId, IList<string> productIds)
         {
-            var command = new Command();
-            var commandTemlate = new StringBuilder();
+            var command = BuildFindWishlistsCommand(customerId, organizationId, storeId, productIds);
+            if (command == null)
+            {
+                return Array.Empty<ProductWishlistEntity>();
+            }
 
-            commandTemlate.Append(@"
+            return await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
+        }
+
+        /// <summary>
+        /// Builds the wishlist lookup as one seekable branch per owner, combined with UNION ALL.
+        /// Returns null when there is no owner to filter by, meaning the caller must not query.
+        /// </summary>
+        protected virtual Command? BuildFindWishlistsCommand(string customerId, string organizationId, string storeId, IList<string> productIds)
+        {
+            var hasCustomer = !string.IsNullOrEmpty(customerId);
+            var hasOrganization = !string.IsNullOrEmpty(organizationId);
+
+            // Without an owner there is nothing to scope the query to. Returning a command here
+            // would match every wishlist in the database.
+            if (!hasCustomer && !hasOrganization)
+            {
+                return null;
+            }
+
+            var command = new Command();
+            var storeFilter = string.Empty;
+
+            if (!string.IsNullOrEmpty(storeId))
+            {
+                storeFilter = @" AND c.""StoreId"" = @storeId";
+                command.Parameters.Add(new NpgsqlParameter("@storeId", storeId));
+            }
+
+            var ownerFilters = new List<string>();
+
+            if (hasCustomer)
+            {
+                ownerFilters.Add(@"c.""CustomerId"" = @customerId AND c.""OrganizationId"" IS NULL");
+                command.Parameters.Add(new NpgsqlParameter("@customerId", customerId));
+            }
+
+            if (hasOrganization)
+            {
+                ownerFilters.Add(@"c.""OrganizationId"" = @organizationId");
+                command.Parameters.Add(new NpgsqlParameter("@organizationId", organizationId));
+            }
+
+            // One statement -- see the note in SqlServerCartRawDatabaseCommand: splitting the OR
+            // into UNION ALL branches doubles the work when an index on CartLineItem.ProductId
+            // exists, and does not help when it does not.
+            var ownerFilter = ownerFilters.Count > 1
+                ? $"({string.Join(" OR ", ownerFilters)})"
+                : ownerFilters[0];
+
+            // INNER JOIN, not LEFT JOIN: the predicates on li.* already discard every
+            // null-extended row, so an outer join only constrains the optimizer's join order.
+            command.Text = $@"
                   SELECT c.""Id"", li.""ProductId""
                   FROM ""Cart"" c
-                  LEFT JOIN ""CartLineItem"" li
+                  INNER JOIN ""CartLineItem"" li
                   ON c.""Id"" = li.""ShoppingCartId""
                   WHERE c.""IsDeleted"" = '0' AND c.""Type"" = 'Wishlist'
                   AND li.""IsGift"" = '0'
-                  AND li.""ProductId"" IN (@productIds)");
+                  AND li.""ProductId"" IN (@productIds){storeFilter}
+                  AND {ownerFilter}";
 
-            if (!string.IsNullOrEmpty(organizationId) && !string.IsNullOrEmpty(customerId))
-            {
-                command.Parameters.Add(new NpgsqlParameter("@customerId", customerId));
-                command.Parameters.Add(new NpgsqlParameter("@organizationId", organizationId));
-
-                commandTemlate.Append(@"
-                    AND (c.""CustomerId"" = @customerId AND c.""OrganizationId"" IS NULL OR c.""OrganizationId"" = @organizationId)
-                ");
-            }
-            else if (!string.IsNullOrEmpty(customerId))
-            {
-                command.Parameters.Add(new NpgsqlParameter("@customerId", customerId));
-
-                commandTemlate.Append(@"
-                    AND c.""CustomerId"" = @customerId AND c.""OrganizationId"" IS NULL
-                ");
-            }
-
-            command.Text = commandTemlate.ToString();
             AddArrayParameters(command, "@productIds", productIds);
 
-            return await dbContext.Set<ProductWishlistEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray()).ToListAsync();
+            return command;
         }
 
         protected virtual Task<int> ExecuteStoreQueryAsync(CartDbContext dbContext, string commandTemplate, IEnumerable<string> parameterValues)

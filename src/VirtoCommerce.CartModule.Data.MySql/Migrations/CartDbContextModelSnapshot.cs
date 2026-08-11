@@ -683,6 +683,9 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
 
                     b.HasIndex("ShoppingCartId");
 
+                    b.HasIndex("ProductId", "IsGift", "ShoppingCartId")
+                        .HasDatabaseName("IX_CartLineItem_ProductId_IsGift");
+
                     b.ToTable("CartLineItem", (string)null);
                 });
 

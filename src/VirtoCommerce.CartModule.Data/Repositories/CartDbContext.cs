@@ -32,6 +32,11 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             #region LineItem
             modelBuilder.Entity<LineItemEntity>().ToTable("CartLineItem").HasKey(x => x.Id);
             modelBuilder.Entity<LineItemEntity>().Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<LineItemEntity>()
+                .HasIndex(x => new { x.ProductId, x.IsGift, x.ShoppingCartId })
+                .HasDatabaseName("IX_CartLineItem_ProductId_IsGift");
+
             modelBuilder.Entity<LineItemEntity>().Property(x => x.VolumetricWeight).HasPrecision(18, 4);
             modelBuilder.Entity<LineItemEntity>().Property(x => x.Weight).HasPrecision(18, 4);
             modelBuilder.Entity<LineItemEntity>().Property(x => x.Height).HasPrecision(18, 4);

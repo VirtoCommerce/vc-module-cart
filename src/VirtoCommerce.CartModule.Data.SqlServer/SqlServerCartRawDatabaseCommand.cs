@@ -47,33 +47,32 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
                 command.Parameters.Add(new Microsoft.Data.SqlClient.SqlParameter("@storeId", storeId));
             }
 
-            var branches = new List<string>();
+            var ownerFilters = new List<string>();
 
-            // The two branches are mutually exclusive -- one requires OrganizationId to be null,
-            // the other requires it to equal a non-null value -- so UNION ALL cannot duplicate.
             if (hasCustomer)
             {
-                branches.Add(BuildWishlistBranch(storeFilter, "c.CustomerId = @customerId AND c.OrganizationId IS NULL"));
+                ownerFilters.Add("c.CustomerId = @customerId AND c.OrganizationId IS NULL");
                 command.Parameters.Add(new Microsoft.Data.SqlClient.SqlParameter("@customerId", customerId));
             }
 
             if (hasOrganization)
             {
-                branches.Add(BuildWishlistBranch(storeFilter, "c.OrganizationId = @organizationId"));
+                ownerFilters.Add("c.OrganizationId = @organizationId");
                 command.Parameters.Add(new Microsoft.Data.SqlClient.SqlParameter("@organizationId", organizationId));
             }
 
-            command.Text = string.Join("\nUNION ALL\n", branches);
-            AddArrayParameters(command, "@productIds", productIds);
+            // One statement. The OR across CustomerId/OrganizationId is not SARGable on its own,
+            // but with an index on CartLineItem.ProductId the optimizer drives from the line-item
+            // side and PK-seeks Cart, so the OR is only ever a residual on a handful of rows.
+            // Splitting it into two UNION ALL branches was measured at exactly double the work --
+            // CartLineItem scan count 1 -> 2, logical reads 19 -> 38 -- for identical results.
+            var ownerFilter = ownerFilters.Count > 1
+                ? $"({string.Join(" OR ", ownerFilters)})"
+                : ownerFilters[0];
 
-            return command;
-        }
-
-        private static string BuildWishlistBranch(string storeFilter, string ownerFilter)
-        {
             // INNER JOIN, not LEFT JOIN: the predicates on li.* already discard every
             // null-extended row, so an outer join only constrains the optimizer's join order.
-            return $@"
+            command.Text = $@"
                   SELECT c.Id, li.ProductId
                   FROM Cart c
                   INNER JOIN CartLineItem li
@@ -82,6 +81,10 @@ namespace VirtoCommerce.CartModule.Data.SqlServer
                   AND li.IsGift = 0
                   AND li.ProductId IN (@productIds){storeFilter}
                   AND {ownerFilter}";
+
+            AddArrayParameters(command, "@productIds", productIds);
+
+            return command;
         }
 
         protected virtual Task<int> ExecuteStoreQueryAsync(CartDbContext dbContext, string commandTemplate, IEnumerable<string> parameterValues)

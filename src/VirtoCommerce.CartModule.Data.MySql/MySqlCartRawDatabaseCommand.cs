@@ -52,23 +52,38 @@ namespace VirtoCommerce.CartModule.Data.MySql
                 command.Parameters.Add(new MySqlParameter("@storeId", storeId));
             }
 
-            var branches = new List<string>();
+            var ownerFilters = new List<string>();
 
-            // The two branches are mutually exclusive -- one requires OrganizationId to be null,
-            // the other requires it to equal a non-null value -- so UNION ALL cannot duplicate.
             if (hasCustomer)
             {
-                branches.Add(BuildWishlistBranch(parameterNamesTemplate, storeFilter, "c.CustomerId = @customerId AND c.OrganizationId IS NULL"));
+                ownerFilters.Add("c.CustomerId = @customerId AND c.OrganizationId IS NULL");
                 command.Parameters.Add(new MySqlParameter("@customerId", customerId));
             }
 
             if (hasOrganization)
             {
-                branches.Add(BuildWishlistBranch(parameterNamesTemplate, storeFilter, "c.OrganizationId = @organizationId"));
+                ownerFilters.Add("c.OrganizationId = @organizationId");
                 command.Parameters.Add(new MySqlParameter("@organizationId", organizationId));
             }
 
-            command.Text = string.Join("\nUNION ALL\n", branches);
+            // One statement -- see the note in SqlServerCartRawDatabaseCommand: splitting the OR
+            // into UNION ALL branches doubles the work when an index on CartLineItem.ProductId
+            // exists, and does not help when it does not.
+            var ownerFilter = ownerFilters.Count > 1
+                ? $"({string.Join(" OR ", ownerFilters)})"
+                : ownerFilters[0];
+
+            // INNER JOIN, not LEFT JOIN: the predicates on li.* already discard every
+            // null-extended row, so an outer join only constrains the optimizer's join order.
+            command.Text = $@"
+                  SELECT c.Id, li.ProductId
+                  FROM Cart c
+                  INNER JOIN CartLineItem li
+                  ON c.Id = li.ShoppingCartId
+                  WHERE c.IsDeleted = '0' AND c.Type = 'Wishlist'
+                  AND li.IsGift = '0'
+                  AND li.ProductId IN ({parameterNamesTemplate}){storeFilter}
+                  AND {ownerFilter}";
 
             foreach (var parameterName in parameterNames)
             {
@@ -76,21 +91,6 @@ namespace VirtoCommerce.CartModule.Data.MySql
             }
 
             return command;
-        }
-
-        private static string BuildWishlistBranch(string productIdParameters, string storeFilter, string ownerFilter)
-        {
-            // INNER JOIN, not LEFT JOIN: the predicates on li.* already discard every
-            // null-extended row, so an outer join only constrains the optimizer's join order.
-            return $@"
-                  SELECT c.Id, li.ProductId
-                  FROM Cart c
-                  INNER JOIN CartLineItem li
-                  ON c.Id = li.ShoppingCartId
-                  WHERE c.IsDeleted = '0' AND c.Type = 'Wishlist'
-                  AND li.IsGift = '0'
-                  AND li.ProductId IN ({productIdParameters}){storeFilter}
-                  AND {ownerFilter}";
         }
 
         protected virtual async Task<int> ExecuteStoreQueryAsync(CartDbContext dbContext, string commandTemplate, IEnumerable<string> parameterValues)

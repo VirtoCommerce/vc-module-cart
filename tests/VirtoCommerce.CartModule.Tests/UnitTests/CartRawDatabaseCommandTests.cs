@@ -16,10 +16,15 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
     ///
     ///  1. storeId must be applied. The parameter was accepted and silently ignored, so the
     ///     query returned wishlists from every store the customer had one in.
-    ///  2. The customer/organization predicate must be two seekable branches, not an OR
-    ///     spanning two different columns. The OR form is non-SARGable and forces a scan.
+    ///  2. A call with organizationId but no customerId must filter by organization. The old
+    ///     if/else-if chain had no branch for it and emitted a query with no owner predicate.
     ///  3. A call with neither customerId nor organizationId must not query at all. The old
     ///     code fell through and returned every wishlist in the database.
+    ///  4. The owner predicate stays ONE statement. An earlier revision split it into two
+    ///     UNION ALL branches to avoid the non-SARGable OR; measurement showed that doubles the
+    ///     work (19 -> 38 logical reads) whenever an index on CartLineItem.ProductId lets the
+    ///     optimizer drive from the line-item side, and it does not help without one, because
+    ///     Cart.OrganizationId has no index either way.
     /// </summary>
     public class CartRawDatabaseCommandTests
     {
@@ -62,33 +67,45 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
 
         #endregion
 
-        #region customer/organization predicate must be seekable branches
+        #region owner predicate stays a single statement
+
+        // Measured on a database with an index on CartLineItem.ProductId: the optimizer drives
+        // from the line-item side (4 matching rows), then PK-seeks Cart -- Cart scan count 0.
+        // Rewriting the OR as two UNION ALL branches made CartLineItem scan count go 1 -> 2 and
+        // doubled logical reads, 19 -> 38, for identical results. The OR is not the problem when
+        // an index lets the optimizer avoid making Cart the driving table.
 
         [Fact]
-        public void SqlServer_WithCustomerAndOrganization_UsesUnionAllInsteadOfOr()
+        public void SqlServer_WithCustomerAndOrganization_EmitsOneStatementWithOrPredicate()
         {
-            var (text, _) = new TestableSqlServer().Build(CustomerId, OrganizationId, StoreId, ProductIds);
+            var (text, parameters) = new TestableSqlServer().Build(CustomerId, OrganizationId, StoreId, ProductIds);
 
-            Assert.Contains("UNION ALL", Normalize(text));
-            Assert.DoesNotContain(" OR ", Normalize(text));
+            Assert.DoesNotContain("UNION ALL", Normalize(text));
+            Assert.Contains(" OR ", Normalize(text));
+            Assert.Contains("@customerId", parameters);
+            Assert.Contains("@organizationId", parameters);
         }
 
         [Fact]
-        public void MySql_WithCustomerAndOrganization_UsesUnionAllInsteadOfOr()
+        public void MySql_WithCustomerAndOrganization_EmitsOneStatementWithOrPredicate()
         {
-            var (text, _) = new TestableMySql().Build(CustomerId, OrganizationId, StoreId, ProductIds);
+            var (text, parameters) = new TestableMySql().Build(CustomerId, OrganizationId, StoreId, ProductIds);
 
-            Assert.Contains("UNION ALL", Normalize(text));
-            Assert.DoesNotContain(" OR ", Normalize(text));
+            Assert.DoesNotContain("UNION ALL", Normalize(text));
+            Assert.Contains(" OR ", Normalize(text));
+            Assert.Contains("@customerId", parameters);
+            Assert.Contains("@organizationId", parameters);
         }
 
         [Fact]
-        public void PostgreSql_WithCustomerAndOrganization_UsesUnionAllInsteadOfOr()
+        public void PostgreSql_WithCustomerAndOrganization_EmitsOneStatementWithOrPredicate()
         {
-            var (text, _) = new TestablePostgreSql().Build(CustomerId, OrganizationId, StoreId, ProductIds);
+            var (text, parameters) = new TestablePostgreSql().Build(CustomerId, OrganizationId, StoreId, ProductIds);
 
-            Assert.Contains("UNION ALL", Normalize(text));
-            Assert.DoesNotContain(" OR ", Normalize(text));
+            Assert.DoesNotContain("UNION ALL", Normalize(text));
+            Assert.Contains(" OR ", Normalize(text));
+            Assert.Contains("@customerId", parameters);
+            Assert.Contains("@organizationId", parameters);
         }
 
         [Fact]

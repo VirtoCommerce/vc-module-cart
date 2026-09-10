@@ -81,7 +81,7 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 .Include(x => x.Discounts)
                 .Include(x => x.Addresses)
                 .Include(x => x.Coupons)
-                .Include(x => x.SharingSettings)
+                .Include(x => x.SharingSettings).ThenInclude(x => x.Targets)
                 .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
                 .AsSplitQuery()
                 .ToListAsync();

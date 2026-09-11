@@ -11,8 +11,9 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
     ///  1. Reading returns the first target, or null when there is none.
     ///  2. Writing an id replaces the whole target set with that single id; writing null clears it —
     ///     exactly the single-valued column semantics those consumers were built for.
-    ///  3. Re-writing the id that is already the only target keeps the existing target row, so an old
-    ///     storefront re-sending the same target on every save does not churn the row.
+    ///  3. Re-writing the id the getter currently returns is a no-op that keeps EVERY target: an old storefront
+    ///     re-sending the same target on every save does not churn the row, and a GET/PUT round-trip of the cart
+    ///     JSON (targets first, then sharedWithId = first target) does not collapse a multi-target set.
     /// </summary>
 #pragma warning disable VC0015 // The obsolete member is the subject under test.
     public class CartSharingSettingTests
@@ -63,6 +64,20 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
 
             Assert.Same(existing, Assert.Single(setting.Targets));
             Assert.Equal("t-1", setting.Targets.Single().Id);
+        }
+
+        [Fact]
+        public void SharedWithId_SetToCurrentFirstTarget_KeepsAllTargets()
+        {
+            var first = Target("org-1");
+            var second = Target("org-2");
+            var setting = new CartSharingSetting { Targets = [first, second] };
+
+            setting.SharedWithId = "ORG-1";
+
+            Assert.Equal(2, setting.Targets.Count);
+            Assert.Same(first, setting.Targets[0]);
+            Assert.Same(second, setting.Targets[1]);
         }
 
         private static CartSharingSettingTarget Target(string sharedWithId) => new() { SharedWithId = sharedWithId };

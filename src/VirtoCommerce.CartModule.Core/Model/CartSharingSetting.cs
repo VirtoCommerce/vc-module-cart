@@ -31,7 +31,8 @@ public class CartSharingSetting : AuditableEntity, ICloneable
                 return;
             }
 
-            if (Targets?.Count == 1 && Targets[0].SharedWithId.EqualsIgnoreCase(value))
+            // The getter's own value must round-trip (e.g. a GET/PUT of the cart JSON) without collapsing the set.
+            if (Targets?.FirstOrDefault()?.SharedWithId.EqualsIgnoreCase(value) == true)
             {
                 return;
             }

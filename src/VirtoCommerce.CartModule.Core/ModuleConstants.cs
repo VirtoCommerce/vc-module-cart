@@ -16,6 +16,11 @@ namespace VirtoCommerce.CartModule.Core
 
         public const string DefaultCartName = "default";
 
+        public static class Sharing
+        {
+            public const int MessageMaxLength = 1024;
+        }
+
         public static class Security
         {
             public static class Permissions

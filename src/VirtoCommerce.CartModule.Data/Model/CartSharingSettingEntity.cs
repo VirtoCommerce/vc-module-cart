@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
@@ -22,7 +23,7 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
     [StringLength(Length32)]
     public string Access { get; set; }
 
-    [StringLength(Length1024)]
+    [StringLength(ModuleConstants.Sharing.MessageMaxLength)]
     public string Message { get; set; }
 
     public virtual ShoppingCartEntity ShoppingCart { get; set; }

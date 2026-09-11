@@ -1,6 +1,7 @@
 using System.Linq;
 using Newtonsoft.Json;
 using VirtoCommerce.CartModule.Core.Model;
+using VirtoCommerce.Platform.Core.JsonConverters;
 using Xunit;
 
 namespace VirtoCommerce.CartModule.Tests.UnitTests
@@ -12,16 +13,24 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
     ///  1. Reading returns the first target, or null when there is none.
     ///  2. Writing an id replaces the whole target set with that single id; writing null clears it —
     ///     exactly the single-valued column semantics those consumers were built for.
-    ///  3. Re-writing the id the getter currently returns is a no-op that keeps EVERY target: an old storefront
-    ///     re-sending the same target on every save does not churn the row, and a GET/PUT round-trip of the cart
-    ///     JSON — which carries the targets back as well — does not collapse a multi-target set.
-    ///  4. A payload that omits the targets entirely, which is all a client generated against the pre-3.1011
-    ///     schema can send, DOES replace the set. That is point 2, not a defect: single-valued in, single target
-    ///     out. Only a caller that can see the set is trusted to change it.
+    ///  3. Re-writing the id the getter currently returns is a no-op that keeps EVERY target, so a consumer
+    ///     re-saving a loaded model does not churn the row.
+    ///
+    /// Points 1-3 are the IN-PROCESS channel, which is the only one those consumers use. Over JSON the property is
+    /// serialized read-only (`SharedWithIdValue`) and ignored on the way in, so no payload can rewrite the set:
+    /// one that fills `targets` and leaves the deprecated field null would otherwise delete every target, and one
+    /// that sends the field before `targets` would duplicate the first row (Newtonsoft populates rather than
+    /// replaces an existing collection). Both are pinned below.
     /// </summary>
 #pragma warning disable VC0015 // The obsolete member is the subject under test.
     public class CartSharingSettingTests
     {
+        // The platform's REST resolver, so the JSON names below are the ones a real payload carries: it is
+        // camelCase, which is what makes the deprecated member and its read-only twin compete for "sharedWithId".
+        // The platform additionally deserializes with NullValueHandling.Ignore; these tests deliberately do not,
+        // so the model is pinned as safe on its own rather than by a global setting that could be reconfigured.
+        private static readonly JsonSerializerSettings PlatformSettings = new() { ContractResolver = new PolymorphJsonContractResolver() };
+
         [Fact]
         public void SharedWithId_Get_ReturnsFirstTargetOrNull()
         {
@@ -84,27 +93,39 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
             Assert.Same(second, setting.Targets[1]);
         }
 
-        [Fact]
-        public void SharedWithId_JsonCarryingTheTargets_KeepsTheWholeSet()
+        [Theory]
+        // A REST GET/PUT round-trip of a multi-target share.
+        [InlineData(@"{""targets"":[{""sharedWithId"":""org-1""},{""sharedWithId"":""org-2""}],""sharedWithId"":""org-1""}")]
+        // A client generated against THIS schema: it fills targets and leaves the deprecated field unset, so the
+        // two arrive together and the field is null. Honouring it would delete every target the payload just sent.
+        [InlineData(@"{""targets"":[{""sharedWithId"":""org-1""},{""sharedWithId"":""org-2""}],""sharedWithId"":null}")]
+        // Field order is the client's choice, and Newtonsoft populates an existing collection rather than
+        // replacing it: through the setter this left a duplicate org-1 row.
+        [InlineData(@"{""sharedWithId"":""org-1"",""targets"":[{""sharedWithId"":""org-1""},{""sharedWithId"":""org-2""}]}")]
+        public void Json_WhateverTheDeprecatedFieldCarries_TheTargetsAreExactlyWhatWasSent(string json)
         {
-            // A REST GET/PUT round-trip: the payload carries the targets, so the trailing sharedWithId is the
-            // value the getter produced and setting it changes nothing.
-            const string Json = @"{""targets"":[{""sharedWithId"":""org-1""},{""sharedWithId"":""org-2""}],""sharedWithId"":""org-1""}";
-
-            var setting = JsonConvert.DeserializeObject<CartSharingSetting>(Json);
+            var setting = JsonConvert.DeserializeObject<CartSharingSetting>(json, PlatformSettings);
 
             Assert.Equal(["org-1", "org-2"], setting.Targets.Select(x => x.SharedWithId));
         }
 
         [Fact]
-        public void SharedWithId_JsonWithoutTargets_ReplacesTheSet()
+        public void Json_WithoutTargets_LeavesThemUntouched()
         {
-            // All a client generated against the pre-3.1011 schema can send: no targets property at all. It gets
-            // single-target semantics, which is what this property is for - pinned so the behaviour is a decision
-            // rather than a surprise.
-            var setting = JsonConvert.DeserializeObject<CartSharingSetting>(@"{""sharedWithId"":""org-9""}");
+            // All a client generated against the pre-3.1011 schema can send. Null, not an empty list: the entity
+            // mapping reads null as "this payload says nothing about the targets" and keeps the stored rows.
+            var setting = JsonConvert.DeserializeObject<CartSharingSetting>(@"{""sharedWithId"":""org-9""}", PlatformSettings);
 
-            Assert.Equal("org-9", Assert.Single(setting.Targets).SharedWithId);
+            Assert.Null(setting.Targets);
+        }
+
+        [Fact]
+        public void Json_StillSerializesSharedWithId()
+        {
+            // Read-only, but still there: an integration that only displays the share keeps working.
+            var setting = new CartSharingSetting { Targets = [Target("org-1"), Target("org-2")] };
+
+            Assert.Contains(@"""sharedWithId"":""org-1""", JsonConvert.SerializeObject(setting, PlatformSettings));
         }
 
         private static CartSharingSettingTarget Target(string sharedWithId) => new() { SharedWithId = sharedWithId };

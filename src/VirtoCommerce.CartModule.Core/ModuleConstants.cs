@@ -19,6 +19,8 @@ namespace VirtoCommerce.CartModule.Core
         public static class Sharing
         {
             public const int MessageMaxLength = 1024;
+
+        public const int MaxTargets = 1000;
         }
 
         public static class Security

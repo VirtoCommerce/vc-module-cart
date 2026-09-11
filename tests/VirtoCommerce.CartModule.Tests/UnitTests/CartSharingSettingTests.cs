@@ -1,4 +1,5 @@
 using System.Linq;
+using Newtonsoft.Json;
 using VirtoCommerce.CartModule.Core.Model;
 using Xunit;
 
@@ -13,7 +14,10 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
     ///     exactly the single-valued column semantics those consumers were built for.
     ///  3. Re-writing the id the getter currently returns is a no-op that keeps EVERY target: an old storefront
     ///     re-sending the same target on every save does not churn the row, and a GET/PUT round-trip of the cart
-    ///     JSON (targets first, then sharedWithId = first target) does not collapse a multi-target set.
+    ///     JSON — which carries the targets back as well — does not collapse a multi-target set.
+    ///  4. A payload that omits the targets entirely, which is all a client generated against the pre-3.1011
+    ///     schema can send, DOES replace the set. That is point 2, not a defect: single-valued in, single target
+    ///     out. Only a caller that can see the set is trusted to change it.
     /// </summary>
 #pragma warning disable VC0015 // The obsolete member is the subject under test.
     public class CartSharingSettingTests
@@ -78,6 +82,29 @@ namespace VirtoCommerce.CartModule.Tests.UnitTests
             Assert.Equal(2, setting.Targets.Count);
             Assert.Same(first, setting.Targets[0]);
             Assert.Same(second, setting.Targets[1]);
+        }
+
+        [Fact]
+        public void SharedWithId_JsonCarryingTheTargets_KeepsTheWholeSet()
+        {
+            // A REST GET/PUT round-trip: the payload carries the targets, so the trailing sharedWithId is the
+            // value the getter produced and setting it changes nothing.
+            const string Json = @"{""targets"":[{""sharedWithId"":""org-1""},{""sharedWithId"":""org-2""}],""sharedWithId"":""org-1""}";
+
+            var setting = JsonConvert.DeserializeObject<CartSharingSetting>(Json);
+
+            Assert.Equal(["org-1", "org-2"], setting.Targets.Select(x => x.SharedWithId));
+        }
+
+        [Fact]
+        public void SharedWithId_JsonWithoutTargets_ReplacesTheSet()
+        {
+            // All a client generated against the pre-3.1011 schema can send: no targets property at all. It gets
+            // single-target semantics, which is what this property is for - pinned so the behaviour is a decision
+            // rather than a surprise.
+            var setting = JsonConvert.DeserializeObject<CartSharingSetting>(@"{""sharedWithId"":""org-9""}");
+
+            Assert.Equal("org-9", Assert.Single(setting.Targets).SharedWithId);
         }
 
         private static CartSharingSettingTarget Target(string sharedWithId) => new() { SharedWithId = sharedWithId };

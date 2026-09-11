@@ -31,7 +31,10 @@ public class CartSharingSetting : AuditableEntity, ICloneable
                 return;
             }
 
-            // The getter's own value must round-trip (e.g. a GET/PUT of the cart JSON) without collapsing the set.
+            // Writing back the value the getter returned changes nothing, so a payload that carries the targets
+            // too (a REST GET/PUT round-trip, a re-save of a loaded model) keeps the whole set. A payload that
+            // omits targets entirely - a client generated against the pre-3.1011 schema - still replaces it,
+            // which is the single-target contract this property exists to honour.
             if (Targets?.FirstOrDefault()?.SharedWithId.EqualsIgnoreCase(value) == true)
             {
                 return;

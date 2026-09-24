@@ -185,6 +185,14 @@ namespace VirtoCommerce.CartModule.Core.Model
             {
                 DynamicProperties = null;
             }
+            if (!cartResponseGroup.HasFlag(CartResponseGroup.WithSharingTargets))
+            {
+                // Null, not empty: an unloaded set is untouched, and saving this cart must not delete its targets.
+                foreach (var sharingSetting in SharingSettings ?? [])
+                {
+                    sharingSetting.Targets = null;
+                }
+            }
         }
 
         #region ICloneable members

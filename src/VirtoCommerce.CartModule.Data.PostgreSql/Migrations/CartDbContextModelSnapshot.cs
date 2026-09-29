@@ -247,6 +247,10 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Message")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
@@ -259,10 +263,6 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<string>("SharedWithId")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("ShoppingCartId")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -273,6 +273,46 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.HasIndex("ShoppingCartId");
 
                     b.ToTable("CartSharingSetting", (string)null);
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.CartSharingSettingTargetEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("CartSharingSettingId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SharedWithId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartSharingSettingId");
+
+                    b.HasIndex("SharedWithId");
+
+                    b.ToTable("CartSharingSettingTarget", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ConfigurationItemEntity", b =>
@@ -1251,6 +1291,17 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Navigation("ShoppingCart");
                 });
 
+            modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.CartSharingSettingTargetEntity", b =>
+                {
+                    b.HasOne("VirtoCommerce.CartModule.Data.Model.CartSharingSettingEntity", "CartSharingSetting")
+                        .WithMany("Targets")
+                        .HasForeignKey("CartSharingSettingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CartSharingSetting");
+                });
+
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ConfigurationItemEntity", b =>
                 {
                     b.HasOne("VirtoCommerce.CartModule.Data.Model.LineItemEntity", "LineItem")
@@ -1396,6 +1447,11 @@ namespace VirtoCommerce.CartModule.Data.PostgreSql.Migrations
                     b.Navigation("Shipment");
 
                     b.Navigation("ShoppingCart");
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.CartSharingSettingEntity", b =>
+                {
+                    b.Navigation("Targets");
                 });
 
             modelBuilder.Entity("VirtoCommerce.CartModule.Data.Model.ConfigurationItemEntity", b =>

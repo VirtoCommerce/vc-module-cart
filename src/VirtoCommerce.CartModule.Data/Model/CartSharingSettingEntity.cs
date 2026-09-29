@@ -1,5 +1,8 @@
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
@@ -20,10 +23,12 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
     [StringLength(Length32)]
     public string Access { get; set; }
 
-    [StringLength(IdLength)]
-    public string SharedWithId { get; set; }
+    [StringLength(ModuleConstants.Sharing.MessageMaxLength)]
+    public string Message { get; set; }
 
     public virtual ShoppingCartEntity ShoppingCart { get; set; }
+
+    public virtual ObservableCollection<CartSharingSettingTargetEntity> Targets { get; set; } = new NullCollection<CartSharingSettingTargetEntity>();
 
     public virtual CartSharingSetting ToModel(CartSharingSetting model)
     {
@@ -38,7 +43,9 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         model.ShoppingCartId = ShoppingCartId;
         model.Scope = Scope;
         model.Access = Access;
-        model.SharedWithId = SharedWithId;
+        model.Message = Message;
+
+        model.Targets = Targets.Select(x => x.ToModel(AbstractTypeFactory<CartSharingSettingTarget>.TryCreateInstance())).ToList();
 
         return model;
     }
@@ -58,7 +65,12 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         ShoppingCartId = model.ShoppingCartId;
         Scope = model.Scope;
         Access = model.Access;
-        SharedWithId = model.SharedWithId;
+        Message = model.Message;
+
+        if (model.Targets != null)
+        {
+            Targets = new ObservableCollection<CartSharingSettingTargetEntity>(model.Targets.Select(x => AbstractTypeFactory<CartSharingSettingTargetEntity>.TryCreateInstance().FromModel(x, pkMap)));
+        }
 
         return this;
     }
@@ -70,6 +82,11 @@ public class CartSharingSettingEntity : AuditableEntity, IDataEntity<CartSharing
         target.ShoppingCartId = ShoppingCartId;
         target.Scope = Scope;
         target.Access = Access;
-        target.SharedWithId = SharedWithId;
+        target.Message = Message;
+
+        if (!Targets.IsNullCollection())
+        {
+            Targets.Patch(target.Targets, (sourceTarget, targetTarget) => sourceTarget.Patch(targetTarget));
+        }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
@@ -54,7 +53,6 @@ public class AbandonedCartReminderJob
         _userManagerFactory = userManagerFactory;
     }
 
-    [DisableConcurrentExecution(10)]
     public async Task Process()
     {
         var storeSearchCriteria = AbstractTypeFactory<StoreSearchCriteria>.TryCreateInstance();

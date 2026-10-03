@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Hangfire;
 using VirtoCommerce.CartModule.Core.Services;
 
 namespace VirtoCommerce.CartModule.Data.BackgroundJobs;
@@ -16,7 +15,6 @@ public class DeleteObsoleteCartsJob
         _deleteHandler = deleteHandler;
     }
 
-    [DisableConcurrentExecution(10)]
     public async Task Process()
     {
         await _deleteHandler.DeleteObsoleteCarts();

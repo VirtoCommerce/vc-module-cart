@@ -21,6 +21,7 @@ using VirtoCommerce.NotificationsModule.TemplateLoader.FileSystem;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -28,7 +29,6 @@ using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Data.MySql.Extensions;
 using VirtoCommerce.Platform.Data.PostgreSql.Extensions;
 using VirtoCommerce.Platform.Data.SqlServer.Extensions;
-using VirtoCommerce.Platform.Hangfire;
 using VirtoCommerce.StoreModule.Core.Model;
 
 namespace VirtoCommerce.CartModule.Web
@@ -81,6 +81,22 @@ namespace VirtoCommerce.CartModule.Web
             serviceCollection.AddTransient<IWishlistService, WishlistService>();
             serviceCollection.AddTransient<IDeleteObsoleteCartsHandler, DeleteObsoleteCartsHandler>();
             serviceCollection.AddTransient<CartChangedEventHandler>();
+
+            // Recurring jobs, registered here rather than in PostInitialize: the schedule is now a DI registration the
+            // background-job engine picks up, and it re-evaluates it whenever the enabler or cron setting changes.
+            // The ids are the ones the Hangfire WatchJobSetting registrations generated ({Type}.{Method}), so on the
+            // Hangfire engine these replace the old recurring entries instead of leaving them to call a method that
+            // no longer runs as a Hangfire job.
+            serviceCollection.AddRecurringJob<DeleteObsoleteCartsJob, DeleteObsoleteCartsJobPayload>(schedule => schedule
+                .WithId($"{nameof(DeleteObsoleteCartsJob)}.{nameof(DeleteObsoleteCartsJob.Process)}")
+                .FromSettings(
+                    ModuleConstants.Settings.General.EnableDeleteObsoleteCarts,
+                    ModuleConstants.Settings.General.CronDeleteObsoleteCarts));
+            serviceCollection.AddRecurringJob<AbandonedCartReminderJob, AbandonedCartReminderJobPayload>(schedule => schedule
+                .WithId($"{nameof(AbandonedCartReminderJob)}.{nameof(AbandonedCartReminderJob.Process)}")
+                .FromSettings(
+                    ModuleConstants.Settings.General.EnableAbandonedCartReminder,
+                    ModuleConstants.Settings.General.CronAbandonedCartReminder));
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -99,20 +115,6 @@ namespace VirtoCommerce.CartModule.Web
             var settingsRegistrar = serviceProvider.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.General.AllSettings, ModuleInfo.Id);
             settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.StoreSettings, nameof(Store));
-
-            var recurringJobService = serviceProvider.GetService<IRecurringJobService>();
-            recurringJobService.WatchJobSetting(
-                new SettingCronJobBuilder()
-                    .SetEnablerSetting(ModuleConstants.Settings.General.EnableDeleteObsoleteCarts)
-                    .SetCronSetting(ModuleConstants.Settings.General.CronDeleteObsoleteCarts)
-                    .ToJob<DeleteObsoleteCartsJob>(x => x.Process())
-                    .Build());
-            recurringJobService.WatchJobSetting(
-                new SettingCronJobBuilder()
-                    .SetEnablerSetting(ModuleConstants.Settings.General.EnableAbandonedCartReminder)
-                    .SetCronSetting(ModuleConstants.Settings.General.CronAbandonedCartReminder)
-                    .ToJob<AbandonedCartReminderJob>(x => x.Process())
-                    .Build());
 
             appBuilder.RegisterEventHandler<CartChangedEvent, CartChangedEventHandler>();
             appBuilder.RegisterEventHandler<CartChangeEvent, CartChangedEventHandler>();

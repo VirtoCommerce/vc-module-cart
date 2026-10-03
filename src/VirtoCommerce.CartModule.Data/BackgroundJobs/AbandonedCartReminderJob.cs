@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Hangfire;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using VirtoCommerce.CartModule.Core;
 using VirtoCommerce.CartModule.Core.Model;
 using VirtoCommerce.CartModule.Core.Model.Search;
@@ -13,6 +14,8 @@ using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.NotificationsModule.Core.Extensions;
 using VirtoCommerce.NotificationsModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.DistributedLock;
+using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.StoreModule.Core.Model;
@@ -26,8 +29,17 @@ namespace VirtoCommerce.CartModule.Data.BackgroundJobs;
 /// <summary>
 /// This background job sends notifications about abandoned carts
 /// </summary>
-public class AbandonedCartReminderJob
+public class AbandonedCartReminderJob : IBackgroundJobHandler<AbandonedCartReminderJobPayload>
 {
+    // Replaces Hangfire's [DisableConcurrentExecution(10)]: wait up to 10 seconds for a previous run to finish, then
+    // skip this occurrence. Two overlapping runs could both pick up a cart before either stamps
+    // AbandonmentNotificationDate and send the customer a duplicate reminder. Unlike the Hangfire attribute, the
+    // lock spans the whole worker fleet, not one Hangfire server.
+    private const string LockResource = "cart:job:abandoned-cart-reminder";
+    private static readonly TimeSpan _lockTimeout = TimeSpan.FromSeconds(10);
+
+    private readonly IDistributedLock _distributedLock;
+    private readonly ILogger<AbandonedCartReminderJob> _logger;
     private readonly IStoreSearchService _storeSearchService;
     private readonly IShoppingCartSearchService _shoppingCartSearchService;
     private readonly INotificationSearchService _notificationSearchService;
@@ -43,8 +55,12 @@ public class AbandonedCartReminderJob
         INotificationSender notificationSender,
         IMemberService memberService,
         IShoppingCartService shoppingCartService,
-        Func<UserManager<ApplicationUser>> userManagerFactory)
+        Func<UserManager<ApplicationUser>> userManagerFactory,
+        IDistributedLock distributedLock,
+        ILogger<AbandonedCartReminderJob> logger)
     {
+        _distributedLock = distributedLock;
+        _logger = logger;
         _storeSearchService = storeSearchService;
         _shoppingCartSearchService = shoppingCartSearchService;
         _notificationSearchService = notificationSearchService;
@@ -54,7 +70,15 @@ public class AbandonedCartReminderJob
         _userManagerFactory = userManagerFactory;
     }
 
-    [DisableConcurrentExecution(10)]
+    public virtual async Task Execute(AbandonedCartReminderJobPayload payload, IJobExecutionContext context, CancellationToken cancellationToken = default)
+    {
+        var ran = await _distributedLock.TryExecuteAsync(LockResource, _ => Process(), _lockTimeout, cancellationToken);
+        if (!ran)
+        {
+            _logger.LogInformation("Skipped {Job}: a previous run still holds the lock.", nameof(AbandonedCartReminderJob));
+        }
+    }
+
     public async Task Process()
     {
         var storeSearchCriteria = AbstractTypeFactory<StoreSearchCriteria>.TryCreateInstance();

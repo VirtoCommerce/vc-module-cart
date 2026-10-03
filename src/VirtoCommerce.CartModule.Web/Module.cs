@@ -86,13 +86,15 @@ namespace VirtoCommerce.CartModule.Web
             // background-job engine picks up, and it re-evaluates it whenever the enabler or cron setting changes.
             // The ids are the ones the Hangfire WatchJobSetting registrations generated ({Type}.{Method}), so on the
             // Hangfire engine these replace the old recurring entries instead of leaving them to call a method that
-            // no longer runs as a Hangfire job.
-            serviceCollection.AddRecurringJob<DeleteObsoleteCartsJob, DeleteObsoleteCartsJobPayload>(schedule => schedule
+            // no longer runs as a Hangfire job. The handlers wrap the unchanged job classes in a distributed lock.
+            serviceCollection.AddTransient<DeleteObsoleteCartsJob>();
+            serviceCollection.AddTransient<AbandonedCartReminderJob>();
+            serviceCollection.AddRecurringJob<DeleteObsoleteCartsJobHandler, DeleteObsoleteCartsJobPayload>(schedule => schedule
                 .WithId($"{nameof(DeleteObsoleteCartsJob)}.{nameof(DeleteObsoleteCartsJob.Process)}")
                 .FromSettings(
                     ModuleConstants.Settings.General.EnableDeleteObsoleteCarts,
                     ModuleConstants.Settings.General.CronDeleteObsoleteCarts));
-            serviceCollection.AddRecurringJob<AbandonedCartReminderJob, AbandonedCartReminderJobPayload>(schedule => schedule
+            serviceCollection.AddRecurringJob<AbandonedCartReminderJobHandler, AbandonedCartReminderJobPayload>(schedule => schedule
                 .WithId($"{nameof(AbandonedCartReminderJob)}.{nameof(AbandonedCartReminderJob.Process)}")
                 .FromSettings(
                     ModuleConstants.Settings.General.EnableAbandonedCartReminder,

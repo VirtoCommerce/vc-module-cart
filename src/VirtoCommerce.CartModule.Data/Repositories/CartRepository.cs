@@ -76,12 +76,21 @@ namespace VirtoCommerce.CartModule.Data.Repositories
                 return Array.Empty<ShoppingCartEntity>();
             }
 
-            var carts = await ShoppingCarts
+            var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
+
+            IQueryable<ShoppingCartEntity> query = ShoppingCarts
                 .Include(x => x.TaxDetails)
                 .Include(x => x.Discounts)
                 .Include(x => x.Addresses)
-                .Include(x => x.Coupons)
-                .Include(x => x.SharingSettings)
+                .Include(x => x.Coupons);
+
+            // The setting is one row, but a list shared with many recipients carries a target row each: those load
+            // only when the caller asks for them.
+            query = cartResponseGroup.HasFlag(CartResponseGroup.WithSharingTargets)
+                ? query.Include(x => x.SharingSettings).ThenInclude(x => x.Targets)
+                : query.Include(x => x.SharingSettings);
+
+            var carts = await query
                 .Where(x => x.IsDeleted == isDeleted && ids.Contains(x.Id))
                 .AsSplitQuery()
                 .ToListAsync();
@@ -89,8 +98,6 @@ namespace VirtoCommerce.CartModule.Data.Repositories
             if (carts.Any())
             {
                 var cartIds = carts.Select(x => x.Id).ToArray();
-
-                var cartResponseGroup = EnumUtility.SafeParseFlags(responseGroup, CartResponseGroup.Full);
 
                 await LoadPayments(cartIds, cartResponseGroup);
                 await LoadLineItems(cartIds, cartResponseGroup);

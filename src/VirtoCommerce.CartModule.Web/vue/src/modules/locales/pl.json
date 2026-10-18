@@ -1,0 +1,12 @@
+{
+  "CART": {
+    "DASHBOARD": {
+      "CARTS": {
+        "TITLE": "Obecnie w koszykach",
+        "CARTS": "koszyków",
+        "REGISTERED": "Koszyki klientów",
+        "GUESTS": "Koszyki gości"
+      }
+    }
+  }
+}

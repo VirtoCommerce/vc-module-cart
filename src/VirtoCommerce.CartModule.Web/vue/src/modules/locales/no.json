@@ -1,0 +1,12 @@
+{
+  "CART": {
+    "DASHBOARD": {
+      "CARTS": {
+        "TITLE": "For øyeblikket i handlekurver",
+        "CARTS": "handlekurver",
+        "REGISTERED": "Kunders handlekurver",
+        "GUESTS": "Gjesters handlekurver"
+      }
+    }
+  }
+}

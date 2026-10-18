@@ -1,0 +1,12 @@
+{
+  "CART": {
+    "DASHBOARD": {
+      "CARTS": {
+        "TITLE": "För närvarande i kundvagnar",
+        "CARTS": "kundvagnar",
+        "REGISTERED": "Kunders kundvagnar",
+        "GUESTS": "Gästers kundvagnar"
+      }
+    }
+  }
+}

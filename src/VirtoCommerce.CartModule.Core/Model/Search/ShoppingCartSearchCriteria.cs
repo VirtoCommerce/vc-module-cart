@@ -57,5 +57,7 @@ namespace VirtoCommerce.CartModule.Core.Model.Search
         public DateTime? AbandonmentNotificationEndDate { get; set; }
 
         public string SharingKey { get; set; }
+
+        public IList<string> LineItemIds { get; set; }
     }
 }

@@ -1,0 +1,3 @@
+{
+  "remote": { "name": "cart_admin", "exposed": "./Module" }
+}

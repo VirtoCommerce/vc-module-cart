@@ -1,0 +1,12 @@
+{
+  "CART": {
+    "DASHBOARD": {
+      "CARTS": {
+        "TITLE": "Actuellement dans les paniers",
+        "CARTS": "paniers",
+        "REGISTERED": "Paniers des clients",
+        "GUESTS": "Paniers des invités"
+      }
+    }
+  }
+}

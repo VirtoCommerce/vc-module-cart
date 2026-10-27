@@ -1,0 +1,12 @@
+{
+  "CART": {
+    "DASHBOARD": {
+      "CARTS": {
+        "TITLE": "Attualmente nei carrelli",
+        "CARTS": "carrelli",
+        "REGISTERED": "Carrelli dei clienti",
+        "GUESTS": "Carrelli degli ospiti"
+      }
+    }
+  }
+}

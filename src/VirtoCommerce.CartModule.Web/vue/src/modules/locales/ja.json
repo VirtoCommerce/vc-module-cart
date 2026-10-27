@@ -1,0 +1,12 @@
+{
+  "CART": {
+    "DASHBOARD": {
+      "CARTS": {
+        "TITLE": "現在カート内",
+        "CARTS": "カート",
+        "REGISTERED": "顧客のカート",
+        "GUESTS": "ゲストのカート"
+      }
+    }
+  }
+}

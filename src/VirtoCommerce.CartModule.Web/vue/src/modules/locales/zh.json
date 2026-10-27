@@ -1,0 +1,12 @@
+{
+  "CART": {
+    "DASHBOARD": {
+      "CARTS": {
+        "TITLE": "当前购物车",
+        "CARTS": "购物车",
+        "REGISTERED": "客户购物车",
+        "GUESTS": "访客购物车"
+      }
+    }
+  }
+}

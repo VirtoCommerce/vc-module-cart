@@ -1,0 +1,12 @@
+{
+  "CART": {
+    "DASHBOARD": {
+      "CARTS": {
+        "TITLE": "Tällä hetkellä ostoskoreissa",
+        "CARTS": "ostoskoria",
+        "REGISTERED": "Asiakkaiden ostoskorit",
+        "GUESTS": "Vieraiden ostoskorit"
+      }
+    }
+  }
+}

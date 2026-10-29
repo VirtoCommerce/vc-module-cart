@@ -189,6 +189,11 @@ namespace VirtoCommerce.CartModule.Data.Services
                 query = query.Where(cart => cart.SharingSettings.Any(setting => setting.Id == criteria.SharingKey && setting.Scope != CartSharingScope.Private));
             }
 
+            if (!criteria.LineItemIds.IsNullOrEmpty())
+            {
+                query = query.Where(cart => cart.Items.Any(item => criteria.LineItemIds.Contains(item.Id)));
+            }
+
             return query;
         }
 

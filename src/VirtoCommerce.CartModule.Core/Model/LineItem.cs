@@ -131,6 +131,8 @@ namespace VirtoCommerce.CartModule.Core.Model
 
         public bool SelectedForCheckout { get; set; } = true;
 
+        public string PurchaseOrderLineNumber { get; set; }
+
         #region IHasDiscounts
         public ICollection<Discount> Discounts { get; set; }
         #endregion

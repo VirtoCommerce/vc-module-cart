@@ -145,6 +145,9 @@ namespace VirtoCommerce.CartModule.Data.Model
 
         public bool SelectedForCheckout { get; set; }
 
+        [StringLength(128)]
+        public string PurchaseOrderLineNumber { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<TaxDetailEntity> TaxDetails { get; set; }
@@ -220,6 +223,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             lineItem.FulfillmentCenterName = FulfillmentCenterName;
             lineItem.VendorId = VendorId;
             lineItem.SelectedForCheckout = SelectedForCheckout;
+            lineItem.PurchaseOrderLineNumber = PurchaseOrderLineNumber;
 
             if (!Discounts.IsNullOrEmpty())
             {
@@ -308,6 +312,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             FulfillmentCenterName = lineItem.FulfillmentCenterName;
             VendorId = lineItem.VendorId;
             SelectedForCheckout = lineItem.SelectedForCheckout;
+            PurchaseOrderLineNumber = lineItem.PurchaseOrderLineNumber;
 
             if (lineItem.Discounts != null)
             {
@@ -380,6 +385,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             target.Sku = Sku;
             target.VendorId = VendorId;
             target.SelectedForCheckout = SelectedForCheckout;
+            target.PurchaseOrderLineNumber = PurchaseOrderLineNumber;
 
             if (!Discounts.IsNullCollection())
             {

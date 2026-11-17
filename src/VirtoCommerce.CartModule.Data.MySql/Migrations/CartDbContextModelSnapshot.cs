@@ -17,7 +17,7 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -670,6 +670,10 @@ namespace VirtoCommerce.CartModule.Data.MySql.Migrations
                     b.Property<string>("ProductType")
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
+
+                    b.Property<string>("PurchaseOrderLineNumber")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");

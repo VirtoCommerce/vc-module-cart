@@ -204,23 +204,31 @@ namespace VirtoCommerce.CartModule.Data.Services
             var quantity = Math.Max(1, lineItem.Quantity);
             var currency = _currencyService.GetAllCurrenciesAsync().GetAwaiter().GetResult().First(c => c.Code == lineItem.Currency);
 
-            lineItem.ListTotal = lineItem.ListPrice * quantity;
-            lineItem.PlacedPrice = lineItem.ListPrice - lineItem.DiscountAmount;
-            lineItem.DiscountTotal = currency.RoundingPolicy.RoundMoney(lineItem.DiscountAmount * quantity, currency);
-            lineItem.ExtendedPrice = lineItem.ListTotal - lineItem.DiscountTotal;
-
             var taxFactor = 1 + lineItem.TaxPercentRate;
 
+            // Unit prices stay exact; each line total is rounded once from the exact unit price,
+            // and the line discount and tax are the remainders, so ListTotal - DiscountTotal = ExtendedPrice
+            // and ExtendedPrice + tax = ExtendedPriceWithTax hold after rounding (VCST-6824)
+            lineItem.PlacedPrice = lineItem.ListPrice - lineItem.DiscountAmount;
+            lineItem.ListTotal = RoundMoney(lineItem.ListPrice * quantity, currency);
+            lineItem.ExtendedPrice = RoundMoney(lineItem.PlacedPrice * quantity, currency);
+            lineItem.DiscountTotal = lineItem.ListTotal - lineItem.ExtendedPrice;
+
             lineItem.ListPriceWithTax = lineItem.ListPrice * taxFactor;
-            lineItem.ListTotalWithTax = lineItem.ListTotal * taxFactor;
             lineItem.SalePriceWithTax = lineItem.SalePrice * taxFactor;
             lineItem.PlacedPriceWithTax = lineItem.PlacedPrice * taxFactor;
-            lineItem.ExtendedPriceWithTax = lineItem.ExtendedPrice * taxFactor;
             lineItem.DiscountAmountWithTax = lineItem.DiscountAmount * taxFactor;
-            lineItem.DiscountTotalWithTax = lineItem.DiscountTotal * taxFactor;
+            lineItem.ListTotalWithTax = RoundMoney(lineItem.ListPrice * quantity * taxFactor, currency);
+            lineItem.ExtendedPriceWithTax = RoundMoney(lineItem.PlacedPrice * quantity * taxFactor, currency);
+            lineItem.DiscountTotalWithTax = lineItem.ListTotalWithTax - lineItem.ExtendedPriceWithTax;
             lineItem.FeeWithTax = lineItem.Fee * taxFactor;
 
-            lineItem.TaxTotal = (lineItem.ExtendedPrice + lineItem.Fee) * lineItem.TaxPercentRate;
+            lineItem.TaxTotal = lineItem.ExtendedPriceWithTax - lineItem.ExtendedPrice + lineItem.Fee * lineItem.TaxPercentRate;
+        }
+
+        protected virtual decimal RoundMoney(decimal amount, Currency currency)
+        {
+            return currency.RoundingPolicy.RoundMoney(amount, currency);
         }
 
         private static ShoppingCart AddShoppingCartByCurrency(Dictionary<string, ShoppingCart> cartByCurrency, string currencyCode)

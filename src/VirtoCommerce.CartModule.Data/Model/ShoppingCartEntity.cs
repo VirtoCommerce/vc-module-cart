@@ -155,6 +155,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             model.ModifiedBy = ModifiedBy;
             model.ModifiedDate = ModifiedDate;
 
+            model.ChannelId = ChannelId;
             model.StoreId = StoreId;
             model.Fee = Fee;
             model.FeeWithTax = FeeWithTax;
@@ -230,6 +231,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             ModifiedBy = model.ModifiedBy;
             ModifiedDate = model.ModifiedDate;
 
+            ChannelId = model.ChannelId;
             Fee = model.Fee;
             FeeWithTax = model.FeeWithTax;
             Status = model.Status;
@@ -332,6 +334,7 @@ namespace VirtoCommerce.CartModule.Data.Model
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
 
+            target.ChannelId = ChannelId;
             target.Fee = Fee;
             target.FeeWithTax = FeeWithTax;
             target.Status = Status;
